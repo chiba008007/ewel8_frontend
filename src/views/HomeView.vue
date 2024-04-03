@@ -1,18 +1,8 @@
-<template>
-  <hello-world />
-</template>
+<script setup lang="ts">
+import { useStoreUser } from "../store/user";
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-// Components
-import HelloWorld from "../components/HelloWorld.vue";
-
-export default defineComponent({
-  name: "HomeView",
-
-  components: {
-    HelloWorld,
-  },
-});
+const user = useStoreUser();
 </script>
+<template>
+  <div>aaa{{ user.count }}</div>
+</template>
