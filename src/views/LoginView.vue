@@ -7,7 +7,9 @@ const userId = ref<string>();
 const password = ref<string>();
 const user = useStoreUser();
 const onClick = () => {
+  // piniaを使ってみたサンプル
   user.increment();
+  // 本来はここでサーバと通信して認証可否を判断するはず
   // console.log(userId.value);
   // console.log(password.value);
   // router.push("/home");

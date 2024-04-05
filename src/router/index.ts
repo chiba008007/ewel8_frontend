@@ -1,16 +1,20 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { useStoreUser } from "../store/user";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/home",
-    name: "home",
+    name: "Home",
     component: HomeView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+    },
   },
   {
     path: "/login",
-    name: "login",
+    name: "Login",
     component: LoginView,
   },
   {
@@ -29,4 +33,40 @@ const router = createRouter({
   routes,
 });
 
+// router.beforeEach((to, from, next) => {
+//   // const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+//   // console.log(requiresAuth);
+//   if (to.matched.some((record) => record.meta.requiresAuth)) {
+//     console.log(auth.loginedId());
+//   }
+// });
+
+router.beforeEach((to, from) => {
+  // ...
+  // explicitly return false to cancel the navigation
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const user = useStoreUser();
+  const isAuthenticated = user.count ?? true;
+
+  if (
+    // make sure the user is authenticated
+    isAuthenticated &&
+    // Avoid an infinite redirect
+    to.name === "Login"
+  ) {
+    // redirect the user to the login page
+    return { name: "Home" };
+  }
+
+  if (
+    // make sure the user is authenticated
+    !isAuthenticated &&
+    // Avoid an infinite redirect
+    to.name !== "Login" &&
+    requiresAuth == true
+  ) {
+    // redirect the user to the login page
+    return { name: "Login" };
+  }
+});
 export default router;
