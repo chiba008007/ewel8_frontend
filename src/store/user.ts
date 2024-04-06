@@ -3,9 +3,8 @@ export const useStoreUser = defineStore("user", {
   state: () => ({
     count: 1,
     count2: 2,
-    user: {
-      name: "John Doe",
-    },
+    userdata: {},
+    userToken: {},
   }),
   persist: true,
   // computed と同じ
@@ -15,6 +14,11 @@ export const useStoreUser = defineStore("user", {
   actions: {
     increment() {
       this.count++;
+    },
+    setUserData(data: any) {
+      data.then((response: any) => {
+        this.userToken = response.data.token;
+      });
     },
   },
 });

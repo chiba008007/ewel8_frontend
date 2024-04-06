@@ -2,13 +2,21 @@
 import { ref } from "vue";
 import router from "../router";
 import { useStoreUser } from "../store/user";
+//import SampleApiService from "@/services/SampleApiService";
+import UserApiService from "@/services/UserApiService";
 
 const userId = ref<string>();
 const password = ref<string>();
 const user = useStoreUser();
 const onClick = () => {
+  let data = {
+    email: "john@doe.com",
+    password: "password",
+  };
+  let userdata = UserApiService.getPost(data);
+  user.setUserData(userdata);
   // piniaを使ってみたサンプル
-  user.increment();
+  //user.increment();
   // 本来はここでサーバと通信して認証可否を判断するはず
   // console.log(userId.value);
   // console.log(password.value);
