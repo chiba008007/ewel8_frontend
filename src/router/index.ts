@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { useStoreUser } from "../store/user";
 import HomeView from "../views/HomeView.vue";
+import HelloWorldView from "../views/HelloWorld.vue";
 import LoginView from "../views/LoginView.vue";
 
 const routes: Array<RouteRecordRaw> = [
