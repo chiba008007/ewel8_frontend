@@ -1,7 +1,7 @@
 import http from "@/user-common";
 
 class UserApiService {
-  getPost(data: any): Promise<any> {
+  getPost(data: object): Promise<object> {
     return http.post("/api/login", data);
   }
 }

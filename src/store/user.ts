@@ -15,10 +15,8 @@ export const useStoreUser = defineStore("user", {
     increment() {
       this.count++;
     },
-    setUserData(data: any) {
-      data.then((response: any) => {
-        this.userToken = response.data.token;
-      });
+    setUserData(data: string) {
+      this.userToken = data;
     },
   },
 });

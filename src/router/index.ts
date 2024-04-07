@@ -41,12 +41,12 @@ const router = createRouter({
 //   }
 // });
 
-router.beforeEach((to, from) => {
+router.beforeEach((to) => {
   // ...
   // explicitly return false to cancel the navigation
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const user = useStoreUser();
-  const isAuthenticated = user.count ?? true;
+  const isAuthenticated = user.userToken;
 
   if (
     // make sure the user is authenticated
