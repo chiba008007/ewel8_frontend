@@ -9,9 +9,6 @@
     <v-main>
       <router-view class="pa-1" />
     </v-main>
-    <v-bottom-navigation> Button Navigation </v-bottom-navigation>
-
-    <v-footer color="primary" app> Footer </v-footer>
   </v-app>
 </template>
 
