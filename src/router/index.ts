@@ -3,12 +3,21 @@ import { useStoreUser } from "../store/user";
 import HomeView from "../views/HomeView.vue";
 import HelloWorldView from "../views/HelloWorld.vue";
 import LoginView from "../views/LoginView.vue";
+import ListView from "../views/ListView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/home",
     name: "Home",
     component: HomeView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+    },
+  },
+  {
+    path: "/list",
+    name: "List",
+    component: ListView,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
     },
@@ -56,7 +65,7 @@ router.beforeEach((to) => {
     to.name === "Login"
   ) {
     // redirect the user to the login page
-    return { name: "Home" };
+    return { name: "List" };
   }
 
   if (

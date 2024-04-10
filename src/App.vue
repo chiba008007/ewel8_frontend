@@ -7,7 +7,7 @@
       <a href="">ログアウト</a>
     </v-system-bar>
     <v-main>
-      <router-view />
+      <router-view class="pa-1" />
     </v-main>
     <v-bottom-navigation> Button Navigation </v-bottom-navigation>
 
