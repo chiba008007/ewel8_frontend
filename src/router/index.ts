@@ -4,6 +4,7 @@ import HomeView from "../views/HomeView.vue";
 import HelloWorldView from "../views/HelloWorld.vue";
 import LoginView from "../views/LoginView.vue";
 import ListView from "../views/ListView.vue";
+import store from "@/store";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -43,40 +44,23 @@ const router = createRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   // const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-//   // console.log(requiresAuth);
-//   if (to.matched.some((record) => record.meta.requiresAuth)) {
-//     console.log(auth.loginedId());
-//   }
-// });
-
-router.beforeEach((to) => {
+router.beforeEach((to, from, next) => {
   // ...
   // explicitly return false to cancel the navigation
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const user = useStoreUser();
-  const isAuthenticated = user.userToken;
+  const isLogin = user.isLogin;
 
-  if (
-    // make sure the user is authenticated
-    isAuthenticated &&
-    // Avoid an infinite redirect
-    to.name === "Login"
-  ) {
-    // redirect the user to the login page
-    return { name: "List" };
+  if (requiresAuth) {
+    if (isLogin && requiresAuth == true) {
+      next();
+    } else {
+      next({
+        path: "/login",
+        query: { redirect: to.fullPath },
+      });
+    }
   }
-
-  if (
-    // make sure the user is authenticated
-    !isAuthenticated &&
-    // Avoid an infinite redirect
-    to.name !== "Login" &&
-    requiresAuth == true
-  ) {
-    // redirect the user to the login page
-    return { name: "Login" };
-  }
+  next();
 });
 export default router;

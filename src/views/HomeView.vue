@@ -6,7 +6,6 @@ const user = useStoreUser();
 const sampleLists = ref<object>();
 SampleApiService.getAll()
   .then((res) => {
-    console.log(res.data.products);
     sampleLists.value = res.data.products;
   })
   .catch((error) => {

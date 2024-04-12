@@ -15,11 +15,9 @@ const onClick = () => {
   };
   UserApiService.getPost(data)
     .then((response: any) => {
-      console.log("success");
-      console.log(response.data.token);
-      //console.log(userdata);
-      user.setUserData(response.data.token);
-      router.push("/home");
+      user.setUserDataToken(response.data.token);
+      user.setUserData(response.data.user);
+      router.push("/list");
     })
     .catch(() => {
       alert("LOGIN ERROR");

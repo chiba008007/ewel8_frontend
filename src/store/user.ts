@@ -3,6 +3,7 @@ export const useStoreUser = defineStore("user", {
   state: () => ({
     count: 1,
     count2: 2,
+    isLogin: false,
     userdata: {},
     userToken: {},
   }),
@@ -15,8 +16,15 @@ export const useStoreUser = defineStore("user", {
     increment() {
       this.count++;
     },
-    setUserData(data: string) {
+    setUserDataToken(data: string) {
       this.userToken = data;
+      this.isLogin = true;
+    },
+    setUserData(data: object) {
+      this.userdata = data;
+    },
+    IsLogout() {
+      this.isLogin = false;
     },
   },
 });
