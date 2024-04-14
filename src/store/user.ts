@@ -23,6 +23,9 @@ export const useStoreUser = defineStore("user", {
     setUserData(data: object) {
       this.userdata = data;
     },
+    getUserData() {
+      return JSON.parse(JSON.stringify(this.userdata));
+    },
     IsLogout() {
       this.isLogin = false;
     },

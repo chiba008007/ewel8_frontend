@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 import type { VBtn } from "vuetify/components";
+
+const emit = defineEmits<{
+  (e: "onClick"): void;
+  // (e: "update", value: string): void;
+}>();
+
 type TVariant = VBtn["$props"]["variant"];
 type TVDensity = VBtn["$props"]["density"];
 const props = defineProps<{
@@ -15,6 +21,7 @@ const props = defineProps<{
     :variant="props.variant"
     :density="props.density"
     :color="props.color"
+    @click="emit('onClick')"
     >{{ props.text }}</v-btn
   >
 </template>

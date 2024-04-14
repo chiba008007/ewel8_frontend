@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import ComponentButton from "../components/ButtonView.vue";
 import ComponentTextField from "../components/TextFieldView.vue";
-
+import AdminMenu from "../components/AdminMenu.vue";
 const headers = [
   { title: "企業名", sortable: false, key: "name" },
   { title: "購入ライセンス", sortable: false, key: "speed" },
@@ -81,124 +81,12 @@ const desserts = [
 const tableHeight = ref(100);
 const onResize = () => {
   const wHeight = window.innerHeight;
-  tableHeight.value = wHeight - 240;
+  tableHeight.value = wHeight - 300;
 };
 </script>
 <template>
   <v-row align="center" justify="center" v-resize="onResize">
-    <v-sheet height="120px" width="70%">
-      <div class="d-flex flex-row justify-center mt-5">
-        <ComponentButton
-          text="企業情報変更"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="新規パートナー登録"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="受検者検索"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="検査ログ"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="PDF出力ログ"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-      </div>
-      <div class="d-flex flex-row justify-center mt-1">
-        <ComponentButton
-          text="検査種別ROWデータ"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="請求書一覧"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="ライセンス一覧"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="トライアルID"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="お知らせ情報"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-      </div>
-      <div class="d-flex flex-row justify-center mt-1">
-        <ComponentButton
-          text="受検者ログイン状況"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="管理者ログイン状況"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="企業一覧"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="PDF一覧"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-        <ComponentButton
-          text="セキュリティログ"
-          variant="outlined"
-          density="compact"
-          color="primary"
-          class="ml-1 w-25"
-        ></ComponentButton>
-      </div>
-    </v-sheet>
+    <AdminMenu />
   </v-row>
   <v-card subtitle="検索フォーム" width="100%" class="ma-0 px-3" elevation="0">
     <v-row>
@@ -216,7 +104,23 @@ const onResize = () => {
       </v-col>
     </v-row>
   </v-card>
-  <v-table :height="tableHeight" fixed-header class="listable mt-0">
+  <v-data-table
+    :headers="headers"
+    :items="desserts"
+    class="listable mt-0"
+    :height="tableHeight"
+    fixed-header
+  >
+    <template v-slot:items="props">
+      <td>{{ props.item.name }}</td>
+      <td class="text-xs-right">{{ props.item.calories }}</td>
+      <td class="text-xs-right">{{ props.item.fat }}</td>
+      <td class="text-xs-right">{{ props.item.carbs }}</td>
+      <td class="text-xs-right">{{ props.item.protein }}</td>
+      <td class="text-xs-right">{{ props.item.iron }}</td>
+    </template>
+  </v-data-table>
+  <!-- <v-table :height="tableHeight" fixed-header class="listable mt-0">
     <thead>
       <tr>
         <th class="text-center" v-for="val in headers" :key="val.title">
@@ -250,7 +154,7 @@ const onResize = () => {
         </td>
       </tr>
     </tbody>
-  </v-table>
+  </v-table> -->
 </template>
 <style lang="scss">
 .listable {
