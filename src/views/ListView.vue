@@ -107,36 +107,18 @@ const onResize = () => {
   <v-data-table
     :headers="headers"
     :items="desserts"
-    class="listable mt-0"
+    class="listable ma-2"
     :height="tableHeight"
     fixed-header
   >
-    <template v-slot:items="props">
-      <td>{{ props.item.name }}</td>
-      <td class="text-xs-right">{{ props.item.calories }}</td>
-      <td class="text-xs-right">{{ props.item.fat }}</td>
-      <td class="text-xs-right">{{ props.item.carbs }}</td>
-      <td class="text-xs-right">{{ props.item.protein }}</td>
-      <td class="text-xs-right">{{ props.item.iron }}</td>
-    </template>
-  </v-data-table>
-  <!-- <v-table :height="tableHeight" fixed-header class="listable mt-0">
-    <thead>
+    <template v-slot:item="{ item }">
       <tr>
-        <th class="text-center" v-for="val in headers" :key="val.title">
-          {{ val.title }}
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr v-for="item in desserts" :key="item.name">
         <td>{{ item.name }}</td>
-        <td class="text-right">{{ item.speed }}</td>
-        <td class="text-right">{{ item.speed }}</td>
-        <td class="text-right">{{ item.speed }}</td>
-        <td class="text-right">{{ item.speed }}</td>
-        <td class="text-right">{{ item.speed }}</td>
+        <td class="text-xs-right">{{ item.speed }}</td>
+        <td class="text-xs-right">{{ item.length }}</td>
+        <td class="text-xs-right">{{ item.price }}</td>
+        <td class="text-xs-right">{{ item.year }}</td>
+        <td class="text-xs-right">{{ item.zan }}</td>
         <td class="text-center">
           <ComponentButton text="パートナ" color="success" density="compact" />
           <ComponentButton
@@ -153,8 +135,8 @@ const onResize = () => {
           />
         </td>
       </tr>
-    </tbody>
-  </v-table> -->
+    </template>
+  </v-data-table>
 </template>
 <style lang="scss">
 .listable {
