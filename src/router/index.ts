@@ -5,6 +5,7 @@ import HelloWorldView from "../views/HelloWorld.vue";
 import LoginView from "../views/LoginView.vue";
 import ListView from "../views/ListView.vue";
 import partnerRegistView from "../views/partnerRegistView.vue";
+import addPertner from "../views/addPertnerView.vue";
 import store from "@/store";
 
 const routes: Array<RouteRecordRaw> = [
@@ -28,6 +29,14 @@ const routes: Array<RouteRecordRaw> = [
     path: "/partnerRegist",
     name: "partnerRegist",
     component: partnerRegistView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+    },
+  },
+  {
+    path: "/addPertner",
+    name: "addPertner",
+    component: addPertner,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
     },

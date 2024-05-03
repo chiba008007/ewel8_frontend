@@ -6,6 +6,7 @@ type TVDensity = VTextField["$props"]["density"];
 
 interface Props {
   type?: string;
+  items?: object[];
   name?: string;
   text?: string;
   placeholder?: string;
@@ -15,11 +16,12 @@ interface Props {
   hideDetails?: boolean | "auto";
   messages?: string;
   person?: string;
+  label?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: "text",
-  name: undefined,
+  items: undefined,
   text: undefined,
   placeholder: undefined,
   variant: "outlined",
@@ -27,6 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
   value: undefined,
   hideDetails: "auto",
   person: undefined,
+  label: undefined,
 });
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
@@ -34,17 +37,13 @@ const emit = defineEmits<{
 }>();
 </script>
 <template>
-  <v-text-field
-    :type="props.type"
-    :label="props.text"
-    :placeholder="props.placeholder"
+  <v-select
+    :label="props.label"
+    :items="props.items"
+    item-value="id"
+    item-title="name"
+    :hide-details="props.hideDetails"
     :variant="props.variant"
     :density="props.density"
-    :model-value="props.value"
-    :name="props.name"
-    :hide-details="props.hideDetails"
-    :messages="props.messages"
-    @keyup="emit('onKeyup', $event.target.value)"
-    @blur="emit('onBlur', $event.target.value)"
-  ></v-text-field>
+  ></v-select>
 </template>
