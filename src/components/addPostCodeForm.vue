@@ -18,7 +18,7 @@ const emit = defineEmits<{
     }}</v-col>
     <v-col sm="8" class="pa-1 border-sm">
       <v-row>
-        <v-col cols="3 d-flex">
+        <v-col cols="4 d-flex">
           <ComponentTextField
             density="compact"
             variant="outlined"
@@ -27,7 +27,7 @@ const emit = defineEmits<{
           />
           <p class="mt-2 pl-4">-</p>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="6">
           <ComponentTextField
             density="compact"
             variant="outlined"

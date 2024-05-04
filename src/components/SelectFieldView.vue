@@ -17,6 +17,7 @@ interface Props {
   messages?: string;
   person?: string;
   label?: string;
+  class?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideDetails: "auto",
   person: undefined,
   label: undefined,
+  class: undefined,
 });
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
@@ -45,5 +47,6 @@ const emit = defineEmits<{
     :hide-details="props.hideDetails"
     :variant="props.variant"
     :density="props.density"
+    :class="props.class"
   ></v-select>
 </template>
