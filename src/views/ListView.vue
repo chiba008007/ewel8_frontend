@@ -144,7 +144,8 @@ const onResize = () => {
     th {
       border-top: 1px solid #ccc;
       border-right: 1px solid #ccc;
-      background-color: #ccffff !important;
+      background-color: rgb(var(--v-theme-primary)) !important;
+      color: #fff;
     }
     th,
     td {

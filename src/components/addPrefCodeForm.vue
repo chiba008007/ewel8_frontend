@@ -18,7 +18,7 @@ const emit = defineEmits<{
     <v-col sm="3" class="border-sm bg-primary blue d-flex align-center pl-2">{{
       props.title
     }}</v-col>
-    <v-col sm="8" class="pa-1 border-sm">
+    <v-col sm="9" class="pa-1 border-sm">
       <ComponentSelectField
         :items="props.items"
         :label="props.label"
