@@ -8,6 +8,10 @@ import addPrefCodeForm from "../components/addPrefCodeForm.vue";
 import addSwitchForm from "../components/addSwitchForm.vue";
 import { useRouter } from "vue-router";
 import PrefApiService from "@/services/PrefApiService";
+import ElementApiService from "@/services/ElementApiService";
+import LicenseApiService from "@/services/LicenseApiService";
+import ComponentTextField from "../components/TextFieldView.vue";
+
 const router = useRouter();
 const pankuzu = [
   { title: "HOME", href: router.resolve({ name: "List" }).href },
@@ -15,8 +19,19 @@ const pankuzu = [
 ];
 const tab = ref();
 const prefs = ref();
+const elements = ref();
+const licenses = ref();
+const onSearch = (ev: string) => {
+  licenses.value = LicenseApiService.getSearchData(ev);
+};
 PrefApiService.getPrefData().then((res) => {
   prefs.value = res;
+});
+ElementApiService.getElementData().then((res) => {
+  elements.value = res;
+});
+LicenseApiService.getElementData().then((res) => {
+  licenses.value = res.value;
 });
 </script>
 <template>
@@ -34,7 +49,7 @@ PrefApiService.getPrefData().then((res) => {
   </v-tabs>
 
   <v-row no-gutters>
-    <v-col cols="12" class="pa-2">
+    <v-col cols="12" class="pa-2 ma-2">
       <ComponentButton text="登録" color="primary" class="my-3" />
       <v-window v-model="tab">
         <v-window-item value="1">
@@ -147,9 +162,54 @@ PrefApiService.getPrefData().then((res) => {
         </v-window-item>
         <v-window-item value="3">
           行動価値エクセルダウンロードで利用する要素名を変更する際に利用します。
+
+          <addPartnerForm
+            v-for="element in elements"
+            :key="element.id"
+            :title="element.note"
+            :value="element.note"
+            text="要素名を入力してください"
+            class="w-100"
+            :hideDetails="true"
+          ></addPartnerForm>
         </v-window-item>
         <v-window-item value="4">
-          ライセンスを登録する検査種類の表示名を選択してください。
+          <div class="my-4">
+            ライセンス名検索
+            <ComponentTextField
+              type="text"
+              density="compact"
+              variant="outlined"
+              class="w-25"
+              placeholder="ライセンス名を入力してください"
+              @onKeyup="onSearch($event)"
+            />
+          </div>
+          ライセンスを登録する検査の登録数を入力してください。(半角数値)
+
+          <v-list v-for="license in licenses" :key="license.code">
+            <v-list-item>
+              <v-list-item-title
+                >{{ license.text }}({{ license.code }})
+              </v-list-item-title>
+              <v-row no-gutters>
+                <v-col
+                  v-for="value in license.list"
+                  :key="value.code"
+                  cols="2"
+                  class="col pa-1"
+                >
+                  {{ value.code }}
+                  <ComponentTextField
+                    type="number"
+                    density="compact"
+                    variant="outlined"
+                    placeholder="0"
+                  />
+                </v-col>
+              </v-row>
+            </v-list-item>
+          </v-list>
         </v-window-item>
         <v-window-item value="5">
           会員自動登録の際に出力されるＰＤＦを選択してください。

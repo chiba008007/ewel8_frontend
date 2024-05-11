@@ -10,6 +10,7 @@ const props = defineProps<{
   login_id?: string;
   person?: string;
   messages?: string;
+  value?: string;
 }>();
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
@@ -22,6 +23,7 @@ const emit = defineEmits<{
     }}</v-col>
     <v-col sm="9" class="pa-1 border-sm">
       <ComponentTextField
+        :value="props.value"
         :text="props.text"
         density="compact"
         variant="outlined"
