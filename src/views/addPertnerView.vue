@@ -2,6 +2,7 @@
 import { ref, defineEmits } from "vue";
 import AdminMenu from "../components/AdminMenu.vue";
 import ComponentButton from "../components/ButtonView.vue";
+import ComponentCheckbox from "../components/CheckboxView.vue";
 import addPartnerForm from "../components/addPartnerForm.vue";
 import addPostCodeForm from "../components/addPostCodeForm.vue";
 import addPrefCodeForm from "../components/addPrefCodeForm.vue";
@@ -10,6 +11,7 @@ import { useRouter } from "vue-router";
 import PrefApiService from "@/services/PrefApiService";
 import ElementApiService from "@/services/ElementApiService";
 import LicenseApiService from "@/services/LicenseApiService";
+import PdfApiService from "@/services/PdfApiService";
 import ComponentTextField from "../components/TextFieldView.vue";
 
 const router = useRouter();
@@ -21,6 +23,7 @@ const tab = ref();
 const prefs = ref();
 const elements = ref();
 const licenses = ref();
+const pdfs = ref();
 const onSearch = (ev: string) => {
   licenses.value = LicenseApiService.getSearchData(ev);
 };
@@ -32,6 +35,9 @@ ElementApiService.getElementData().then((res) => {
 });
 LicenseApiService.getElementData().then((res) => {
   licenses.value = res.value;
+});
+PdfApiService.getElementData().then((res) => {
+  pdfs.value = res.value;
 });
 </script>
 <template>
@@ -212,7 +218,12 @@ LicenseApiService.getElementData().then((res) => {
           </v-list>
         </v-window-item>
         <v-window-item value="5">
-          会員自動登録の際に出力されるＰＤＦを選択してください。
+          会員自動登録の際に出力されるPDFを選択してください。
+          <v-row class="mt-3">
+            <v-col cols="4" v-for="pdf in pdfs" :key="pdf">
+              <ComponentCheckbox :label="pdf"></ComponentCheckbox>
+            </v-col>
+          </v-row>
         </v-window-item>
       </v-window>
     </v-col>

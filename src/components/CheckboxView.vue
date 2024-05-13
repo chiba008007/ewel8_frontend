@@ -1,21 +1,15 @@
 <script setup lang="ts">
 import { defineProps, withDefaults, defineEmits, ref } from "vue";
-import type { VTextField } from "vuetify/components";
-type TVDensity = VTextField["$props"]["density"];
 
 const model = ref<boolean>(true);
 interface Props {
-  title?: string;
-  density?: TVDensity;
   label?: string;
-  model?: boolean;
+  value?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: "申込み検査ボタン",
-  density: "compact",
-  label: "利用する",
-  model: true,
+  label: "",
+  value: false,
 });
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
@@ -23,13 +17,10 @@ const emit = defineEmits<{
 }>();
 </script>
 <template>
-  <v-switch
+  <v-checkbox
     class="ml-2"
     v-model="model"
-    :value="props.model"
-    :density="props.density"
     :label="props.label"
-    hide-details
-    inset
-  ></v-switch>
+    :value="props.value"
+  ></v-checkbox>
 </template>
