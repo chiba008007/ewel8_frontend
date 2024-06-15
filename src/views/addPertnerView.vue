@@ -39,9 +39,19 @@ LicenseApiService.getElementData().then((res) => {
 PdfApiService.getElementData().then((res) => {
   pdfs.value = res.value;
 });
+const pdfList = ref([]);
+const onChange = (event: Event) => {
+  if (event.target) {
+    let str = (event.target as HTMLInputElement).value;
+    pdfList.value.push(str as never);
+  }
+  let arr = [...pdfList.value];
+  const a = arr.filter((x) => arr.indexOf(x) === arr.lastIndexOf(x));
+  console.log(a);
+};
 </script>
 <template>
-  <v-row align="center" justify="center">
+  <v-row justify="center">
     <AdminMenu />
   </v-row>
   <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
@@ -220,8 +230,13 @@ PdfApiService.getElementData().then((res) => {
         <v-window-item value="5">
           会員自動登録の際に出力されるPDFを選択してください。
           <v-row class="mt-3">
-            <v-col cols="4" v-for="pdf in pdfs" :key="pdf">
-              <ComponentCheckbox :label="pdf"></ComponentCheckbox>
+            <v-col cols="4" v-for="(pdf, index) in pdfs" :key="pdf">
+              <ComponentCheckbox
+                :label="pdf"
+                :value="index"
+                selected="selected"
+                @change="(event:Event) => onChange(event)"
+              ></ComponentCheckbox>
             </v-col>
           </v-row>
         </v-window-item>

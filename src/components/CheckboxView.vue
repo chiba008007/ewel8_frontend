@@ -1,26 +1,27 @@
 <script setup lang="ts">
 import { defineProps, withDefaults, defineEmits, ref } from "vue";
 
-const model = ref<boolean>(true);
 interface Props {
   label?: string;
-  value?: boolean;
+  value?: number;
+  selected?: string | undefined | object;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   label: "",
-  value: false,
+  value: 0,
+  selected: "selected",
 });
 const emit = defineEmits<{
-  (e: "onKeyup", value: string): void;
-  (e: "onBlur", value: string): void;
+  (e: "onChange", val: number): void;
 }>();
 </script>
 <template>
   <v-checkbox
     class="ml-2"
-    v-model="model"
+    :v-model="props.selected"
     :label="props.label"
     :value="props.value"
+    @onChange="emit('onChange', props.value)"
   ></v-checkbox>
 </template>
