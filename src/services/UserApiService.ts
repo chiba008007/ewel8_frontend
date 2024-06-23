@@ -12,6 +12,9 @@ class UserApiService {
   getAdmin(data: object): Promise<object> {
     return httpAuth.post("/api/user/admin", data);
   }
+  setPartner(data: object): Promise<object> {
+    return httpAuth.post("/api/user/setUserData", data);
+  }
 }
 
 export default new UserApiService();

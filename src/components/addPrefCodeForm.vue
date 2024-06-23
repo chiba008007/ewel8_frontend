@@ -8,6 +8,7 @@ const props = defineProps<{
   items?: object[];
   hideDetails?: boolean | "auto";
   class?: string;
+  value?: string;
 }>();
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
@@ -24,6 +25,7 @@ const emit = defineEmits<{
         :label="props.label"
         :hideDetails="props.hideDetails"
         :class="props.class"
+        :text="props.value"
       ></ComponentSelectField>
     </v-col>
   </v-row>

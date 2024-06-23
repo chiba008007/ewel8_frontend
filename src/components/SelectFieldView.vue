@@ -48,5 +48,6 @@ const emit = defineEmits<{
     :variant="props.variant"
     :density="props.density"
     :class="props.class"
+    :model-value="props.text"
   ></v-select>
 </template>

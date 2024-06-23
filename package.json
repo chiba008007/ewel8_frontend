@@ -22,7 +22,8 @@
     "vuetify": "^3.0.0-beta.0",
     "vuex": "^4.1.0",
     "vuex-persistedstate": "^4.1.0",
-    "webfontloader": "^1.0.0"
+    "webfontloader": "^1.0.0",
+    "yubinbango-core2": "^0.6.3"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",

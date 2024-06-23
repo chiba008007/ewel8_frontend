@@ -7,6 +7,12 @@ const props = defineProps<{
   class?: string;
   hideDetails?: boolean;
 }>();
+const onblur1 = (text: string) => {
+  emit("onBlur", text, "post1");
+};
+const onblur2 = (text: string) => {
+  emit("onBlur", text, "post2");
+};
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
 }>();
@@ -24,6 +30,7 @@ const emit = defineEmits<{
             variant="outlined"
             :class="props.class"
             :hideDetails="props.hideDetails"
+            @onBlur="(e) => onblur1(e)"
           />
           <p class="mt-2 pl-4">-</p>
         </v-col>
@@ -33,6 +40,7 @@ const emit = defineEmits<{
             variant="outlined"
             :class="props.class"
             :hideDetails="props.hideDetails"
+            @onBlur="(e) => onblur2(e)"
           />
         </v-col>
       </v-row>

@@ -13,6 +13,9 @@ import ElementApiService from "@/services/ElementApiService";
 import LicenseApiService from "@/services/LicenseApiService";
 import PdfApiService from "@/services/PdfApiService";
 import ComponentTextField from "../components/TextFieldView.vue";
+import { Core as YubinBangoCore } from "yubinbango-core2";
+
+import UserApiService from "@/services/UserApiService";
 
 const router = useRouter();
 const pankuzu = [
@@ -24,6 +27,12 @@ const prefs = ref();
 const elements = ref();
 const licenses = ref();
 const pdfs = ref();
+const post1 = ref();
+const post2 = ref();
+const preftext = ref();
+const addressText = ref();
+
+const settingData = ref();
 const onSearch = (ev: string) => {
   licenses.value = LicenseApiService.getSearchData(ev);
 };
@@ -40,14 +49,31 @@ PdfApiService.getElementData().then((res) => {
   pdfs.value = res.value;
 });
 const pdfList = ref([]);
+const pdfSelectLists = ref();
 const onChange = (event: Event) => {
   if (event.target) {
     let str = (event.target as HTMLInputElement).value;
     pdfList.value.push(str as never);
   }
   let arr = [...pdfList.value];
-  const a = arr.filter((x) => arr.indexOf(x) === arr.lastIndexOf(x));
-  console.log(a);
+  pdfSelectLists.value = arr.filter(
+    (x) => arr.indexOf(x) === arr.lastIndexOf(x)
+  );
+};
+const postBlur = (e: string, type: string) => {
+  if (type === "post1") post1.value = e;
+  if (type === "post2") post2.value = e;
+  new YubinBangoCore(post1.value + post2.value, function (addr: any) {
+    preftext.value = addr.region;
+    addressText.value = addr.street;
+  });
+};
+const addRegist = () => {
+  UserApiService.setPartner(settingData.value).then((res) => {
+    console.log(res);
+    alert(1111);
+    // alertFlag.value = res.data === 1 ?? true;
+  });
 };
 </script>
 <template>
@@ -66,7 +92,12 @@ const onChange = (event: Event) => {
 
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
-      <ComponentButton text="登録" color="primary" class="my-3" />
+      <ComponentButton
+        text="登録"
+        color="primary"
+        class="my-3"
+        @onClick="addRegist()"
+      />
       <v-window v-model="tab">
         <v-window-item value="1">
           パートナー企業情報を入力してください。
@@ -94,6 +125,7 @@ const onChange = (event: Event) => {
             title="郵便番号"
             class="w-100"
             :hideDetails="true"
+            @onBlur="(e, type) => postBlur(e, type)"
           ></addPostCodeForm>
           <addPrefCodeForm
             title="都道府県"
@@ -101,12 +133,14 @@ const onChange = (event: Event) => {
             class="w-50"
             :hideDetails="true"
             :items="prefs"
+            :value="preftext ?? ``"
           ></addPrefCodeForm>
           <addPartnerForm
             title="住所"
             text="住所を入力してください"
             class="w-100"
             :hideDetails="true"
+            :value="addressText ?? ``"
           ></addPartnerForm>
           <addPartnerForm
             title="建物名"
