@@ -16,6 +16,7 @@ interface Props {
   messages?: string;
   person?: string;
   class?: string;
+  rules?: string | "" | null | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -29,6 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideDetails: "auto",
   person: undefined,
   class: "",
+  rules: null,
 });
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
@@ -47,6 +49,7 @@ const emit = defineEmits<{
     :hide-details="props.hideDetails"
     :messages="props.messages"
     :class="props.class"
+    :rules="props.rules ? [props.rules] : undefined"
     @keyup="emit('onKeyup', $event.target.value)"
     @blur="emit('onBlur', $event.target.value)"
   ></v-text-field>

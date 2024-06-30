@@ -42,12 +42,13 @@ const emit = defineEmits<{
   <v-select
     :label="props.label"
     :items="props.items"
-    item-value="id"
+    item-value="name"
     item-title="name"
     :hide-details="props.hideDetails"
     :variant="props.variant"
     :density="props.density"
     :class="props.class"
     :model-value="props.text"
+    @blur="emit('onBlur', $event.target.value)"
   ></v-select>
 </template>

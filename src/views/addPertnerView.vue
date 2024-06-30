@@ -31,7 +31,7 @@ const post1 = ref();
 const post2 = ref();
 const preftext = ref();
 const addressText = ref();
-
+const registButton = ref(false);
 const settingData = ref();
 const onSearch = (ev: string) => {
   licenses.value = LicenseApiService.getSearchData(ev);
@@ -63,17 +63,48 @@ const onChange = (event: Event) => {
 const postBlur = (e: string, type: string) => {
   if (type === "post1") post1.value = e;
   if (type === "post2") post2.value = e;
-  new YubinBangoCore(post1.value + post2.value, function (addr: any) {
-    preftext.value = addr.region;
-    addressText.value = addr.street;
-  });
+  if (post1.value && post2.value) {
+    new YubinBangoCore(post1.value + post2.value, function (addr: any) {
+      preftext.value = addr.region;
+      addressText.value = addr.street;
+    });
+  }
+};
+
+const name = ref();
+const email = ref();
+const password = ref();
+const onBlur = (e: string, type: string) => {
+  console.log(e);
+  console.log(type);
+  if (type === "name") name.value = e;
+  if (type === "email") email.value = e;
+  if (type === "password") password.value = e;
+  if (type === "pref") preftext.value = e;
 };
 const addRegist = () => {
-  UserApiService.setPartner(settingData.value).then((res) => {
-    console.log(res);
-    alert(1111);
-    // alertFlag.value = res.data === 1 ?? true;
-  });
+  settingData.value = {
+    type: "partner",
+    name: name.value,
+    email: email.value,
+    password: password.value,
+    post_code: post1.value + "-" + post2.value,
+    pref: preftext.value,
+  };
+  console.log(settingData.value);
+  if (formValidate()) {
+    UserApiService.setPartner(settingData.value).then((res) => {
+      console.log(res);
+      alert(1111);
+      // alertFlag.value = res.data === 1 ?? true;
+    });
+  }
+};
+const rules = (value: string | null, text: string) => {
+  return !value ? text : null;
+};
+const formValidate = () => {
+  return true;
 };
 </script>
 <template>
@@ -97,6 +128,7 @@ const addRegist = () => {
         color="primary"
         class="my-3"
         @onClick="addRegist()"
+        :disabled="registButton"
       />
       <v-window v-model="tab">
         <v-window-item value="1">
@@ -105,14 +137,22 @@ const addRegist = () => {
             title="企業名"
             text="企業名を入力してください"
             class="w-100"
-            :hideDetails="true"
+            :hideDetails="`auto`"
+            type="name"
+            :value="name"
+            :rules="(val:string|any) => rules(val, '企業名は必須入力です')"
+            @onBlur="(ev, type) => onBlur(ev, type)"
           ></addPartnerForm>
           <addPartnerForm
-            title="ID"
-            text="IDを入力してください"
+            title="メールアドレス"
+            text="メールアドレスを入力してください"
             class="w-100"
             :hideDetails="false"
             messages="半角英数・4文字以上で入力してください。大文字と小文字は区別されます。"
+            type="email"
+            :value="email"
+            @onBlur="(ev, type) => onBlur(ev, type)"
+            :rules="(val:string|any) => rules(val, 'IDは必須入力です')"
           ></addPartnerForm>
           <addPartnerForm
             title="パスワード"
@@ -120,6 +160,10 @@ const addRegist = () => {
             class="w-100"
             :hideDetails="false"
             messages="半角8文字以上、半角15文字で入力してください。大文字と小文字は区別さ英大文字・英小文字・数、字それぞれを最低1文字ずつ含む必要があります。"
+            type="password"
+            :value="password"
+            @onBlur="(ev, type) => onBlur(ev, type)"
+            :rules="(val:string|any) => rules(val, 'パスワードは必須入力です')"
           ></addPartnerForm>
           <addPostCodeForm
             title="郵便番号"
@@ -134,6 +178,8 @@ const addRegist = () => {
             :hideDetails="true"
             :items="prefs"
             :value="preftext ?? ``"
+            type="pref"
+            @onBlur="(e, type) => onBlur(e, type)"
           ></addPrefCodeForm>
           <addPartnerForm
             title="住所"

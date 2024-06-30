@@ -6,11 +6,13 @@ const props = defineProps<{
   title?: string;
   text?: string;
   class?: string;
-  hideDetails?: boolean;
+  hideDetails?: boolean | "auto";
   login_id?: string;
   person?: string;
   messages?: string;
   value?: string;
+  type?: string;
+  rules?: string | void | null;
 }>();
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
@@ -30,6 +32,8 @@ const emit = defineEmits<{
         :class="props.class"
         :hideDetails="props.hideDetails"
         :messages="props.messages"
+        :rules="props.rules ?? ''"
+        @onBlur="emit('onBlur', $event, props.type ?? '')"
       />
     </v-col>
   </v-row>

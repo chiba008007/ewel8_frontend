@@ -12,6 +12,7 @@ type TVDensity = VBtn["$props"]["density"];
 const props = defineProps<{
   text: string;
   color: string;
+  disabled?: boolean;
   variant?: TVariant;
   density?: TVDensity;
 }>();
@@ -21,6 +22,7 @@ const props = defineProps<{
     :variant="props.variant"
     :density="props.density"
     :color="props.color"
+    :disabled="props.disabled"
     @click="emit('onClick')"
     >{{ props.text }}</v-btn
   >
