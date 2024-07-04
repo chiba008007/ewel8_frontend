@@ -31,6 +31,9 @@ const post1 = ref();
 const post2 = ref();
 const preftext = ref();
 const addressText = ref();
+const addressText2 = ref();
+const tel = ref();
+const fax = ref();
 const registButton = ref(false);
 const settingData = ref();
 const onSearch = (ev: string) => {
@@ -81,6 +84,10 @@ const onBlur = (e: string, type: string) => {
   if (type === "email") email.value = e;
   if (type === "password") password.value = e;
   if (type === "pref") preftext.value = e;
+  if (type === "address") addressText.value = e;
+  if (type === "address2") addressText2.value = e;
+  if (type === "tel") tel.value = e;
+  if (type === "fax") fax.value = e;
 };
 const addRegist = () => {
   settingData.value = {
@@ -90,6 +97,10 @@ const addRegist = () => {
     password: password.value,
     post_code: post1.value + "-" + post2.value,
     pref: preftext.value,
+    address1: addressText.value,
+    address2: addressText2.value,
+    tel: tel.value,
+    fax: fax.value,
   };
   console.log(settingData.value);
   if (formValidate()) {
@@ -187,12 +198,16 @@ const formValidate = () => {
             class="w-100"
             :hideDetails="true"
             :value="addressText ?? ``"
+            type="address"
+            @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
           <addPartnerForm
             title="建物名"
             text="建物名を入力してください"
             class="w-100"
             :hideDetails="true"
+            type="address2"
+            @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
           <addPartnerForm
             title="電話番号"
@@ -200,6 +215,8 @@ const formValidate = () => {
             class="w-100"
             :hideDetails="false"
             messages="例)03-0000-0000"
+            type="tel"
+            @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
           <addPartnerForm
             title="FAX番号"
@@ -207,6 +224,8 @@ const formValidate = () => {
             class="w-100"
             :hideDetails="false"
             messages="例)03-0000-0000"
+            type="fax"
+            @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
           <addSwitchForm
             title="申込み検査ボタン"
