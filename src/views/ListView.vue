@@ -12,71 +12,128 @@ const headers = [
   { title: "残数", sortable: false, key: "zan" },
   { title: "機能", sortable: false, key: "kino" },
 ];
-const desserts = [
-  {
-    id: 1,
-    name: "Speedster",
-    speed: 35,
-    length: 22,
-    price: 300000,
-    year: 2021,
-    zan: 123,
-  },
-  {
-    id: 1,
-    name: "Speedster",
-    speed: 35,
-    length: 22,
-    price: 300000,
-    year: 2021,
-    zan: 123,
-  },
-  {
-    id: 1,
-    name: "Speedster",
-    speed: 35,
-    length: 22,
-    price: 300000,
-    year: 2021,
-    zan: 123,
-  },
-  {
-    id: 1,
-    name: "Speedster",
-    speed: 35,
-    length: 22,
-    price: 300000,
-    year: 2021,
-    zan: 123,
-  },
-  {
-    id: 1,
-    name: "Speedster",
-    speed: 35,
-    length: 22,
-    price: 300000,
-    year: 2021,
-    zan: 123,
-  },
-  {
-    id: 1,
-    name: "Speedster",
-    speed: 35,
-    length: 22,
-    price: 300000,
-    year: 2021,
-    zan: 123,
-  },
-  {
-    id: 1,
-    name: "Speedster",
-    speed: 35,
-    length: 22,
-    price: 300000,
-    year: 2021,
-    zan: 123,
-  },
-];
+
+const getPartner = () => {
+  return [
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+    {
+      id: 1,
+      name: "Speedster",
+      speed: 35,
+      length: 22,
+      price: 300000,
+      year: 2021,
+      zan: 123,
+    },
+  ];
+};
 
 const tableHeight = ref(100);
 const onResize = () => {
@@ -106,7 +163,7 @@ const onResize = () => {
   </v-card>
   <v-data-table
     :headers="headers"
-    :items="desserts"
+    :items="getPartner()"
     class="listable ma-2"
     :height="tableHeight"
     fixed-header

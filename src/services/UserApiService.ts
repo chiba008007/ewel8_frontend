@@ -15,6 +15,12 @@ class UserApiService {
   setPartner(data: object): Promise<object> {
     return httpAuth.post("/api/user/setUserData", data);
   }
+  setLicense(data: object): Promise<object> {
+    return httpAuth.post("/api/user/setUserLicense", data);
+  }
+  checkEmail(data: string) {
+    return httpAuth.get("/api/user/checkEmail?email=" + data);
+  }
 }
 
 export default new UserApiService();

@@ -16,6 +16,7 @@ interface Props {
   messages?: string;
   person?: string;
   class?: string;
+  errormessage?: string;
   rules?: string | "" | null | undefined;
 }
 
@@ -31,10 +32,11 @@ const props = withDefaults(defineProps<Props>(), {
   person: undefined,
   class: "",
   rules: null,
+  errormessage: "",
 });
 const emit = defineEmits<{
-  (e: "onKeyup", value: string): void;
-  (e: "onBlur", value: string): void;
+  (e: "onKeyup", value: string, name: string | undefined): void;
+  (e: "onBlur", value: string, name: string): void;
 }>();
 </script>
 <template>
@@ -50,7 +52,10 @@ const emit = defineEmits<{
     :messages="props.messages"
     :class="props.class"
     :rules="props.rules ? [props.rules] : undefined"
-    @keyup="emit('onKeyup', $event.target.value)"
-    @blur="emit('onBlur', $event.target.value)"
+    @keyup="emit('onKeyup', $event.target.value, props.name ?? '')"
+    @blur="emit('onBlur', $event.target.value, props.name ?? '')"
   ></v-text-field>
+  <p v-if="props.errormessage" class="text-red text-caption ml-4">
+    {{ props.errormessage }}
+  </p>
 </template>

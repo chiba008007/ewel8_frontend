@@ -9,6 +9,7 @@ interface Props {
   density?: TVDensity;
   label?: string;
   model?: boolean;
+  type?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -19,7 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
-  (e: "onBlur", value: string): void;
+  (e: "onUpdate", value: boolean, type: string): void;
 }>();
 </script>
 <template>
@@ -31,5 +32,6 @@ const emit = defineEmits<{
     :label="props.label"
     hide-details
     inset
+    @update:modelValue="emit('onUpdate', model, props.type ?? '')"
   ></v-switch>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 //import { defineProps, withDefaults, defineEmits, ref } from "vue";
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 import ComponentSwitch from "../components/SwitchView.vue";
 import type { VTextField } from "vuetify/components";
 type TVDensity = VTextField["$props"]["density"];
@@ -12,13 +12,14 @@ const props = defineProps<{
   model?: boolean;
   tooltipflag?: boolean;
   tooltipMessage?: string;
+  type?: string;
 }>();
 
 //const model = ref<boolean>(true);
 
-// const emit = defineEmits<{
-//   (e: "onBlur", value: string, type: string): void;
-// }>();
+const emit = defineEmits<{
+  (e: "onUpdate", value: boolean, type: string): void;
+}>();
 </script>
 <template>
   <v-row no-gutters>
@@ -36,6 +37,8 @@ const props = defineProps<{
         :label="props.label"
         :density="props.density"
         :model="props.model"
+        :type="props.type"
+        @onUpdate="(e, type) => emit('onUpdate', e, type ?? '')"
       ></ComponentSwitch>
     </v-col>
   </v-row>

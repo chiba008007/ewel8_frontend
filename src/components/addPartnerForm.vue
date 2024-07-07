@@ -10,12 +10,14 @@ const props = defineProps<{
   login_id?: string;
   person?: string;
   messages?: string;
+  errormessage?: string;
   value?: string;
   type?: string;
   rules?: string | void | null;
 }>();
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
+  (e: "onKeyup", value: string, type: string): void;
 }>();
 </script>
 <template>
@@ -32,8 +34,10 @@ const emit = defineEmits<{
         :class="props.class"
         :hideDetails="props.hideDetails"
         :messages="props.messages"
+        :errormessage="props.errormessage"
         :rules="props.rules ?? ''"
         @onBlur="emit('onBlur', $event, props.type ?? '')"
+        @onKeyup="emit('onKeyup', $event, props.type ?? '')"
       />
     </v-col>
   </v-row>
