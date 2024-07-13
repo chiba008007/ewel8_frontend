@@ -6,6 +6,7 @@ import LoginView from "../views/LoginView.vue";
 import ListView from "../views/ListView.vue";
 import partnerRegistView from "../views/partnerRegistView.vue";
 import addPertner from "../views/addPertnerView.vue";
+import customerList from "../views/customerListView.vue";
 import store from "@/store";
 
 const routes: Array<RouteRecordRaw> = [
@@ -54,6 +55,16 @@ const routes: Array<RouteRecordRaw> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+  },
+
+  // 企業画面
+  {
+    path: "/customerList/:id",
+    name: "customerList",
+    component: customerList,
+    meta: {
+      requiresAuth: true,
+    },
   },
 ];
 

@@ -3,6 +3,10 @@ import { ref } from "vue";
 import ComponentButton from "../components/ButtonView.vue";
 import ComponentTextField from "../components/TextFieldView.vue";
 import AdminMenu from "../components/AdminMenu.vue";
+import UserApiService from "@/services/UserApiService";
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 const headers = [
   { title: "企業名", sortable: false, key: "name" },
   { title: "購入ライセンス", sortable: false, key: "speed" },
@@ -12,137 +16,32 @@ const headers = [
   { title: "残数", sortable: false, key: "zan" },
   { title: "機能", sortable: false, key: "kino" },
 ];
-
-const getPartner = () => {
-  return [
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-    {
-      id: 1,
-      name: "Speedster",
-      speed: 35,
-      length: 22,
-      price: 300000,
-      year: 2021,
-      zan: 123,
-    },
-  ];
+let tmp = {
+  type: "partner",
 };
+const desserts = ref<object[0]>([]);
+UserApiService.getPartner(tmp).then(function (rlt) {
+  const entries = Object.entries(rlt);
+  for (const [key, val] of entries) {
+    if (key == "data") {
+      desserts.value.push(val.user);
+    }
+  }
+  console.log(desserts);
+});
 
 const tableHeight = ref(100);
 const onResize = () => {
   const wHeight = window.innerHeight;
   tableHeight.value = wHeight - 300;
 };
+
+const pageClickMove = (pagename: string, id: number) => {
+  router.push(router.resolve({ name: pagename, params: { id: id } }).href);
+};
 </script>
 <template>
-  <v-row align="center" justify="center" v-resize="onResize">
+  <v-row justify="center" v-resize="onResize">
     <AdminMenu />
   </v-row>
   <v-card subtitle="検索フォーム" width="100%" class="ma-0 px-3" elevation="0">
@@ -163,21 +62,26 @@ const onResize = () => {
   </v-card>
   <v-data-table
     :headers="headers"
-    :items="getPartner()"
+    :items="desserts[0]"
     class="listable ma-2"
     :height="tableHeight"
     fixed-header
   >
     <template v-slot:item="{ item }">
       <tr>
-        <td>{{ item.name }}</td>
-        <td class="text-xs-right">{{ item.speed }}</td>
+        <td class="w-25">{{ item.name }}</td>
+        <td class="text-right">{{ item.total }}</td>
         <td class="text-xs-right">{{ item.length }}</td>
         <td class="text-xs-right">{{ item.price }}</td>
         <td class="text-xs-right">{{ item.year }}</td>
         <td class="text-xs-right">{{ item.zan }}</td>
         <td class="text-center">
-          <ComponentButton text="パートナ" color="success" density="compact" />
+          <ComponentButton
+            text="企業一覧"
+            color="success"
+            density="compact"
+            @onClick="pageClickMove('customerList', item.id)"
+          />
           <ComponentButton
             text="更新"
             color="success"
