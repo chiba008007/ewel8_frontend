@@ -1,26 +1,21 @@
 <script setup lang="ts">
 import { ref, defineEmits } from "vue";
+import { useStoreUser } from "../store/user";
+import InfoAreaView from "../components/InfoAreaView.vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
+const user = useStoreUser();
+
 const pankuzu = [
-  { title: "HOME", href: router.resolve({ name: "List" }).href },
-  { title: "パートナー情報一覧" },
+  { title: user.home, href: router.resolve({ name: "List" }).href },
+  { title: user.customerInfoList },
 ];
-pankuzu.push({ title: "顧客情報一覧" });
 
 const tab = ref(0);
 </script>
 <template>
-  <v-row justify="center" class="pa-3 pb-0">
-    <v-col>
-      <v-alert
-        text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, ratione debitis quis est labore voluptatibus! Eaque cupiditate minima, at placeat totam, magni doloremque veniam neque porro libero rerum unde voluptatem!"
-        title="Alert title"
-        variant="outlined"
-      ></v-alert>
-    </v-col>
-  </v-row>
+  <InfoAreaView />
   <v-row justify="center">
     <CustomerMenu />
   </v-row>

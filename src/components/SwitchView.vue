@@ -5,7 +5,6 @@ type TVDensity = VTextField["$props"]["density"];
 
 const model = ref<boolean>(true);
 interface Props {
-  title?: string;
   density?: TVDensity;
   label?: string;
   model?: boolean;
@@ -13,7 +12,6 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: "申込み検査ボタン",
   density: "compact",
   label: "利用する",
   model: true,
@@ -26,7 +24,7 @@ const emit = defineEmits<{
 <template>
   <v-switch
     class="ml-2"
-    v-model="model"
+    :v-model="props.model"
     :value="props.model"
     :density="props.density"
     :label="props.label"

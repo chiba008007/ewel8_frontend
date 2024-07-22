@@ -24,7 +24,7 @@ const pageClickMove = (pagename: string) => {
         density="compact"
         color="primary"
         class="ml-1 w-25"
-        @onClick="pageClickMove('addPertner')"
+        @onClick="pageClickMove('addCustomer')"
       ></ComponentButton>
       <ComponentButton
         text="受検者検索"

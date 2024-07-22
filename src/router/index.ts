@@ -7,6 +7,8 @@ import ListView from "../views/ListView.vue";
 import partnerRegistView from "../views/partnerRegistView.vue";
 import addPertner from "../views/addPertnerView.vue";
 import customerList from "../views/customerListView.vue";
+import addCustomer from "../views/addCustomer.vue";
+
 import store from "@/store";
 
 const routes: Array<RouteRecordRaw> = [
@@ -62,6 +64,14 @@ const routes: Array<RouteRecordRaw> = [
     path: "/customerList/:id",
     name: "customerList",
     component: customerList,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/addCustomer/:id",
+    name: "addCustomer",
+    component: addCustomer,
     meta: {
       requiresAuth: true,
     },

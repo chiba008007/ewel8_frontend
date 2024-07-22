@@ -34,6 +34,6 @@ npm run lint
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### 2025/04/05 次やること
+### mysql 接続
 
-- ajax で backend と接続しログイン認証を行う
+$ sudo mysql -u root -proot
