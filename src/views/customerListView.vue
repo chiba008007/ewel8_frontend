@@ -6,11 +6,17 @@ import CustomerMenu from "../components/CustomerMenu.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const user = useStoreUser();
-
-const pankuzu = [
-  { title: user.home, href: router.resolve({ name: "List" }).href },
-  { title: user.customerInfoList },
-];
+const userdata = user.userdata;
+console.log(user.userdata);
+const pankuzu = ref();
+if ((user.userdata as any).type === "partner") {
+  pankuzu.value = [{ title: user.customerInfoList }];
+} else {
+  pankuzu.value = [
+    { title: user.home, href: router.resolve({ name: "List" }).href },
+    { title: user.customerInfoList },
+  ];
+}
 
 const tab = ref(0);
 </script>

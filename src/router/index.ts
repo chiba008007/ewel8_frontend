@@ -90,6 +90,8 @@ router.beforeEach((to, from, next) => {
   const user = useStoreUser();
   const isLogin = user.isLogin;
 
+  //  const type = (user.userdata as any).type;
+
   if (requiresAuth) {
     if (isLogin && requiresAuth == true) {
       next();

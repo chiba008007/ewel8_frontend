@@ -8,6 +8,7 @@ import UserApiService from "@/services/UserApiService";
 const userId = ref<string>();
 const password = ref<string>();
 const user = useStoreUser();
+
 const onClick = () => {
   let data = {
     email: userId.value,
@@ -17,7 +18,12 @@ const onClick = () => {
     .then((response: any) => {
       user.setUserDataToken(response.data.token);
       user.setUserData(response.data.user);
-      router.push("/list");
+      if (response.data.user.type === "partner") {
+        router.push("/customerList/" + response.data.user.id);
+      } else {
+        // 管理者用ログイン画面
+        router.push("/list");
+      }
     })
     .catch(() => {
       alert("LOGIN ERROR");
