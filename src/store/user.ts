@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useRouter, useRoute } from "vue-router";
 export const useStoreUser = defineStore("user", {
   state: () => ({
     count: 1,
@@ -33,6 +34,15 @@ export const useStoreUser = defineStore("user", {
     },
     IsLogout() {
       this.isLogin = false;
+    },
+
+    // ログインした人のIDとパラメータのIDが同じ確認
+    sameIdChecked(userid: number, paramId: number) {
+      const router = useRouter();
+      if (userid == paramId) {
+        return true;
+      }
+      return false;
     },
   },
 });

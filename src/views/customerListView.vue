@@ -6,8 +6,8 @@ import CustomerMenu from "../components/CustomerMenu.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const user = useStoreUser();
-const userdata = user.userdata;
-console.log(user.userdata);
+// const userdata = user.userdata;
+// console.log(user.userdata);
 const pankuzu = ref();
 if ((user.userdata as any).type === "partner") {
   pankuzu.value = [{ title: user.customerInfoList }];

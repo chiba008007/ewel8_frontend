@@ -5,9 +5,11 @@ import HelloWorldView from "../views/HelloWorld.vue";
 import LoginView from "../views/LoginView.vue";
 import ListView from "../views/ListView.vue";
 import partnerRegistView from "../views/partnerRegistView.vue";
+import partnerEditView from "../views/partnerEditView.vue";
 import addPertner from "../views/addPertnerView.vue";
 import customerList from "../views/customerListView.vue";
 import addCustomer from "../views/addCustomer.vue";
+import ErrorView from "../views/errorView.vue";
 
 import store from "@/store";
 
@@ -37,6 +39,14 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/partnerEdit/:id",
+    name: "partnerEdit",
+    component: partnerEditView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+    },
+  },
+  {
     path: "/addPertner",
     name: "addPertner",
     component: addPertner,
@@ -57,6 +67,11 @@ const routes: Array<RouteRecordRaw> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+  },
+  {
+    path: "/error",
+    name: "error",
+    component: ErrorView,
   },
 
   // 企業画面

@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import ComponentButton from "../components/ButtonView.vue";
 import { useRouter } from "vue-router";
+import { useStoreUser } from "../store/user";
+
 const router = useRouter();
+const user = useStoreUser();
+const userdata = user.userdata as any;
+const id = userdata.id;
 
 const pageClickMove = (pagename: string) => {
   router.push(router.resolve({ name: pagename }).href);
+};
+const pageClickMoveParam = (pagename: string, id: number) => {
+  router.push(router.resolve({ name: pagename, params: { id: id } }).href);
 };
 </script>
 <template>
@@ -16,7 +24,7 @@ const pageClickMove = (pagename: string) => {
         density="compact"
         color="primary"
         class="w-25"
-        @onClick="pageClickMove('partnerRegist')"
+        @onClick="pageClickMoveParam('partnerEdit', id)"
       ></ComponentButton>
       <ComponentButton
         text="新規顧客登録"
