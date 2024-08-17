@@ -39,10 +39,10 @@ export const useStoreUser = defineStore("user", {
     // ログインした人のIDとパラメータのIDが同じ確認
     sameIdChecked(userid: number, paramId: number) {
       const router = useRouter();
-      if (userid == paramId) {
-        return true;
+      if (userid != paramId) {
+        router.push(router.resolve({ name: "error" }).href);
       }
-      return false;
+      return true;
     },
   },
 });

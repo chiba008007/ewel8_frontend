@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import ComponentButton from "../components/ButtonView.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useStoreUser } from "../store/user";
 
 const router = useRouter();
@@ -8,6 +9,11 @@ const user = useStoreUser();
 const userdata = user.userdata as any;
 const id = userdata.id;
 
+const route = useRoute();
+const regex = /(\d+)(?!.*\d)/;
+const isPortal = ref(route.path.match(regex));
+const paramId = ref();
+paramId.value = isPortal.value ? (isPortal.value[0] as unknown) : 0;
 const pageClickMove = (pagename: string) => {
   router.push(router.resolve({ name: pagename }).href);
 };
@@ -24,7 +30,7 @@ const pageClickMoveParam = (pagename: string, id: number) => {
         density="compact"
         color="primary"
         class="w-25"
-        @onClick="pageClickMoveParam('partnerEdit', id)"
+        @onClick="pageClickMoveParam('partnerEdit', paramId)"
       ></ComponentButton>
       <ComponentButton
         text="新規顧客登録"

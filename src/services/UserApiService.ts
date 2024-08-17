@@ -15,6 +15,9 @@ class UserApiService {
   getPartner(data: object): Promise<object> {
     return httpAuth.post("/api/user/getPartner", data);
   }
+  getPartnerDetail(data: object): Promise<object> {
+    return httpAuth.post("/api/user/getPartnerDetail", data);
+  }
   setPartner(data: object): Promise<object> {
     return httpAuth.post("/api/user/setUserData", data);
   }

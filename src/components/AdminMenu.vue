@@ -71,21 +71,12 @@ const pageClickMove = (pagename: string) => {
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
-        text="トライアルID"
-        variant="outlined"
-        density="compact"
-        color="primary"
-        class="ml-1 w-25"
-      ></ComponentButton>
-      <ComponentButton
         text="お知らせ情報"
         variant="outlined"
         density="compact"
         color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
-    </div>
-    <div class="d-flex flex-row justify-center mt-1">
       <ComponentButton
         text="受検者ログイン状況"
         variant="outlined"
@@ -93,6 +84,8 @@ const pageClickMove = (pagename: string) => {
         color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
+    </div>
+    <div class="d-flex flex-row justify-center mt-1">
       <ComponentButton
         text="管理者ログイン状況"
         variant="outlined"
@@ -119,6 +112,13 @@ const pageClickMove = (pagename: string) => {
         variant="outlined"
         density="compact"
         color="primary"
+        class="ml-1 w-25"
+      ></ComponentButton>
+      <ComponentButton
+        text=""
+        color="default"
+        density="compact"
+        :disabled="true"
         class="ml-1 w-25"
       ></ComponentButton>
     </div>
