@@ -18,6 +18,7 @@ interface Props {
   class?: string;
   errormessage?: string;
   rules?: string | "" | null | undefined;
+  maxlength?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -33,6 +34,7 @@ const props = withDefaults(defineProps<Props>(), {
   class: "",
   rules: null,
   errormessage: "",
+  maxlength: 1000,
 });
 const emit = defineEmits<{
   (e: "onKeyup", value: string, name: string | undefined): void;
@@ -52,6 +54,7 @@ const emit = defineEmits<{
     :messages="props.messages"
     :class="props.class"
     :rules="props.rules ? [props.rules] : undefined"
+    :maxlength="props.maxlength"
     @keyup="emit('onKeyup', $event.target.value, props.name ?? '')"
     @blur="emit('onBlur', $event.target.value, props.name ?? '')"
   ></v-text-field>

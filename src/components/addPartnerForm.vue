@@ -18,6 +18,7 @@ const props = defineProps<{
   passwordFlag?: boolean;
   requriredIcon?: boolean;
   telSampleFlag?: boolean;
+  maxlength?: number;
 }>();
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
@@ -44,6 +45,7 @@ const emit = defineEmits<{
         :hideDetails="props.hideDetails"
         :messages="props.messages"
         :errormessage="props.errormessage"
+        :maxlength="props.maxlength"
         :rules="props.rules ?? ''"
         @onBlur="emit('onBlur', $event, props.type ?? '')"
         @onKeyup="emit('onKeyup', $event, props.type ?? '')"

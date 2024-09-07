@@ -11,6 +11,8 @@ import { Core as YubinBangoCore } from "yubinbango-core2";
 import PrefApiService from "@/services/PrefApiService";
 import addPrefCodeForm from "../components/addPrefCodeForm.vue";
 import ComponentButton from "../components/ButtonView.vue";
+import PartnerAdmin from "../components/PartnerAdmin.vue";
+import ComponentAlert from "../components/AlertView.vue";
 
 const route = useRoute();
 const regex = /(\d+)(?!.*\d)/;
@@ -20,21 +22,27 @@ const router = useRouter();
 const user = useStoreUser();
 const userid = (user.userdata as any).id;
 const userType = (user.userdata as any).type;
+const password = ref();
+const post = ref();
 const post1 = ref();
 const post2 = ref();
 const preftext = ref();
 const addressText = ref();
 const addressText2 = ref();
+const tel = ref();
+const fax = ref();
+
 const tab = ref(0);
 const prefs = ref();
 
-const tanto_name = ref();
-const tanto_address = ref();
-const tanto_busyo = ref();
-const tanto_tel1 = ref();
-const tanto_tel2 = ref();
-const tanto_name2 = ref();
-const tanto_address2 = ref();
+const person = ref();
+const person_address = ref();
+const person_tel = ref();
+const person2 = ref();
+const person_address2 = ref();
+
+const errorAlertFlag = ref(false);
+const successAlertFlag = ref(false);
 
 PrefApiService.getPrefData().then((res) => {
   prefs.value = res;
@@ -62,14 +70,25 @@ const tmp = {
 const userDetail = ref();
 UserApiService.getPartnerDetail(tmp).then((res) => {
   const entries = (res as any).data.user;
-  console.log(entries);
   userDetail.value = entries;
+  post.value = userDetail.value.post_code;
+  preftext.value = userDetail.value.pref;
+  addressText.value = userDetail.value.address1;
+  addressText2.value = userDetail.value.address2;
+  tel.value = userDetail.value.tel;
+  fax.value = userDetail.value.fax;
+  person.value = userDetail.value.person;
+  person_address.value = userDetail.value.person_address;
+  person_tel.value = userDetail.value.person_tel;
+  person2.value = userDetail.value.person2;
+  person_address2.value = userDetail.value.person_address2;
 });
 
 const postBlur = (e: string, type: string) => {
   if (type === "post1") post1.value = e;
   if (type === "post2") post2.value = e;
   if (post1.value && post2.value) {
+    post.value = post1.value + "-" + post2.value;
     new YubinBangoCore(post1.value + post2.value, function (addr: any) {
       preftext.value = addr.region;
       addressText.value = addr.street;
@@ -78,14 +97,72 @@ const postBlur = (e: string, type: string) => {
 };
 
 const onBlur = (e: string | boolean, type: string) => {
-  console.log("blur");
+  if (type === "password") password.value = e;
+  if (type === "pref") preftext.value = e;
+  if (type === "addressText") addressText.value = e;
+  if (type === "addressText2") addressText2.value = e;
+  if (type === "tel") tel.value = e;
+  if (type === "fax") fax.value = e;
+  if (type === "person") person.value = e;
+  if (type === "person_address") person_address.value = e;
+  if (type === "person_tel") person_tel.value = e;
+  if (type === "person2") person2.value = e;
+  if (type === "person_address2") person_address2.value = e;
 };
 
+const registButton = ref(false);
 const rules = (value: string | null, text: string) => {
-  return !value ? text : null;
+  if (!value) {
+    return text;
+  }
+  return null;
+};
+const passwordRules = (value: string | null) => {
+  let text;
+  if (value?.length == 0) {
+    return null;
+  }
+  if (value && value?.length < 8) {
+    text = "8文字以上で入力してください。";
+    return text;
+  }
+  let ptn = /^[a-zA-Z0-9]+$/;
+  if (!ptn.test(value as string)) {
+    text = "半角英数値のみで入力してください。";
+    return text;
+  }
+  return null;
+};
+const addRegist = () => {
+  errorAlertFlag.value = false;
+  let pwd = passwordRules(password.value);
+  if (pwd) {
+    errorAlertFlag.value = true;
+    return false;
+  }
+  var tmp = {
+    id: paramId,
+    password: password.value,
+    post_code: post.value,
+    pref: preftext.value,
+    address1: addressText.value,
+    address2: addressText2.value,
+    tel: tel.value,
+    fax: fax.value,
+    person: person.value,
+    person_address: person_address.value,
+    person2: person2.value,
+    person_address2: person_address2.value,
+    person_tel: person_tel.value,
+  };
+  successAlertFlag.value = false;
+  UserApiService.editPartner(tmp).then((res) => {
+    successAlertFlag.value = true;
+  });
 };
 </script>
 <template>
+  <PartnerAdmin />
   <v-row align="center" justify="center">
     <CustomerMenu />
   </v-row>
@@ -109,7 +186,16 @@ const rules = (value: string | null, text: string) => {
         <v-tab value="1">企業情報変更</v-tab>
         <v-tab value="2">行動価値用要素名</v-tab>
       </v-tabs>
-
+      <ComponentAlert
+        v-if="errorAlertFlag"
+        type="error"
+        text="登録に失敗しました"
+      ></ComponentAlert>
+      <ComponentAlert
+        v-if="successAlertFlag"
+        type="success"
+        text="登録に成功しました"
+      ></ComponentAlert>
       <v-window v-model="tab" class="mt-2">
         <v-window-item value="1">
           <v-row no-gutters class="mt-0">
@@ -129,11 +215,16 @@ const rules = (value: string | null, text: string) => {
                 :hideDetails="`auto`"
                 class="w-25"
                 :passwordFlag="true"
+                :maxlength="15"
+                :rules="(val:string|any) => passwordRules(val)"
+                @onBlur="(e, type) => onBlur(e, 'password')"
               ></addPartnerForm>
               <addPostCodeForm
                 title="郵便番号"
                 class="w-100"
                 :hideDetails="true"
+                :value="post"
+                type="post"
                 @onBlur="(e, type) => postBlur(e, type)"
               ></addPostCodeForm>
               <addPrefCodeForm
@@ -152,7 +243,7 @@ const rules = (value: string | null, text: string) => {
                 class="w-100"
                 :hideDetails="true"
                 :value="addressText ?? ``"
-                type="address"
+                type="addressText"
                 @onBlur="(e, type) => onBlur(e, type)"
               ></addPartnerForm>
               <addPartnerForm
@@ -160,8 +251,8 @@ const rules = (value: string | null, text: string) => {
                 text="建物名を入力してください"
                 class="w-100"
                 :hideDetails="true"
-                :value="addressText ?? ``"
-                type="address"
+                :value="addressText2 ?? ``"
+                type="addressText2"
                 @onBlur="(e, type) => onBlur(e, type)"
               ></addPartnerForm>
               <addPartnerForm
@@ -170,6 +261,7 @@ const rules = (value: string | null, text: string) => {
                 class="w-100"
                 :hideDetails="false"
                 messages="例)03-0000-0000"
+                :value="tel ?? ``"
                 type="tel"
                 @onBlur="(e, type) => onBlur(e, type)"
               ></addPartnerForm>
@@ -179,6 +271,7 @@ const rules = (value: string | null, text: string) => {
                 class="w-100"
                 :hideDetails="false"
                 messages="例)03-0000-0000"
+                :value="fax ?? ``"
                 type="fax"
                 @onBlur="(e, type) => onBlur(e, type)"
               ></addPartnerForm>
@@ -187,72 +280,53 @@ const rules = (value: string | null, text: string) => {
           <v-row no-gutters class="mt-1">
             <v-col cols="12" class="pa-2 ma-2">
               <addPartnerForm
-                title="担当者氏名"
-                text="担当者氏名を入力してください"
+                title="主担当者氏名"
+                text="主担当者氏名を入力してください"
                 class="w-100"
                 :hideDetails="`auto`"
-                type="tanto_name"
-                :value="tanto_name"
+                type="person"
+                :value="person"
                 :requriredIcon="true"
-                :rules="(val:string|any) => rules(val, '担当者氏名は必須入力です')"
+                :rules="(val:string|any) => rules(val, '主担当者氏名は必須入力です')"
                 @onBlur="(ev, type) => onBlur(ev, type)"
               ></addPartnerForm>
               <addPartnerForm
-                title="担当者アドレス"
-                text="担当者アドレスを入力してください"
+                title="主担当者アドレス"
+                text="主担当者アドレスを入力してください"
                 class="w-100"
                 :hideDetails="`auto`"
-                type="tanto_address"
-                :value="tanto_address"
+                type="person_address"
+                :value="person_address"
                 :requriredIcon="true"
-                :rules="(val:string|any) => rules(val, '担当者アドレスは必須入力です')"
+                :rules="(val:string|any) => rules(val, '主担当者アドレスは必須入力です')"
                 @onBlur="(ev, type) => onBlur(ev, type)"
               ></addPartnerForm>
               <addPartnerForm
-                title="部署名"
-                text="部署名を入力してください"
+                title="連絡先"
+                text="連絡先を入力してください"
                 class="w-50"
                 :hideDetails="`auto`"
-                type="tanto_busyo"
-                :value="tanto_busyo"
-                @onBlur="(ev, type) => onBlur(ev, type)"
-              ></addPartnerForm>
-              <addPartnerForm
-                title="連絡先1"
-                text="連絡先1を入力してください"
-                class="w-50"
-                :hideDetails="`auto`"
-                type="tanto_tel1"
-                :value="tanto_tel1"
+                type="person_tel"
+                :value="person_tel"
                 messages="例)03-0000-0000"
                 @onBlur="(ev, type) => onBlur(ev, type)"
               ></addPartnerForm>
               <addPartnerForm
-                title="連絡先2"
-                text="連絡先2を入力してください"
-                class="w-50"
+                title="副担当者氏名"
+                text="副担当者氏名を入力してください"
+                class="w-100"
                 :hideDetails="`auto`"
-                type="tanto_tel2"
-                :value="tanto_tel2"
-                messages="例)03-0000-0000"
+                type="person2"
+                :value="person2"
                 @onBlur="(ev, type) => onBlur(ev, type)"
               ></addPartnerForm>
               <addPartnerForm
-                title="担当者氏名2"
-                text="担当者氏名2を入力してください"
+                title="副担当者アドレス"
+                text="副担当者アドレスを入力してください"
                 class="w-100"
                 :hideDetails="`auto`"
-                type="tanto_name2"
-                :value="tanto_name2"
-                @onBlur="(ev, type) => onBlur(ev, type)"
-              ></addPartnerForm>
-              <addPartnerForm
-                title="担当者アドレス2"
-                text="担当者アドレス2を入力してください"
-                class="w-100"
-                :hideDetails="`auto`"
-                type="tanto_address2"
-                :value="tanto_address2"
+                type="person_address2"
+                :value="person_address2"
                 @onBlur="(ev, type) => onBlur(ev, type)"
               ></addPartnerForm>
             </v-col>

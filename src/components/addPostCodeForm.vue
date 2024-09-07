@@ -5,8 +5,13 @@ import ComponentTextField from "../components/TextFieldView.vue";
 const props = defineProps<{
   title?: string;
   class?: string;
+  value?: string;
   hideDetails?: boolean;
 }>();
+const getPost = (type: number) => {
+  let tmp = props.value?.split("-")[type];
+  return tmp;
+};
 const onblur1 = (text: string) => {
   emit("onBlur", text, "post1");
 };
@@ -30,6 +35,7 @@ const emit = defineEmits<{
             variant="outlined"
             :class="props.class"
             :hideDetails="props.hideDetails"
+            :value="getPost(0)"
             @onBlur="(e) => onblur1(e)"
           />
           <p class="mt-2 pl-4">-</p>
@@ -40,6 +46,7 @@ const emit = defineEmits<{
             variant="outlined"
             :class="props.class"
             :hideDetails="props.hideDetails"
+            :value="getPost(1)"
             @onBlur="(e) => onblur2(e)"
           />
         </v-col>

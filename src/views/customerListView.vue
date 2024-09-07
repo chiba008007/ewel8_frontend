@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, defineEmits } from "vue";
 import { useStoreUser } from "../store/user";
+
 import InfoAreaView from "../components/InfoAreaView.vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
+import PartnerAdmin from "../components/PartnerAdmin.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const user = useStoreUser();
@@ -21,6 +23,7 @@ if ((user.userdata as any).type === "partner") {
 const tab = ref(0);
 </script>
 <template>
+  <PartnerAdmin />
   <InfoAreaView />
   <v-row justify="center">
     <CustomerMenu />
