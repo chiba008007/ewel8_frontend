@@ -10,6 +10,7 @@ import addPertner from "../views/addPertnerView.vue";
 import customerList from "../views/customerListView.vue";
 import addCustomer from "../views/addCustomer.vue";
 import ErrorView from "../views/errorView.vue";
+import ExamView from "../views/ExamView.vue";
 
 import store from "@/store";
 
@@ -90,6 +91,12 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true,
     },
+  },
+
+  {
+    path: "/exam",
+    name: "exam",
+    component: ExamView,
   },
 ];
 
