@@ -8,13 +8,6 @@ const inputData = ref({
   birth_date: "",
 });
 
-const onBlur = (val: string, key: string) => {
-  inputData.value = {
-    ...inputData.value,
-    [key]: val,
-  };
-};
-
 const rules = (value: string | null, text: string) => {
   return !value ? text : null;
 };
