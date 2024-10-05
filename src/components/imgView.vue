@@ -11,7 +11,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   src: undefined,
 });
-console.log(props);
 </script>
 
 <template>
