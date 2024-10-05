@@ -10,7 +10,7 @@ import addPertner from "../views/addPertnerView.vue";
 import customerList from "../views/customerListView.vue";
 import addCustomer from "../views/addCustomer.vue";
 import ErrorView from "../views/errorView.vue";
-import ExamView from "../views/ExamView.vue";
+import ExamView from "../views/examinate/ExamView.vue";
 
 import store from "@/store";
 
