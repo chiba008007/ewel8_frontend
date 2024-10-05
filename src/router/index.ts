@@ -11,6 +11,7 @@ import customerList from "../views/customerListView.vue";
 import addCustomer from "../views/addCustomer.vue";
 import ErrorView from "../views/errorView.vue";
 import ExamView from "../views/examinate/ExamView.vue";
+import ExamProfileView from "../views/examinate/ProfileView.vue";
 
 import store from "@/store";
 
@@ -97,6 +98,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/exam",
     name: "exam",
     component: ExamView,
+  },
+  {
+    path: "/exam/profile",
+    name: "examProfile",
+    component: ExamProfileView,
   },
 ];
 
