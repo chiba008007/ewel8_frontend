@@ -25,6 +25,14 @@ const rules = (value: string | null, text: string) => {
 const onClick = () => {
   console.log("onClick", profile.value);
 };
+
+const convertDateFormat = (date: string) => {
+  const dt = new Date(date);
+  const y = dt.getFullYear();
+  const m = (dt.getMonth() + 1).toString().padStart(2, "0");
+  const d = dt.getDate().toString().padStart(2, "0");
+  return `${y}年${m}月${d}日`;
+};
 </script>
 
 <template>
@@ -105,11 +113,12 @@ const onClick = () => {
         <v-radio-group inline :hideDetails="true" v-model="profile.gender">
           <v-radio label="男性" :value="1"></v-radio>
           <v-radio label="女性" :value="2"></v-radio>
+          <v-radio label="選択しない" :value="0"></v-radio>
         </v-radio-group>
         <small class="text-red">※必須項目ではありません</small>
       </ExamProfileForm>
       <ExamProfileForm title="生年月日">
-        {{ profile.birth_date }}
+        {{ convertDateFormat(profile.birth_date) }}
       </ExamProfileForm>
     </v-container>
 
