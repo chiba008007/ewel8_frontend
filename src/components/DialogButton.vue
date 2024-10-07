@@ -18,8 +18,8 @@ const props = withDefaults(defineProps<Props>(), {
   text: undefined,
   title: "確認",
   message: undefined,
-  okButtonText: "OK",
-  cancelButtonText: "CANCEL",
+  okButtonText: "はい",
+  cancelButtonText: "いいえ",
 });
 
 const dialog = ref(false);
