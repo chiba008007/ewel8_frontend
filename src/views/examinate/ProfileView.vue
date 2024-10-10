@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import ComponentTextField from "@/components/TextFieldView.vue";
 import ComponentButton from "@/components/ButtonView.vue";
 import ComponentDialogButton from "@/components/DialogButton.vue";
 import ExamTitle from "@/components/ExamTitle.vue";
 import ExamProfileForm from "@/components/ExamProfileForm.vue";
+
+const router = useRouter();
 
 const profile = ref({
   login_id: "test",
@@ -23,7 +26,7 @@ const rules = (value: string | null, text: string) => {
 };
 
 const onClick = () => {
-  console.log("onClick", profile.value);
+  router.push({ name: "examCheckConfirm" });
 };
 
 const convertDateFormat = (date: string) => {
