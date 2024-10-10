@@ -13,6 +13,8 @@ import ErrorView from "../views/errorView.vue";
 import ExamView from "../views/examinate/ExamView.vue";
 import ExamProfileView from "../views/examinate/ProfileView.vue";
 import ExamChecConfirmkView from "../views/examinate/CheckConfirmView.vue";
+import ExamCheckView from "../views/examinate/CheckView.vue";
+import ExamBrowserUpdateHelpView from "../views/examinate/BrowsserUpdateHelpView.vue";
 
 import store from "@/store";
 
@@ -109,6 +111,16 @@ const routes: Array<RouteRecordRaw> = [
     path: "/exam/checkConfirm",
     name: "examCheckConfirm",
     component: ExamChecConfirmkView,
+  },
+  {
+    path: "/exam/check",
+    name: "examCheck",
+    component: ExamCheckView,
+  },
+  {
+    path: "/exam/browserUpdateHelp",
+    name: "examBrowserUpdateHelp",
+    component: ExamBrowserUpdateHelpView,
   },
 ];
 
