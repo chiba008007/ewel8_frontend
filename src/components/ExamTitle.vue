@@ -5,7 +5,7 @@ import ComponentImg from "@/components/imgView.vue";
 const props = defineProps<{
   logoSrc: string;
   customerName: string;
-  examName: string;
+  examName?: string;
 }>();
 </script>
 
@@ -20,5 +20,7 @@ const props = defineProps<{
       }}</v-col>
     </v-row>
   </v-container>
-  <div class="text-h6 font-weight-bold text-center">{{ props.examName }}</div>
+  <div v-if="props.examName" class="text-h6 font-weight-bold text-center">
+    {{ props.examName }}
+  </div>
 </template>

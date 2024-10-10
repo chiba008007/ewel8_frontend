@@ -12,6 +12,7 @@ import addCustomer from "../views/addCustomer.vue";
 import ErrorView from "../views/errorView.vue";
 import ExamView from "../views/examinate/ExamView.vue";
 import ExamProfileView from "../views/examinate/ProfileView.vue";
+import ExamChecConfirmkView from "../views/examinate/CheckConfirmView.vue";
 
 import store from "@/store";
 
@@ -103,6 +104,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/exam/profile",
     name: "examProfile",
     component: ExamProfileView,
+  },
+  {
+    path: "/exam/checkConfirm",
+    name: "examCheckConfirm",
+    component: ExamChecConfirmkView,
   },
 ];
 
