@@ -34,6 +34,16 @@ npm run lint
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### mysql 接続
+■ デプロイしたら画面が真っ白になった
+htaccess を作成
 
-$ sudo mysql -u root -proot
+```
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
