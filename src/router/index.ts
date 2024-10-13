@@ -15,6 +15,7 @@ import ExamProfileView from "../views/examinate/ProfileView.vue";
 import ExamChecConfirmkView from "../views/examinate/CheckConfirmView.vue";
 import ExamCheckView from "../views/examinate/CheckView.vue";
 import ExamBrowserUpdateHelpView from "../views/examinate/BrowsserUpdateHelpView.vue";
+import ExamListView from "../views/examinate/ExamListView.vue";
 
 import store from "@/store";
 
@@ -121,6 +122,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/exam/browserUpdateHelp",
     name: "examBrowserUpdateHelp",
     component: ExamBrowserUpdateHelpView,
+  },
+  {
+    path: "/exam/list",
+    name: "examList",
+    component: ExamListView,
   },
 ];
 
