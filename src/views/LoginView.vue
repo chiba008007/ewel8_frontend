@@ -9,13 +9,24 @@ const userId = ref<string>();
 const password = ref<string>();
 const user = useStoreUser();
 
+UserApiService.checkTest()
+  .then((response: any) => {
+    console.log(response);
+  })
+  .catch((e) => {
+    console.log("satus error");
+    console.log(e);
+    // alert("status ERROR");
+  });
 const onClick = () => {
   let data = {
     email: userId.value,
     password: password.value,
   };
+  console.log(data);
   UserApiService.getPost(data)
     .then((response: any) => {
+      console.log(response);
       user.setUserDataToken(response.data.token);
       user.setUserData(response.data.user);
       if (response.data.user.type === "partner") {
@@ -25,7 +36,8 @@ const onClick = () => {
         router.push("/list");
       }
     })
-    .catch(() => {
+    .catch((e) => {
+      console.log(e);
       alert("LOGIN ERROR");
     });
 };

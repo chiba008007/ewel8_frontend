@@ -3,6 +3,9 @@ import httpAuth from "@/auth-common";
 import { ref } from "vue";
 
 class UserApiService {
+  checkTest() {
+    return http.get("/api/test");
+  }
   editLoginAdmin(editData: object) {
     return httpAuth.post("/api/user/adminEdit", editData);
   }
