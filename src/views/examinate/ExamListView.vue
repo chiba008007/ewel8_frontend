@@ -3,6 +3,7 @@ import { ref } from "vue";
 import ComponentButton from "@/components/ButtonView.vue";
 import ComponentTextField from "@/components/TextFieldView.vue";
 import ComponentAlert from "@/components/AlertView.vue";
+import ComponentRadio from "@/components/RadioView.vue";
 import ExamTitle from "@/components/ExamTitle.vue";
 
 type exam = Array<{
@@ -113,10 +114,14 @@ const registerAnswer = () => {
               v-model="answerList[1].value"
               :rules="[(v:number) => !!v || '必須項目です']"
             >
-              <v-radio label="意識していない" :value="1"></v-radio>
-              <v-radio label="あまり意識していない" :value="2"></v-radio>
-              <v-radio label="少し意識している" :value="3"></v-radio>
-              <v-radio label="意識している" :value="4"></v-radio>
+              <ComponentRadio
+                :items="[
+                  { label: '意識していない', value: 1 },
+                  { label: 'あまり意識していない', value: 2 },
+                  { label: '少し意識している', value: 3 },
+                  { label: '意識している', value: 4 },
+                ]"
+              />
             </v-radio-group>
           </div>
 
@@ -149,10 +154,14 @@ const registerAnswer = () => {
               v-model="answerList[2].value"
               :rules="[(v:number) => !!v || '必須項目です']"
             >
-              <v-radio label="恵まれていない" :value="1"></v-radio>
-              <v-radio label="あまり恵まれていない" :value="2"></v-radio>
-              <v-radio label="少し恵まれている" :value="3"></v-radio>
-              <v-radio label="恵まれている" :value="4"></v-radio>
+              <ComponentRadio
+                :items="[
+                  { label: '恵まれていない', value: 1 },
+                  { label: 'あまり恵まれていない', value: 2 },
+                  { label: '少し恵まれている', value: 3 },
+                  { label: '恵まれている', value: 4 },
+                ]"
+              />
             </v-radio-group>
           </div>
 
@@ -170,10 +179,14 @@ const registerAnswer = () => {
               v-model="answerList[3].value"
               :rules="[(v:number) => !!v || '必須項目です']"
             >
-              <v-radio label="認識していない" :value="1"></v-radio>
-              <v-radio label="あまり認識していない" :value="2"></v-radio>
-              <v-radio label="少し認識している" :value="3"></v-radio>
-              <v-radio label="認識している" :value="4"></v-radio>
+              <ComponentRadio
+                :items="[
+                  { label: '認識していない', value: 1 },
+                  { label: 'あまり認識していない', value: 2 },
+                  { label: '少し認識している', value: 3 },
+                  { label: '認識している', value: 4 },
+                ]"
+              />
             </v-radio-group>
           </div>
 
@@ -191,10 +204,14 @@ const registerAnswer = () => {
               v-model="answerList[4].value"
               :rules="[(v:number) => !!v || '必須項目です']"
             >
-              <v-radio label="まったく認識できていない" :value="1"></v-radio>
-              <v-radio label="あまり認識できていない" :value="2"></v-radio>
-              <v-radio label="少し認識できている" :value="3"></v-radio>
-              <v-radio label="認識できている" :value="4"></v-radio>
+              <ComponentRadio
+                :items="[
+                  { label: 'まったく認識できていない', value: 1 },
+                  { label: 'あまり認識できていない', value: 2 },
+                  { label: '少し認識できている', value: 3 },
+                  { label: '認識できている', value: 4 },
+                ]"
+              />
             </v-radio-group>
           </div>
 
@@ -211,10 +228,14 @@ const registerAnswer = () => {
               v-model="answerList[5].value"
               :rules="[(v:number) => !!v || '必須項目です']"
             >
-              <v-radio label="まったく必要ないと思う" :value="1"></v-radio>
-              <v-radio label="あまり必要ないと思う" :value="2"></v-radio>
-              <v-radio label="少し必要だと思う" :value="3"></v-radio>
-              <v-radio label="必要だと思う" :value="4"></v-radio>
+              <ComponentRadio
+                :items="[
+                  { label: 'まったく必要ないと思う', value: 1 },
+                  { label: 'あまり必要ないと思う', value: 2 },
+                  { label: '少し必要だと思う', value: 3 },
+                  { label: '必要だと思う', value: 4 },
+                ]"
+              />
             </v-radio-group>
             <p class="mt-4">上記と答えた理由を教えてください。</p>
             <ComponentTextField
@@ -239,13 +260,14 @@ const registerAnswer = () => {
               v-model="answerList[6].value"
               :rules="[(v:number) => !!v || '必須項目です']"
             >
-              <v-radio
-                label="メリットはまったくないと思う"
-                :value="1"
-              ></v-radio>
-              <v-radio label="メリットはあまりないと思う" :value="2"></v-radio>
-              <v-radio label="メリットは少しあると思う" :value="3"></v-radio>
-              <v-radio label="メリットはあると思う" :value="4"></v-radio>
+              <ComponentRadio
+                :items="[
+                  { label: 'メリットはまったくないと思う', value: 1 },
+                  { label: 'メリットはあまりないと思う', value: 2 },
+                  { label: 'メリットは少しあると思う', value: 3 },
+                  { label: 'メリットはあると思う', value: 4 },
+                ]"
+              />
             </v-radio-group>
             <p class="mt-4">上記と答えた理由を教えてください。</p>
             <ComponentTextField
