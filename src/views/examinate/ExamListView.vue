@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import ComponentButton from "@/components/ButtonView.vue";
 import ComponentTextField from "@/components/TextFieldView.vue";
+import ComponentAlert from "@/components/AlertView.vue";
 import ExamTitle from "@/components/ExamTitle.vue";
 
 type exam = Array<{
@@ -21,6 +22,7 @@ const answerList = ref({
   6: { value: 0, comment: "" },
 });
 const validForm = ref(false);
+const successAlertFlag = ref(false);
 
 // NOTE: サンプル検査データ
 for (let i of [1, 2, 3]) {
@@ -33,6 +35,7 @@ for (let i of [1, 2, 3]) {
 
 const registerAnswer = () => {
   console.log(answerList.value);
+  successAlertFlag.value = true;
 };
 </script>
 
@@ -258,7 +261,7 @@ const registerAnswer = () => {
             アンケートは以上です。<br />
             ご協力ありがとうございました。
           </div>
-          <div class="text-center">
+          <div class="text-center mb-4">
             <ComponentButton
               text="アンケート登録"
               color="primary"
@@ -266,6 +269,11 @@ const registerAnswer = () => {
               :disabled="!validForm"
             />
           </div>
+          <ComponentAlert
+            v-if="successAlertFlag"
+            type="success"
+            text="アンケート内容を送信しました"
+          ></ComponentAlert>
         </v-form>
       </v-container>
     </v-window-item>
