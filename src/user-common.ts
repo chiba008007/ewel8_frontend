@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from "axios";
-
+import { d_Path } from "./plugins/const";
 const apiClient: AxiosInstance = axios.create({
   // APIのURI
-  baseURL: "http://localhost:8000",
+  baseURL: d_Path,
   //baseURL: "https://api.uh-oh.jp",
   // リクエストヘッダ
   headers: {

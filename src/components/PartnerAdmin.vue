@@ -6,14 +6,18 @@ const tmp = {
   partnerId: key,
   type: "partner",
 };
+console.log(tmp);
 const partnerDetail = ref();
-UserApiService.getPartnerDetail(tmp).then((res) => {
-  const entries = (res as any).data.user;
-  partnerDetail.value = entries;
-});
+
+try {
+  UserApiService.getPartnerDetail(tmp).then((res) => {
+    const entries = (res as any).data.user;
+    partnerDetail.value = entries;
+  });
+} catch (e) {
+  console.log(e);
+}
 </script>
 <template>
-  <h3 class="ma-4" v-if="partnerDetail?.system_name">
-    {{ partnerDetail?.system_name }} 管理画面
-  </h3>
+  <h3 class="ma-4">{{ partnerDetail?.system_name }} 管理画面</h3>
 </template>

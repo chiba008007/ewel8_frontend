@@ -38,14 +38,7 @@ const pageClickMoveParam = (pagename: string, id: number) => {
         density="compact"
         color="primary"
         class="ml-1 w-25"
-        @onClick="pageClickMove('addCustomer')"
-      ></ComponentButton>
-      <ComponentButton
-        text="受検者検索"
-        variant="outlined"
-        density="compact"
-        color="primary"
-        class="ml-1 w-25"
+        @onClick="pageClickMove('customerAdd')"
       ></ComponentButton>
       <ComponentButton
         text="ダウンロード"
@@ -61,8 +54,6 @@ const pageClickMoveParam = (pagename: string, id: number) => {
         color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
-    </div>
-    <div class="d-flex flex-row justify-center mt-1">
       <ComponentButton
         text="企業登録フォーム"
         variant="outlined"
@@ -71,6 +62,8 @@ const pageClickMoveParam = (pagename: string, id: number) => {
         class="w-25"
         @onClick="pageClickMove('partnerRegist')"
       ></ComponentButton>
+    </div>
+    <div class="d-flex flex-row justify-center mt-1">
       <ComponentButton
         text="検査申込み料金設定"
         variant="outlined"
@@ -99,7 +92,15 @@ const pageClickMoveParam = (pagename: string, id: number) => {
         density="compact"
         color="primary"
         class="ml-1 w-25"
-        :disabled="true"
+        disabled
+      ></ComponentButton>
+      <ComponentButton
+        text=""
+        variant="outlined"
+        density="compact"
+        color="primary"
+        class="ml-1 w-25"
+        disabled
       ></ComponentButton>
     </div>
   </v-sheet>

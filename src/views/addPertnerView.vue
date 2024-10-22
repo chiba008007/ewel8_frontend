@@ -16,7 +16,7 @@ import ComponentTextField from "../components/TextFieldView.vue";
 import { Core as YubinBangoCore } from "yubinbango-core2";
 
 import UserApiService from "@/services/UserApiService";
-
+import { checkEmail, checkPassword } from "../plugins/validate";
 const router = useRouter();
 const pankuzu = [
   { title: "HOME", href: router.resolve({ name: "List" }).href },
@@ -34,7 +34,7 @@ const addressText = ref();
 const addressText2 = ref();
 const tel = ref();
 const fax = ref();
-const registButton = ref(false);
+const registButton = ref(true);
 const settingData = ref();
 const settingLicense = ref();
 const onSearch = (ev: string) => {
@@ -93,6 +93,10 @@ const person_address2 = ref();
 const person_tel = ref();
 
 const onBlur = (e: string | boolean, type: string) => {
+  registButton.value = true;
+  if (name.value && email.value && password.value) {
+    registButton.value = false;
+  }
   if (type === "name") name.value = e;
   if (type === "email") email.value = e;
   if (type === "password") password.value = e;
@@ -189,8 +193,10 @@ const addRegist = () => {
   }
 };
 const rules = (value: string | null, text: string) => {
+  console.log(value);
   return !value ? text : null;
 };
+
 const formValidate = () => {
   return true;
 };
@@ -253,7 +259,7 @@ const formValidate = () => {
             :value="email"
             @onBlur="(ev, type) => onBlur(ev, type)"
             @onKeyup="(ev, type) => onMailup(ev, type)"
-            :rules="(val:string|any) => rules(val, 'メールアドレスは必須です')"
+            :rules="checkEmail(email)"
           ></addPartnerForm>
           <addPartnerForm
             title="パスワード"
@@ -264,7 +270,7 @@ const formValidate = () => {
             type="password"
             :value="password"
             @onBlur="(ev, type) => onBlur(ev, type)"
-            :rules="(val:string|any) => rules(val, 'パスワードは必須入力です')"
+            :rules="checkPassword(password)"
           ></addPartnerForm>
           <addPostCodeForm
             title="郵便番号"

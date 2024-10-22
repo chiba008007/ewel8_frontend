@@ -1,12 +1,14 @@
 <script setup lang="ts">
 //import { defineProps, withDefaults, defineEmits, ref } from "vue";
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
+import { useStoreUser } from "../store/user";
 import TextAreaField from "../components/TextAreaFieldView.vue";
 import type { VTextField } from "vuetify/components";
 type TVariant = VTextField["$props"]["variant"];
 type TVDensity = VTextField["$props"]["density"];
 import ComponentSwitch from "../components/SwitchView.vue";
-
+const user = useStoreUser();
+const privacy = ref(user.privacyText);
 const props = defineProps<{
   title?: string;
   density?: TVDensity;
@@ -18,12 +20,15 @@ const props = defineProps<{
   height?: number;
   value?: string;
   disabled?: boolean;
+  privacyModel?: boolean;
 }>();
 
 //const model = ref<boolean>(true);
 
 const emit = defineEmits<{
   (e: "onUpdate", value: boolean, type: string): void;
+  (e: "onClick", value: boolean): void;
+  (e: "onBlur", value: string): void;
 }>();
 </script>
 <template>
@@ -34,15 +39,18 @@ const emit = defineEmits<{
     <v-col sm="9" class="pa-1 border-sm">
       <ComponentSwitch
         label="編集/利用する"
-        type="privacyEdit"
+        :type="props.type"
+        :model="props.privacyModel"
+        @onClick="(e) => emit('onClick', e)"
       ></ComponentSwitch>
       <TextAreaField
         :name="props.name"
         :variant="props.variant"
         :hideDetails="props.hideDetails"
         :height="props.height"
-        :value="props.value"
+        :value="privacy"
         :disabled="props.disabled"
+        @onBlur="(e:string) => emit('onBlur', e)"
       ></TextAreaField>
     </v-col>
   </v-row>

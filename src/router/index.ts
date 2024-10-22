@@ -8,7 +8,7 @@ import partnerRegistView from "../views/partnerRegistView.vue";
 import partnerEditView from "../views/partnerEditView.vue";
 import addPertner from "../views/addPertnerView.vue";
 import customerList from "../views/customerListView.vue";
-import addCustomer from "../views/addCustomer.vue";
+import customerAdd from "../views/customerAdd.vue";
 import ErrorView from "../views/errorView.vue";
 import ExamView from "../views/examinate/ExamView.vue";
 import ExamProfileView from "../views/examinate/ProfileView.vue";
@@ -91,9 +91,9 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/addCustomer/:id",
-    name: "addCustomer",
-    component: addCustomer,
+    path: "/customerAdd/:id",
+    name: "customerAdd",
+    component: customerAdd,
     meta: {
       requiresAuth: true,
     },

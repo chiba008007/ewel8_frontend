@@ -19,17 +19,19 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
   (e: "onUpdate", value: boolean, type: string): void;
+  (e: "onClick", value: boolean, type: string): void;
 }>();
 </script>
 <template>
   <v-switch
     class="ml-2"
     :v-model="props.model"
-    :value="props.model"
+    :model-value="props.model"
     :density="props.density"
     :label="props.label"
     hide-details
     inset
     @update:modelValue="emit('onUpdate', model, props.type ?? '')"
+    @click="emit('onClick', model, props.type ?? '')"
   ></v-switch>
 </template>

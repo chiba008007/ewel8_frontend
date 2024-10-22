@@ -8,14 +8,14 @@ const props = defineProps<{
   title?: string;
   density?: TVDensity;
   label?: string;
-  model?: boolean;
+  model?: string;
   type?: string;
 }>();
 
 //const model = ref<boolean>(true);
 
 const emit = defineEmits<{
-  (e: "onUpdate", value: boolean, type: string): void;
+  (e: "onUpdate", value: string, type: string): void;
 }>();
 </script>
 <template>
@@ -29,7 +29,7 @@ const emit = defineEmits<{
         variant="outlined"
         :density="props.density"
         hide-details="auto"
-        @update:modelValue="(e, type) => emit('onUpdate', e, type ?? '')"
+        @update:modelValue="(e:any, type:any) => emit('onUpdate', e, type ?? '')"
       ></v-file-input>
       <p class="ma-0 pa-0 text-caption">
         ※幅240ピクセル、高さ80ピクセル、ファイルサイズ10kbyte程度

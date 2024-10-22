@@ -36,6 +36,7 @@ const emit = defineEmits<{
             :class="props.class"
             :hideDetails="props.hideDetails"
             :value="getPost(0)"
+            :maxlength="3"
             @onBlur="(e) => onblur1(e)"
           />
           <p class="mt-2 pl-4">-</p>
@@ -47,6 +48,7 @@ const emit = defineEmits<{
             :class="props.class"
             :hideDetails="props.hideDetails"
             :value="getPost(1)"
+            :maxlength="4"
             @onBlur="(e) => onblur2(e)"
           />
         </v-col>

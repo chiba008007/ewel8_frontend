@@ -13,6 +13,7 @@ import addPrefCodeForm from "../components/addPrefCodeForm.vue";
 import ComponentButton from "../components/ButtonView.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ComponentAlert from "../components/AlertView.vue";
+import { checkEmail, checkPassword } from "../plugins/validate";
 
 const route = useRoute();
 const regex = /(\d+)(?!.*\d)/;
@@ -117,29 +118,10 @@ const rules = (value: string | null, text: string) => {
   }
   return null;
 };
-const passwordRules = (value: string | null) => {
-  let text;
-  if (value?.length == 0) {
-    return null;
-  }
-  if (value && value?.length < 8) {
-    text = "8文字以上で入力してください。";
-    return text;
-  }
-  let ptn = /^[a-zA-Z0-9]+$/;
-  if (!ptn.test(value as string)) {
-    text = "半角英数値のみで入力してください。";
-    return text;
-  }
-  return null;
-};
+
 const addRegist = () => {
   errorAlertFlag.value = false;
-  let pwd = passwordRules(password.value);
-  if (pwd) {
-    errorAlertFlag.value = true;
-    return false;
-  }
+
   var tmp = {
     id: paramId,
     password: password.value,
@@ -213,10 +195,10 @@ const addRegist = () => {
               <addPartnerForm
                 title="パスワード"
                 :hideDetails="`auto`"
-                class="w-25"
+                class="w-75"
                 :passwordFlag="true"
                 :maxlength="15"
-                :rules="(val:string|any) => passwordRules(val)"
+                :rules="checkPassword(password, 'edit')"
                 @onBlur="(e, type) => onBlur(e, 'password')"
               ></addPartnerForm>
               <addPostCodeForm

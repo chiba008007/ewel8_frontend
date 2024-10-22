@@ -19,17 +19,20 @@ const headers = [
 let tmp = {
   type: "partner",
 };
-const desserts = ref<object[0]>([]);
-UserApiService.getPartner(tmp).then(function (rlt) {
-  const entries = Object.entries(rlt);
-  for (const [key, val] of entries) {
-    if (key == "data") {
-      desserts.value.push(val.user);
+const desserts = ref<object[]>([]);
+try {
+  UserApiService.getPartner(tmp).then(function (rlt) {
+    const entries = Object.entries(rlt);
+    for (const [key, val] of entries) {
+      if (key == "data") {
+        desserts.value.push(val.user);
+      }
     }
-  }
-  console.log(desserts);
-});
-
+    console.log(desserts);
+  });
+} catch (e) {
+  console.log(e);
+}
 const tableHeight = ref(100);
 const onResize = () => {
   const wHeight = window.innerHeight;

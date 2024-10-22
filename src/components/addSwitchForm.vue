@@ -19,6 +19,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "onUpdate", value: boolean, type: string): void;
+  (e: "onClick", value: boolean, type: string): void;
 }>();
 </script>
 <template>
@@ -39,6 +40,7 @@ const emit = defineEmits<{
         :model="props.model"
         :type="props.type"
         @onUpdate="(e, type) => emit('onUpdate', e, type ?? '')"
+        @onClick="(e:any, type:any) =>  emit('onClick', e, type ?? '')"
       ></ComponentSwitch>
     </v-col>
   </v-row>
