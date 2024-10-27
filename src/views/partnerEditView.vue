@@ -13,7 +13,7 @@ import addPrefCodeForm from "../components/addPrefCodeForm.vue";
 import ComponentButton from "../components/ButtonView.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ComponentAlert from "../components/AlertView.vue";
-import { checkEmail, checkPassword } from "../plugins/validate";
+import { requiredValue, checkPassword } from "../plugins/validate";
 
 const route = useRoute();
 const regex = /(\d+)(?!.*\d)/;
@@ -23,27 +23,29 @@ const router = useRouter();
 const user = useStoreUser();
 const userid = (user.userdata as any).id;
 const userType = (user.userdata as any).type;
-const password = ref();
-const post = ref();
-const post1 = ref();
-const post2 = ref();
-const preftext = ref();
-const addressText = ref();
-const addressText2 = ref();
-const tel = ref();
-const fax = ref();
 
-const tab = ref(0);
+const form = ref({
+  password: "",
+  post: "",
+  post1: "",
+  post2: "",
+  preftext: "",
+  addressText: "",
+  addressText2: "",
+  tel: "",
+  fax: "",
+  prefs: "",
+  person: "",
+  person_address: "",
+  person_tel: "",
+  person2: "",
+  person_address2: "",
+});
+
 const prefs = ref();
-
-const person = ref();
-const person_address = ref();
-const person_tel = ref();
-const person2 = ref();
-const person_address2 = ref();
-
 const errorAlertFlag = ref(false);
 const successAlertFlag = ref(false);
+const tab = ref(0);
 
 PrefApiService.getPrefData().then((res) => {
   prefs.value = res;
@@ -72,70 +74,52 @@ const userDetail = ref();
 UserApiService.getPartnerDetail(tmp).then((res) => {
   const entries = (res as any).data.user;
   userDetail.value = entries;
-  post.value = userDetail.value.post_code;
-  preftext.value = userDetail.value.pref;
-  addressText.value = userDetail.value.address1;
-  addressText2.value = userDetail.value.address2;
-  tel.value = userDetail.value.tel;
-  fax.value = userDetail.value.fax;
-  person.value = userDetail.value.person;
-  person_address.value = userDetail.value.person_address;
-  person_tel.value = userDetail.value.person_tel;
-  person2.value = userDetail.value.person2;
-  person_address2.value = userDetail.value.person_address2;
+  form.value.post = userDetail.value.post_code;
+  form.value.preftext = userDetail.value.pref;
+  form.value.addressText = userDetail.value.address1;
+  form.value.addressText2 = userDetail.value.address2;
+  form.value.tel = userDetail.value.tel;
+  form.value.fax = userDetail.value.fax;
+  form.value.person = userDetail.value.person;
+  form.value.person_address = userDetail.value.person_address;
+  form.value.person_tel = userDetail.value.person_tel;
+  form.value.person2 = userDetail.value.person2;
+  form.value.person_address2 = userDetail.value.person_address2;
 });
 
+const post1 = ref();
+const post2 = ref();
 const postBlur = (e: string, type: string) => {
   if (type === "post1") post1.value = e;
   if (type === "post2") post2.value = e;
   if (post1.value && post2.value) {
-    post.value = post1.value + "-" + post2.value;
+    form.value.post = post1.value + "-" + post2.value;
     new YubinBangoCore(post1.value + post2.value, function (addr: any) {
-      preftext.value = addr.region;
-      addressText.value = addr.street;
+      form.value.preftext = addr.region;
+      form.value.addressText = addr.street;
     });
   }
 };
 
-const onBlur = (e: string | boolean, type: string) => {
-  if (type === "password") password.value = e;
-  if (type === "pref") preftext.value = e;
-  if (type === "addressText") addressText.value = e;
-  if (type === "addressText2") addressText2.value = e;
-  if (type === "tel") tel.value = e;
-  if (type === "fax") fax.value = e;
-  if (type === "person") person.value = e;
-  if (type === "person_address") person_address.value = e;
-  if (type === "person_tel") person_tel.value = e;
-  if (type === "person2") person2.value = e;
-  if (type === "person_address2") person_address2.value = e;
-};
-
 const registButton = ref(false);
-const rules = (value: string | null, text: string) => {
-  if (!value) {
-    return text;
-  }
-  return null;
-};
 
 const addRegist = () => {
   errorAlertFlag.value = false;
 
   var tmp = {
     id: paramId,
-    password: password.value,
-    post_code: post.value,
-    pref: preftext.value,
-    address1: addressText.value,
-    address2: addressText2.value,
-    tel: tel.value,
-    fax: fax.value,
-    person: person.value,
-    person_address: person_address.value,
-    person2: person2.value,
-    person_address2: person_address2.value,
-    person_tel: person_tel.value,
+    password: form.value.password,
+    post_code: form.value.post,
+    pref: form.value.preftext,
+    address1: form.value.addressText,
+    address2: form.value.addressText2,
+    tel: form.value.tel,
+    fax: form.value.fax,
+    person: form.value.person,
+    person_address: form.value.person_address,
+    person2: form.value.person2,
+    person_address2: form.value.person_address2,
+    person_tel: form.value.person_tel,
   };
   successAlertFlag.value = false;
   UserApiService.editPartner(tmp).then((res) => {
@@ -198,14 +182,14 @@ const addRegist = () => {
                 class="w-75"
                 :passwordFlag="true"
                 :maxlength="15"
-                :rules="checkPassword(password, 'edit')"
-                @onBlur="(e, type) => onBlur(e, 'password')"
+                :rules="checkPassword(form.password, 'edit')"
+                @onBlur="(e) => (form.password = e)"
               ></addPartnerForm>
               <addPostCodeForm
                 title="郵便番号"
                 class="w-100"
                 :hideDetails="true"
-                :value="post"
+                :value="form.post"
                 type="post"
                 @onBlur="(e, type) => postBlur(e, type)"
               ></addPostCodeForm>
@@ -215,27 +199,27 @@ const addRegist = () => {
                 class="w-50"
                 :hideDetails="true"
                 :items="prefs"
-                :value="preftext ?? ``"
+                :value="form.preftext ?? ``"
                 type="pref"
-                @onBlur="(e, type) => onBlur(e, type)"
+                @onBlur="(e) => (form.preftext = e)"
               ></addPrefCodeForm>
               <addPartnerForm
                 title="住所"
                 text="住所を入力してください"
                 class="w-100"
                 :hideDetails="true"
-                :value="addressText ?? ``"
+                :value="form.addressText ?? ``"
                 type="addressText"
-                @onBlur="(e, type) => onBlur(e, type)"
+                @onBlur="(e) => (form.addressText = e)"
               ></addPartnerForm>
               <addPartnerForm
                 title="建物名"
                 text="建物名を入力してください"
                 class="w-100"
                 :hideDetails="true"
-                :value="addressText2 ?? ``"
+                :value="form.addressText2 ?? ``"
                 type="addressText2"
-                @onBlur="(e, type) => onBlur(e, type)"
+                @onBlur="(e) => (form.addressText2 = e)"
               ></addPartnerForm>
               <addPartnerForm
                 title="電話番号"
@@ -243,9 +227,9 @@ const addRegist = () => {
                 class="w-100"
                 :hideDetails="false"
                 messages="例)03-0000-0000"
-                :value="tel ?? ``"
+                :value="form.tel ?? ``"
                 type="tel"
-                @onBlur="(e, type) => onBlur(e, type)"
+                @onBlur="(e) => (form.tel = e)"
               ></addPartnerForm>
               <addPartnerForm
                 title="FAX番号"
@@ -253,9 +237,8 @@ const addRegist = () => {
                 class="w-100"
                 :hideDetails="false"
                 messages="例)03-0000-0000"
-                :value="fax ?? ``"
-                type="fax"
-                @onBlur="(e, type) => onBlur(e, type)"
+                :value="form.fax ?? ``"
+                @onBlur="(e) => (form.fax = e)"
               ></addPartnerForm>
             </v-col>
           </v-row>
@@ -266,11 +249,10 @@ const addRegist = () => {
                 text="主担当者氏名を入力してください"
                 class="w-100"
                 :hideDetails="`auto`"
-                type="person"
-                :value="person"
+                :value="form.person"
                 :requriredIcon="true"
-                :rules="(val:string|any) => rules(val, '主担当者氏名は必須入力です')"
-                @onBlur="(ev, type) => onBlur(ev, type)"
+                :rules="requiredValue(form.person, '主担当者氏名')"
+                @onBlur="(e) => (form.person = e)"
               ></addPartnerForm>
               <addPartnerForm
                 title="主担当者アドレス"
@@ -278,10 +260,10 @@ const addRegist = () => {
                 class="w-100"
                 :hideDetails="`auto`"
                 type="person_address"
-                :value="person_address"
+                :value="form.person_address"
                 :requriredIcon="true"
-                :rules="(val:string|any) => rules(val, '主担当者アドレスは必須入力です')"
-                @onBlur="(ev, type) => onBlur(ev, type)"
+                :rules="requiredValue(form.person_address, '主担当者アドレス')"
+                @onBlur="(e) => (form.person_address = e)"
               ></addPartnerForm>
               <addPartnerForm
                 title="連絡先"
@@ -289,9 +271,9 @@ const addRegist = () => {
                 class="w-50"
                 :hideDetails="`auto`"
                 type="person_tel"
-                :value="person_tel"
+                :value="form.person_tel"
                 messages="例)03-0000-0000"
-                @onBlur="(ev, type) => onBlur(ev, type)"
+                @onBlur="(e) => (form.person_tel = e)"
               ></addPartnerForm>
               <addPartnerForm
                 title="副担当者氏名"
@@ -299,8 +281,8 @@ const addRegist = () => {
                 class="w-100"
                 :hideDetails="`auto`"
                 type="person2"
-                :value="person2"
-                @onBlur="(ev, type) => onBlur(ev, type)"
+                :value="form.person2"
+                @onBlur="(e) => (form.person2 = e)"
               ></addPartnerForm>
               <addPartnerForm
                 title="副担当者アドレス"
@@ -308,8 +290,8 @@ const addRegist = () => {
                 class="w-100"
                 :hideDetails="`auto`"
                 type="person_address2"
-                :value="person_address2"
-                @onBlur="(ev, type) => onBlur(ev, type)"
+                :value="form.person_address2"
+                @onBlur="(e) => (form.person_address2 = e)"
               ></addPartnerForm>
             </v-col>
           </v-row>

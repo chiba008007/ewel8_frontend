@@ -5,8 +5,9 @@ import ComponentTextField from "../components/TextFieldView.vue";
 import AdminMenu from "../components/AdminMenu.vue";
 import UserApiService from "@/services/UserApiService";
 import { useRouter } from "vue-router";
+import { sleep } from "../plugins/const";
 const router = useRouter();
-
+const loading = ref(true);
 const headers = [
   { title: "企業名", sortable: false, key: "name" },
   { title: "購入ライセンス", sortable: false, key: "speed" },
@@ -16,6 +17,9 @@ const headers = [
   { title: "残数", sortable: false, key: "zan" },
   { title: "機能", sortable: false, key: "kino" },
 ];
+
+sleep(1000);
+
 let tmp = {
   type: "partner",
 };
@@ -28,7 +32,8 @@ try {
         desserts.value.push(val.user);
       }
     }
-    console.log(desserts);
+    // console.log(desserts);
+    loading.value = false;
   });
 } catch (e) {
   console.log(e);
@@ -63,7 +68,9 @@ const pageClickMove = (pagename: string, id: number) => {
       </v-col>
     </v-row>
   </v-card>
+  <div v-show="loading" class="loader">Now loading...</div>
   <v-data-table
+    v-show="!loading"
     :headers="headers"
     :items="desserts[0]"
     class="listable ma-2"

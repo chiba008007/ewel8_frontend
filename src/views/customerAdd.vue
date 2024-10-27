@@ -55,7 +55,7 @@ const inputData = ref({
   logoImagePath: "",
   privacy: {
     checked: false,
-    privacyText: "",
+    privacyText: user.privacyText,
   },
   customerDisplayFlag: false,
   tanto_name: "",

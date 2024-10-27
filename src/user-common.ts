@@ -8,7 +8,7 @@ const apiClient: AxiosInstance = axios.create({
   headers: {
     "Content-type": "application/json",
     "X-Requested-With": "XMLHttpRequest",
-    "Access-Control-Allow-Origin": "https://smp.uh-oh.jp",
+    "Access-Control-Allow-Origin": d_Path,
     "Access-Control-Allow-Credentials": true,
   },
   withCredentials: true,

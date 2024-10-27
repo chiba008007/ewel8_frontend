@@ -24,3 +24,10 @@ export const gender: NumberCodeOrNullListType = {
   1: "男性",
   2: "女性",
 };
+
+/** スリープ */
+export const sleep = (waitMsec: number) => {
+  const startMsec = new Date();
+  // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+  while ((new Date() as any) - (startMsec as any) < waitMsec);
+};
