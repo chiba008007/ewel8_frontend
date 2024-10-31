@@ -3,7 +3,7 @@ import { ref, defineEmits } from "vue";
 import { useStoreUser } from "../store/user";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import InfoAreaView from "../components/InfoAreaView.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import addPartnerForm from "../components/addPartnerForm.vue";
 import { Core as YubinBangoCore } from "yubinbango-core2";
 import addPostCodeForm from "../components/addPostCodeForm.vue";
@@ -19,11 +19,17 @@ import {
   requiredValue,
   checkEmail,
 } from "../plugins/validate";
+import UserApiService from "@/services/UserApiService";
+import { imagePath, customer } from "@/plugins/const";
+import ComponentAlert from "../components/AlertView.vue";
 
 const router = useRouter();
+const route = useRoute();
 const user = useStoreUser();
 const registButton = ref<boolean>(true);
 
+const regex = /(\d+)(?!.*\d)/;
+const isPortal = ref(route.path.match(regex)).value as any;
 const pankuzu = [
   { title: user.home, href: router.resolve({ name: "List" }).href },
   {
@@ -67,6 +73,7 @@ const inputData = ref({
   tanto_address2: "",
 });
 const prefs = ref();
+const myimage_path = ref();
 
 const onBlurButton = () => {
   registButton.value = true;
@@ -99,9 +106,71 @@ PrefApiService.getPrefData().then((res) => {
   prefs.value = res;
 });
 
+const onUpdate = (e: any) => {
+  let blob: Blob;
+  let formData = new FormData();
+  let imageUrl: string;
+
+  blob = new Blob([e[0]], { type: "image/jpeg" });
+  imageUrl = window.URL.createObjectURL(blob);
+  formData.append("photo", blob, "image.jpg");
+  myimage_path.value = imageUrl;
+
+  UserApiService.onUpload(formData)
+    .then((res: any) => {
+      inputData.value.logoImagePath = imagePath + res.data;
+    })
+    .catch((e) => {
+      alert("editUserData ERROR" + e);
+    });
+};
+const successAlertFlag = ref(false);
 const addRegist = () => {
   console.log(inputData.value);
-  alert("regist");
+  let userdata = user.userdata as any;
+  let tmp = {
+    type: customer,
+    admin_id: userdata.id,
+    partner_id: isPortal[0],
+    name: inputData.value.name,
+    email: inputData.value.login_id,
+    password: inputData.value.password,
+    company_name: inputData.value.name,
+    login_id: inputData.value.login_id,
+    post_code: inputData.value.post1 + "-" + inputData.value.post2,
+    pref: inputData.value.preftext,
+    address1: inputData.value.addressText,
+    address2: inputData.value.addressText2,
+    tel: inputData.value.tel,
+    fax: inputData.value.fax,
+    trendFlag: inputData.value.displayTrendFlag ? 1 : 0,
+    csvFlag: inputData.value.displayCsvFlag ? 1 : 0,
+    pdfFlag: inputData.value.displayPdfFlag ? 1 : 0,
+    weightFlag: inputData.value.displayWeightFlag ? 1 : 0,
+    excelFlag: inputData.value.displayExcelFlag ? 1 : 0,
+    customFlag: inputData.value.customerDisplayFlag ? 1 : 0,
+    sslFlag: inputData.value.displaySslFlag ? 1 : 0,
+    logoImagePath: inputData.value.logoImagePath,
+    privacy: inputData.value.privacy.checked ? 1 : 0,
+    privacyText: inputData.value.privacy.privacyText,
+    displayFlag: 1,
+    tanto_name: inputData.value.tanto_name,
+    tanto_address: inputData.value.tanto_address,
+    tanto_busyo: inputData.value.tanto_busyo,
+    tanto_tel1: inputData.value.tanto_tel1,
+    tanto_tel2: inputData.value.tanto_tel2,
+    tanto_name2: inputData.value.tanto_name,
+    tanto_address2: inputData.value.tanto_address2,
+  };
+
+  UserApiService.setCustomerAdd(tmp)
+    .then((res) => {
+      console.log("success");
+      successAlertFlag.value = true;
+    })
+    .catch(function (e) {
+      alert(e);
+    });
 };
 </script>
 <template>
@@ -120,6 +189,11 @@ const addRegist = () => {
         @onClick="addRegist()"
         :disabled="registButton"
       />
+      <ComponentAlert
+        v-if="successAlertFlag"
+        type="success"
+        text="登録に成功しました"
+      ></ComponentAlert>
     </v-col>
   </v-row>
 
@@ -318,9 +392,10 @@ const addRegist = () => {
         title="ロゴ画像"
         density="compact"
         label="アップロード画像選択"
-        type="logoImagePath"
+        v-model="inputData.logoImagePath"
+        :myimage_path="myimage_path"
         :model="inputData.logoImagePath"
-        @onUpdate="(e) => (inputData.logoImagePath = e)"
+        @onUpdate="(e) => ((inputData.logoImagePath = e), onUpdate(e))"
       ></addImageForm>
       <addPrivacyForm
         variant="outlined"

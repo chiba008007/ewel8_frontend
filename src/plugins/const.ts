@@ -8,7 +8,7 @@ const uri = new URL(window.location.href);
 const reg = /localhost/;
 let tmp = "";
 if (reg.test(uri.toString())) {
-  tmp = "http://localhost:8000/";
+  tmp = "http://localhost:8000";
 } else {
   tmp = "https://ewelmanage.uh-oh.jp";
 }
@@ -31,3 +31,6 @@ export const sleep = (waitMsec: number) => {
   // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
   while ((new Date() as any) - (startMsec as any) < waitMsec);
 };
+
+/** 顧客タイプ */
+export const customer = "customer";

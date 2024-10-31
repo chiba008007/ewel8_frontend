@@ -1,5 +1,6 @@
 import http from "@/user-common";
 import httpAuth from "@/auth-common";
+import httpUpload from "@/upload-common";
 import { ref } from "vue";
 
 class UserApiService {
@@ -32,6 +33,12 @@ class UserApiService {
   }
   checkEmail(data: string) {
     return httpAuth.get("/api/user/checkEmail?email=" + data);
+  }
+  onUpload(form: FormData): Promise<object> {
+    return httpUpload.post("/api/user/upload", form);
+  }
+  setCustomerAdd(data: object): Promise<object> {
+    return httpAuth.post("/api/user/setCustomerAdd", data);
   }
 }
 
