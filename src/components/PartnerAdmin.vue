@@ -6,7 +6,6 @@ const tmp = {
   partnerId: key,
   type: "partner",
 };
-console.log(tmp);
 const partnerDetail = ref();
 
 try {

@@ -18,7 +18,7 @@ const headers = [
   { title: "機能", sortable: false, key: "kino" },
 ];
 
-sleep(1000);
+//sleep(1000);
 
 let tmp = {
   type: "partner",

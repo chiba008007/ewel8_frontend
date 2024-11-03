@@ -5,9 +5,14 @@ import { useStoreUser } from "../store/user";
 import InfoAreaView from "../components/InfoAreaView.vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
-import { useRouter } from "vue-router";
+import ButtonView from "@/components/ButtonView.vue";
+import { useRouter, useRoute } from "vue-router";
+import UserApiService from "@/services/UserApiService";
+
 const router = useRouter();
+const route = useRoute();
 const user = useStoreUser();
+const tmpid = ref(route.path.replace(/[^0-9]/g, ""));
 // const userdata = user.userdata;
 // console.log(user.userdata);
 const pankuzu = ref();
@@ -20,6 +25,83 @@ if ((user.userdata as any).type === "partner") {
   ];
 }
 
+const customerheaders = ref([
+  { title: "企業名", align: "start", key: "campany" },
+  { title: "受検者数", align: "start", key: "examCount" },
+  { title: "処理数", align: "start", key: "syoriCount" },
+  { title: "残数", align: "start", key: "zanCount" },
+  { title: "機能", align: "start", key: "method" },
+]);
+const headers = ref([
+  { title: "検査種別", align: "start", key: "examType" },
+  { title: "購入ライセンス", align: "start", key: "buyLisence" },
+  { title: "販売可能ライセンス", align: "start", key: "saleLisence" },
+  { title: "受検者数", align: "start", key: "examCount" },
+  { title: "処理数", align: "start", key: "syoriCount" },
+  { title: "残数", align: "start", key: "zanCount" },
+]);
+const customerList = ref([
+  {
+    campany: "",
+    examCount: 0,
+    syoriCount: 0,
+    zanCount: 0,
+    method: "",
+  },
+]);
+const data = ref([
+  {
+    examType: "",
+    buyLisence: 0,
+    saleLisence: 0,
+    examCount: 0,
+    syoriCount: 0,
+    zanCount: 0,
+  },
+]);
+
+// ライセンス一覧
+let tmp = {
+  user_id: tmpid.value,
+};
+UserApiService.getLisencesList(tmp)
+  .then(function (res: any) {
+    data.value = [];
+    res.data.map((val: any) => {
+      data.value.push({
+        examType: val.code,
+        buyLisence: val.num,
+        saleLisence: 83457,
+        examCount: 5400,
+        syoriCount: 5400,
+        zanCount: 5400,
+      });
+    });
+  })
+  .catch((e) => {
+    alert("getLisencesList ERROR" + e);
+  });
+// 顧客一覧
+let ctmp = {
+  partner_id: tmpid.value,
+};
+console.log(ctmp);
+UserApiService.getCustomerList(ctmp)
+  .then(function (res: any) {
+    customerList.value = [];
+    res.data.map(function (value: any) {
+      customerList.value.push({
+        campany: value.name,
+        examCount: 0,
+        syoriCount: 0,
+        zanCount: 0,
+        method: "",
+      });
+    });
+  })
+  .catch((e) => {
+    alert("getCustomerList ERROR" + e);
+  });
 const tab = ref(0);
 </script>
 <template>
@@ -38,8 +120,67 @@ const tab = ref(0);
       </v-tabs>
 
       <v-window v-model="tab">
-        <v-window-item value="1"> aaa </v-window-item>
-        <v-window-item value="2"> bbb </v-window-item>
+        <v-window-item value="1">
+          <v-data-table
+            :headers="customerheaders"
+            :items="customerList"
+            class="listable ma-2"
+            fixed-header
+          >
+            <template v-slot:item="{ item }">
+              <tr>
+                <td class="w-50">{{ item.campany }}</td>
+                <td>{{ item.examCount }}</td>
+                <td>{{ item.syoriCount }}</td>
+                <td>{{ item.zanCount }}</td>
+                <td class="w-25">
+                  <ButtonView
+                    text="顧客画面"
+                    color="success"
+                    size="small"
+                  ></ButtonView>
+                  <ButtonView
+                    text="更新"
+                    color="success"
+                    size="small"
+                    class="ml-1"
+                  ></ButtonView>
+                  <ButtonView
+                    text="削除"
+                    color="danger"
+                    size="small"
+                    class="ml-1"
+                  ></ButtonView>
+                  <ButtonView
+                    text="添付"
+                    color="success"
+                    size="small"
+                    class="ml-1"
+                  ></ButtonView>
+                </td>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-window-item>
+        <v-window-item value="2">
+          <v-data-table
+            :headers="headers"
+            :items="data"
+            class="listable ma-2"
+            fixed-header
+          >
+            <template v-slot:item="{ item }">
+              <tr>
+                <td>{{ item.examType }}</td>
+                <td>{{ item.buyLisence }}</td>
+                <td>{{ item.saleLisence }}</td>
+                <td>{{ item.examCount }}</td>
+                <td>{{ item.syoriCount }}</td>
+                <td>{{ item.zanCount }}</td>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-window-item>
       </v-window>
     </v-col>
   </v-row>

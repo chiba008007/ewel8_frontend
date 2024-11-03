@@ -40,6 +40,12 @@ class UserApiService {
   setCustomerAdd(data: object): Promise<object> {
     return httpAuth.post("/api/user/setCustomerAdd", data);
   }
+  getLisencesList(data: object): Promise<object> {
+    return httpAuth.post("/api/user/getLisencesList", data);
+  }
+  getCustomerList(data: object): Promise<object> {
+    return httpAuth.post("/api/user/getCustomerList", data);
+  }
 }
 
 export default new UserApiService();
