@@ -46,6 +46,9 @@ class UserApiService {
   getCustomerList(data: object): Promise<object> {
     return httpAuth.post("/api/user/getCustomerList", data);
   }
+  getPartnerid(data: object): Promise<object> {
+    return httpAuth.post("/api/user/getPartnerid", data);
+  }
 }
 
 export default new UserApiService();

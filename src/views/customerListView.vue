@@ -8,7 +8,9 @@ import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import { useRouter, useRoute } from "vue-router";
 import UserApiService from "@/services/UserApiService";
+import pageClickMove from "../plugins/pagemove";
 
+const move = pageClickMove();
 const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
@@ -42,6 +44,7 @@ const headers = ref([
 ]);
 const customerList = ref([
   {
+    id: "",
     campany: "",
     examCount: 0,
     syoriCount: 0,
@@ -59,7 +62,6 @@ const data = ref([
     zanCount: 0,
   },
 ]);
-
 // ライセンス一覧
 let tmp = {
   user_id: tmpid.value,
@@ -85,12 +87,12 @@ UserApiService.getLisencesList(tmp)
 let ctmp = {
   partner_id: tmpid.value,
 };
-console.log(ctmp);
 UserApiService.getCustomerList(ctmp)
   .then(function (res: any) {
     customerList.value = [];
     res.data.map(function (value: any) {
       customerList.value.push({
+        id: value.id,
         campany: value.name,
         examCount: 0,
         syoriCount: 0,
@@ -102,10 +104,14 @@ UserApiService.getCustomerList(ctmp)
   .catch((e) => {
     alert("getCustomerList ERROR" + e);
   });
+
 const tab = ref(0);
+const onMove = (param: string, key: number) => {
+  move.pageClickMoveParamCode(param, key);
+};
 </script>
 <template>
-  <PartnerAdmin />
+  <PartnerAdmin coded="partner" />
   <InfoAreaView />
   <v-row justify="center">
     <CustomerMenu />
@@ -135,9 +141,10 @@ const tab = ref(0);
                 <td>{{ item.zanCount }}</td>
                 <td class="w-25">
                   <ButtonView
-                    text="顧客画面"
+                    text="検査一覧"
                     color="success"
                     size="small"
+                    @click="onMove('testLists', item.id)"
                   ></ButtonView>
                   <ButtonView
                     text="更新"
@@ -147,7 +154,7 @@ const tab = ref(0);
                   ></ButtonView>
                   <ButtonView
                     text="削除"
-                    color="danger"
+                    color="red"
                     size="small"
                     class="ml-1"
                   ></ButtonView>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { defineProps, withDefaults, defineEmits } from "vue";
 import type { VAutocomplete, VTextField } from "vuetify/components";
+import { removeTabKey } from "../plugins/validate";
 type TVariant = VTextField["$props"]["variant"];
 type TVDensity = VTextField["$props"]["density"];
 
@@ -11,7 +12,7 @@ interface Props {
   placeholder?: string;
   variant?: TVariant;
   density?: TVDensity;
-  value?: string;
+  value?: string | number;
   hideDetails?: boolean | "auto";
   messages?: string;
   person?: string;
@@ -55,6 +56,7 @@ const emit = defineEmits<{
     :class="props.class"
     :rules="props.rules ? [props.rules] : undefined"
     :maxlength="props.maxlength"
+    @keydown="removeTabKey($event)"
     @keyup="emit('onKeyup', $event.target.value, props.name ?? '')"
     @blur="emit('onBlur', $event.target.value, props.name ?? '')"
   ></v-text-field>

@@ -122,9 +122,13 @@ const addRegist = () => {
     person_tel: form.value.person_tel,
   };
   successAlertFlag.value = false;
-  UserApiService.editPartner(tmp).then((res) => {
-    successAlertFlag.value = true;
-  });
+  UserApiService.editPartner(tmp)
+    .then((res) => {
+      successAlertFlag.value = true;
+    })
+    .catch((e) => {
+      alert("edit ERROR" + e);
+    });
 };
 </script>
 <template>
@@ -250,7 +254,6 @@ const addRegist = () => {
                 class="w-100"
                 :hideDetails="`auto`"
                 :value="form.person"
-                :requriredIcon="true"
                 :rules="requiredValue(form.person, '主担当者氏名')"
                 @onBlur="(e) => (form.person = e)"
               ></addPartnerForm>
@@ -261,7 +264,6 @@ const addRegist = () => {
                 :hideDetails="`auto`"
                 type="person_address"
                 :value="form.person_address"
-                :requriredIcon="true"
                 :rules="requiredValue(form.person_address, '主担当者アドレス')"
                 @onBlur="(e) => (form.person_address = e)"
               ></addPartnerForm>

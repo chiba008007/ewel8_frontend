@@ -1,11 +1,10 @@
 <script setup lang="ts">
-//import { defineProps, withDefaults, defineEmits, ref } from "vue";
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, withDefaults } from "vue";
 import ComponentSwitch from "../components/SwitchView.vue";
 import type { VTextField } from "vuetify/components";
 type TVDensity = VTextField["$props"]["density"];
 
-const props = defineProps<{
+interface Props {
   title?: string;
   density?: TVDensity;
   label?: string;
@@ -13,8 +12,12 @@ const props = defineProps<{
   tooltipflag?: boolean;
   tooltipMessage?: string;
   type?: string;
-}>();
+  color?: string;
+}
 
+const props = withDefaults(defineProps<Props>(), {
+  color: "bg-primary",
+});
 //const model = ref<boolean>(true);
 
 const emit = defineEmits<{
@@ -24,7 +27,11 @@ const emit = defineEmits<{
 </script>
 <template>
   <v-row no-gutters>
-    <v-col sm="3" class="border-sm bg-primary blue d-flex align-center pl-2">
+    <v-col
+      sm="3"
+      class="border-sm d-flex align-center pl-2"
+      :class="props.color"
+    >
       {{ props.title }}
       <v-tooltip :text="props.tooltipMessage" v-if="props.tooltipflag">
         <template v-slot:activator="{ props }">

@@ -4,6 +4,12 @@ export const requiredValue = (value: string, item: string) => {
   }
   return "";
 };
+export const numberValue = (value: number, item: string) => {
+  if (isNaN(value) || value.toString().length == 0) {
+    return item + "は数値を入力してください。";
+  }
+  return "";
+};
 
 export const checkEmail = (value: string) => {
   if (!value) return "メールアドレスは必須です";
@@ -28,4 +34,34 @@ export const checkLoginID = (value: string) => {
   if (value.length < 4 || value.length > 8)
     return "ログインIDは4文字以上8文字以下で設定してください。";
   return null;
+};
+export const removeTabKey = (e: any) => {
+  if (e.key === "Tab") {
+    e.preventDefault();
+    return false;
+  }
+};
+
+export const checkDate = (year: string, month: string, day: string) => {
+  if (!year || !month || !day) return false;
+  if (
+    !String(year).match(/^[0-9]{4}$/) ||
+    !String(month).match(/^[0-9]{1,2}$/) ||
+    !String(day).match(/^[0-9]{1,2}$/)
+  )
+    return false;
+  const dateObj = new Date(parseInt(year), parseInt(month), parseInt(day)),
+    dateObjStr =
+      dateObj.getFullYear() +
+      "" +
+      zeroPadding(dateObj.getMonth()) +
+      "" +
+      zeroPadding(dateObj.getDate()),
+    checkDateStr = year + "" + month + "" + day;
+  if (dateObjStr == checkDateStr) return true;
+
+  return false;
+};
+export const zeroPadding = (num: number | string) => {
+  return num.toString().padStart(2, "0");
 };

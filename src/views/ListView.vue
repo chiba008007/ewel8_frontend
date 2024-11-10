@@ -109,25 +109,4 @@ const pageClickMove = (pagename: string, id: number) => {
     </template>
   </v-data-table>
 </template>
-<style lang="scss">
-.listable {
-  table {
-    th {
-      border-top: 1px solid #ccc;
-      border-right: 1px solid #ccc;
-      background-color: rgb(var(--v-theme-primary)) !important;
-      color: #fff;
-    }
-    th,
-    td {
-      border-right: 1px solid #ccc;
-      border-bottom: 1px solid #ccc;
-    }
-  }
-}
-
-.v-text-field >>> input {
-  font-size: 1.9em;
-  padding: 0 !important;
-}
-</style>
+<style lang="scss"></style>

@@ -17,6 +17,8 @@ import ExamCheckView from "../views/examinate/CheckView.vue";
 import ExamBrowserUpdateHelpView from "../views/examinate/BrowsserUpdateHelpView.vue";
 import ExamListView from "../views/examinate/ExamListView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
+import testListView from "../views/testListView.vue";
+import testAddView from "../views/testAddView.vue";
 
 import store from "@/store";
 
@@ -98,7 +100,25 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true,
     },
   },
+  // 検査一覧用
+  {
+    path: "/testLists/:id",
+    name: "testLists",
+    component: testListView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/testAdd/:id",
+    name: "testAdd",
+    component: testAddView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
 
+  // 受検用
   {
     path: "/exam",
     name: "exam",

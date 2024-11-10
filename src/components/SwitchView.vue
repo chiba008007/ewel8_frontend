@@ -7,7 +7,7 @@ const model = ref<boolean>(true);
 interface Props {
   density?: TVDensity;
   label?: string;
-  model?: boolean;
+  model?: boolean | string | number;
   type?: string;
 }
 

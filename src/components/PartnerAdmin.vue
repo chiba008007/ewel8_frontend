@@ -1,19 +1,23 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, defineProps } from "vue";
 import UserApiService from "@/services/UserApiService";
+
+const props = defineProps<{
+  coded?: string | undefined;
+}>();
 let key = location.pathname.replace(/[^0-9]/g, "");
 const tmp = {
   partnerId: key,
-  type: "partner",
+  type: props.coded ? props.coded : "partner",
 };
 const partnerDetail = ref();
-
 try {
   UserApiService.getPartnerDetail(tmp).then((res) => {
     const entries = (res as any).data.user;
     partnerDetail.value = entries;
   });
 } catch (e) {
+  alert("detail error");
   console.log(e);
 }
 </script>
