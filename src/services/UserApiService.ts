@@ -49,6 +49,12 @@ class UserApiService {
   getPartnerid(data: object): Promise<object> {
     return httpAuth.post("/api/user/getPartnerid", data);
   }
+  getUserLisence(data: object): Promise<object> {
+    return httpAuth.post("/api/user/getUserLisence", data);
+  }
+  getUserLisenceCalc(data: object): Promise<object> {
+    return httpAuth.post("/api/user/getUserLisenceCalc", data);
+  }
 }
 
 export default new UserApiService();

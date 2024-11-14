@@ -18,6 +18,8 @@ import TextFieldView from "@/components/TextFieldView.vue";
 import { useRouter, useRoute } from "vue-router";
 import UserApiService from "@/services/UserApiService";
 import { numberValue, requiredValue, checkDate } from "../plugins/validate";
+import CardViewPFS from "@/components/CardViewPFS.vue";
+import ElementApiService from "@/services/ElementApiService";
 
 const router = useRouter();
 const route = useRoute();
@@ -66,7 +68,7 @@ if ((user.userdata as any).type === "partner") {
     ];
   });
 }
-const tab = ref(1);
+const tab = ref(2);
 const inputData = ref({
   testname: "",
   testcount: 0,
@@ -93,6 +95,28 @@ const inputData = ref({
   pdfcount: 0,
 });
 
+const lisenceView = ref();
+UserApiService.getUserLisence({
+  user_id: tmpid.value,
+}).then((res: any) => {
+  lisenceView.value = res.data;
+});
+const lisenceViewCalc = ref();
+UserApiService.getUserLisenceCalc({
+  user_id: tmpid.value,
+}).then((res: any) => {
+  lisenceViewCalc.value = res.data;
+});
+const pdfLists = ref(pdfArray);
+const inputPDf = ref([{ key: 0, text: "", value: false }]);
+inputPDf.value = [];
+pdfLists.value.forEach(function (val) {
+  inputPDf.value.push({
+    key: val.key,
+    text: val.text,
+    value: false,
+  });
+});
 const registButton = ref<boolean>(true);
 const onBlurButton = () => {
   registButton.value = true;
@@ -176,7 +200,7 @@ const pdfDateTime = (e: string, type: string) => {
     inputData.value.pdfendday = e;
   }
 };
-const pdfLists = ref(pdfArray);
+
 const onSearch = (e: string) => {
   let tmp = [] as any;
   pdfLists.value = pdfArray;
@@ -198,7 +222,26 @@ const onSearch = (e: string) => {
 const onClick = () => {
   alert(1234);
   console.log(inputData.value);
+  console.log(inputPDf.value);
+  console.log(inputTestPart.value);
 };
+const pdfCheck = (e: any, k: number) => {
+  inputPDf.value[k].value = e ? false : true;
+};
+
+const elements = ref();
+ElementApiService.getElementData().then((res) => {
+  elements.value = res;
+});
+
+const inputTestPart = ref({
+  PFS: {
+    threeflag: false,
+    weightFlag: false,
+    status: false,
+    weight: {},
+  },
+});
 </script>
 <template>
   <PartnerAdmin coded="customer" />
@@ -451,18 +494,60 @@ const onClick = () => {
           @onKeyup="(e) => onSearch(e)"
         ></TextFieldView>
         <CheckboxView
-          v-for="pdf in pdfLists"
+          v-for="(pdf, k) in inputPDf"
           :key="pdf.key"
           :label="pdf.text"
-          :value="pdf.key"
+          :value="pdf.value"
           hide-details="false"
           class="ma-0 pa-0"
+          @onChange="(e) => pdfCheck(e, k)"
         >
         </CheckboxView>
       </section>
     </v-window-item>
-    <v-window-item value="2"> bbb </v-window-item>
-    <v-window-item value="3"> ccc </v-window-item>
+    <v-window-item value="2">
+      <section class="pa-2">
+        <v-row>
+          <v-col cols="12">
+            <div v-for="val in lisenceView" :key="val.id">
+              <CardViewPFS
+                v-if="val.code == 'PFS'"
+                :title="val.jp"
+                :testcount="inputData.testcount"
+                :model="inputTestPart.PFS.threeflag"
+                :weightModel="inputTestPart.PFS.weightFlag"
+                :element="elements"
+                @onThree="
+                  (e) => (inputTestPart.PFS.threeflag = e ? false : true)
+                "
+                @onWeightFlag="
+                  (e) => (inputTestPart.PFS.weightFlag = e ? false : true)
+                "
+                @onWeight="(e) => (inputTestPart.PFS.weight = e)"
+                @onStatus="(e) => (inputTestPart.PFS.status = e)"
+              ></CardViewPFS>
+            </div>
+          </v-col>
+        </v-row>
+      </section>
+    </v-window-item>
+    <v-window-item value="3">
+      <v-row class="pa-0">
+        <v-col
+          cols="2"
+          v-for="lisence in lisenceViewCalc"
+          :key="lisence.id"
+          class="text-cener"
+        >
+          <div class="border-sm ma-2 w-100">
+            <div class="border-b-sm text-center pa-2 bg-lime">
+              {{ lisence.jp }}
+            </div>
+            <p class="text-right pa-2">{{ lisence.num }}</p>
+          </div>
+        </v-col>
+      </v-row>
+    </v-window-item>
   </v-window>
 </template>
 <style lang="scss"></style>

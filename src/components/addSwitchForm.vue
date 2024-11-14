@@ -13,15 +13,16 @@ interface Props {
   tooltipMessage?: string;
   type?: string;
   color?: string;
+  class?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   color: "bg-primary",
+  class: "",
 });
 //const model = ref<boolean>(true);
 
 const emit = defineEmits<{
-  (e: "onUpdate", value: boolean, type: string): void;
   (e: "onClick", value: boolean, type: string): void;
 }>();
 </script>
@@ -39,14 +40,13 @@ const emit = defineEmits<{
         </template>
       </v-tooltip>
     </v-col>
-    <v-col sm="9" class="pa-1 border-sm">
+    <v-col sm="9" class="pa-1 border-sm" :class="props.class">
       <ComponentSwitch
         :title="props.title"
         :label="props.label"
         :density="props.density"
         :model="props.model"
         :type="props.type"
-        @onUpdate="(e, type) => emit('onUpdate', e, type ?? '')"
         @onClick="(e:any, type:any) =>  emit('onClick', e, type ?? '')"
       ></ComponentSwitch>
     </v-col>

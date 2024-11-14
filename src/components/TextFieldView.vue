@@ -20,6 +20,7 @@ interface Props {
   errormessage?: string;
   rules?: string | "" | null | undefined;
   maxlength?: number;
+  step?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -46,6 +47,7 @@ const emit = defineEmits<{
   <v-text-field
     :type="props.type"
     :label="props.text"
+    :step="props.step"
     :placeholder="props.placeholder"
     :variant="props.variant"
     :density="props.density"

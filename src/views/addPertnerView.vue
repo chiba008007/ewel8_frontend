@@ -49,21 +49,7 @@ ElementApiService.getElementData().then((res) => {
 LicenseApiService.getElementData().then((res) => {
   licenses.value = res.value;
 });
-PdfApiService.getElementData().then((res) => {
-  pdfs.value = res.value;
-});
-const pdfList = ref([]);
-const pdfSelectLists = ref();
-const onChange = (event: Event) => {
-  if (event.target) {
-    let str = (event.target as HTMLInputElement).value;
-    pdfList.value.push(str as never);
-  }
-  let arr = [...pdfList.value];
-  pdfSelectLists.value = arr.filter(
-    (x) => arr.indexOf(x) === arr.lastIndexOf(x)
-  );
-};
+
 const postBlur = (e: string, type: string) => {
   if (type === "post1") post1.value = e;
   if (type === "post2") post2.value = e;
@@ -139,10 +125,8 @@ const onMailup = (e: string, type: string) => {
       });
   }
 };
-const requestFlag = ref<boolean>(true);
-const onUpdate = (e: boolean) => {
-  requestFlag.value = e;
-};
+const requestFlag = ref(true);
+
 const registAlert = ref(false);
 const addRegist = () => {
   settingData.value = {
@@ -182,7 +166,6 @@ const addRegist = () => {
         res: res,
         licensesKey: licensesKey.value,
         licensesBody: licensesBody.value,
-        pdfList: pdfList.value,
       };
       UserApiService.setLicense(settingLicense.value).then((res) => {
         console.log("success");
@@ -193,7 +176,6 @@ const addRegist = () => {
   }
 };
 const rules = (value: string | null, text: string) => {
-  console.log(value);
   return !value ? text : null;
 };
 
@@ -212,7 +194,6 @@ const formValidate = () => {
     <v-tab value="2">担当者情報</v-tab>
     <v-tab value="3">行動価値用要素名</v-tab>
     <v-tab value="4">ライセンス</v-tab>
-    <v-tab value="5">出力PDF</v-tab>
   </v-tabs>
 
   <v-row no-gutters>
@@ -327,11 +308,10 @@ const formValidate = () => {
             title="申込み検査ボタン"
             :label="`表示する`"
             density="compact"
-            type="requestFlag"
-            :model="true"
+            :model="requestFlag"
             :tooltipflag="true"
             tooltipMessage="顧客が検査を申込むボタンの表示可否を選択します。"
-            @onUpdate="(e) => onUpdate(e)"
+            @onClick="(e) => (requestFlag = e ? false : true)"
           ></addSwitchForm>
           <addPartnerForm
             title="管理システム名"
@@ -391,7 +371,7 @@ const formValidate = () => {
           <addPartnerForm
             v-for="element in elements"
             :key="element.id"
-            :title="element.note + element.id"
+            :title="element.note"
             :value="element.note"
             text="要素名を入力してください"
             class="w-100"
@@ -439,19 +419,6 @@ const formValidate = () => {
               </v-row>
             </v-list-item>
           </v-list>
-        </v-window-item>
-        <v-window-item value="5">
-          会員自動登録の際に出力されるPDFを選択してください。
-          <v-row class="mt-3">
-            <v-col cols="4" v-for="(pdf, index) in pdfs" :key="pdf">
-              <ComponentCheckbox
-                :label="pdf"
-                :value="index"
-                selected="selected"
-                @change="(event:Event) => onChange(event)"
-              ></ComponentCheckbox>
-            </v-col>
-          </v-row>
         </v-window-item>
       </v-window>
     </v-col>

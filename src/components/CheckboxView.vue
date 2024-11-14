@@ -3,7 +3,7 @@ import { defineProps, withDefaults, defineEmits, ref } from "vue";
 
 interface Props {
   label?: string;
-  value?: number;
+  value?: number | string | undefined | null | boolean;
   selected?: string | undefined | object;
 }
 
@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<Props>(), {
   selected: "selected",
 });
 const emit = defineEmits<{
-  (e: "onChange", val: number): void;
+  (e: "onChange", val: number | string | boolean | null): void;
 }>();
 </script>
 <template>
@@ -21,7 +21,8 @@ const emit = defineEmits<{
     class="ml-2"
     :v-model="props.selected"
     :label="props.label"
-    :value="props.value"
+    :model-value="props.value"
     @onChange="emit('onChange', props.value)"
+    @change="emit('onChange', props.value)"
   ></v-checkbox>
 </template>
