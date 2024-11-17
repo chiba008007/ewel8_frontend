@@ -17,9 +17,11 @@ import addPDFForm from "../components/addPDFForm.vue";
 import TextFieldView from "@/components/TextFieldView.vue";
 import { useRouter, useRoute } from "vue-router";
 import UserApiService from "@/services/UserApiService";
+import TestApiService from "@/services/TestApiService";
 import { numberValue, requiredValue, checkDate } from "../plugins/validate";
 import CardViewPFS from "@/components/CardViewPFS.vue";
 import ElementApiService from "@/services/ElementApiService";
+import AlertView from "@/components/AlertView.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -68,7 +70,7 @@ if ((user.userdata as any).type === "partner") {
     ];
   });
 }
-const tab = ref(2);
+const tab = ref(0);
 const inputData = ref({
   testname: "",
   testcount: 0,
@@ -120,7 +122,7 @@ pdfLists.value.forEach(function (val) {
 const registButton = ref<boolean>(true);
 const onBlurButton = () => {
   registButton.value = true;
-  if (!requiredValue(inputData.value.testname, "顧客企業名")) {
+  if (inputData.value.testname && inputData.value.testcount > 0) {
     registButton.value = false;
   }
 };
@@ -219,11 +221,45 @@ const onSearch = (e: string) => {
     console.log(exc);
   }
 };
+const alertFlag = ref(false);
 const onClick = () => {
-  alert(1234);
-  console.log(inputData.value);
-  console.log(inputPDf.value);
-  console.log(inputTestPart.value);
+  alertFlag.value = false;
+  let tmp = {
+    user_id: tmpid.value,
+    testname: inputData.value.testname,
+    testcount: inputData.value.testcount,
+    nameuseflag: inputData.value.nameuseflag,
+    genderuseflag: inputData.value.genderuseflag,
+    mailremaincount: inputData.value.mailremaincount,
+    startdaytime: inputData.value.startdaytime,
+    enddaytime: inputData.value.enddaytime,
+    resultflag: inputData.value.resultflag,
+    envcheckflag: inputData.value.envcheckflag,
+    enqflag: inputData.value.enqflag,
+    lisencedownloadflag: inputData.value.lisencedownloadflag,
+    examlistdownloadflag: inputData.value.examlistdownloadflag,
+    totaldownloadflag: inputData.value.totaldownloadflag,
+    recomendflag: inputData.value.recomendflag,
+    loginflag: inputData.value.loginflag,
+    logintext: inputData.value.logintext,
+    movietype: inputData.value.movieType,
+    moviedisplayurl: inputData.value.moviedisplayurl,
+    pdfuseflag: inputData.value.pdfuseflag,
+    pdfstartday: inputData.value.pdfstartday,
+    pdfendday: inputData.value.pdfendday,
+    pdfcountflag: inputData.value.pdfcountflag,
+    pdflimitcount: inputData.value.testcount,
+    pdf: inputPDf.value,
+    parts: inputTestPart.value,
+  };
+  try {
+    TestApiService.setTest(tmp).then((res) => {
+      console.log(res);
+      alertFlag.value = true;
+    });
+  } catch (e) {
+    alert("regist error");
+  }
 };
 const pdfCheck = (e: any, k: number) => {
   inputPDf.value[k].value = e ? false : true;
@@ -256,10 +292,17 @@ const inputTestPart = ref({
     <v-tab value="3">販売可能ライセンス</v-tab>
   </v-tabs>
   <div class="ma-2">
+    <AlertView
+      title=""
+      text="検査登録成功しました。"
+      type="success"
+      v-show="alertFlag"
+    ></AlertView>
     <ButtonView
       text="更新"
       color="lime"
       class="mt-3 mb-3"
+      :disabled="registButton"
       @onClick="onClick()"
     />
     <h3>{{ user.testAdd }}</h3>
