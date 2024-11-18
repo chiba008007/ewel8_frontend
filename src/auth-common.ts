@@ -13,8 +13,8 @@ const apiClient: AxiosInstance = axios.create({
     "Access-Control-Allow-Credentials": true,
     Authorization: "Bearer " + JSON.parse(token)?.userToken,
   },
-  // withCredentials: true,
-  // withXSRFToken: true,
+  withCredentials: true,
+  withXSRFToken: true,
 });
 
 export default apiClient;
