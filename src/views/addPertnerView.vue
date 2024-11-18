@@ -117,7 +117,7 @@ const onBlur = (e: string | boolean, type: string) => {
   registButton.value = true;
   if (
     name.value &&
-    checkLoginID(login_id.value).length < 1 &&
+    (checkLoginID(login_id.value) as any) == true &&
     checkPassword(password.value).length < 1
   ) {
     registButton.value = false;
@@ -268,7 +268,7 @@ const formValidate = () => {
             type="login_id"
             :value="login_id"
             messages="半角英数・4文字以上で入力してください。大文字と小文字は区別されます。"
-            :rules="checkLoginID(login_id)"
+            :rules="checkLoginID(login_id) as any"
             :errormessage="errormessageLoginId"
             @onBlur="(ev, type) => onBlur(ev, type)"
           ></addPartnerForm>

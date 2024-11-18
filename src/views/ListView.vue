@@ -18,22 +18,22 @@ const headers = [
   { title: "機能", sortable: false, key: "kino" },
 ];
 
-//sleep(1000);
-
 let tmp = {
   type: "partner",
 };
 const desserts = ref<object[]>([]);
 try {
   UserApiService.getPartner(tmp).then(function (rlt) {
-    const entries = Object.entries(rlt);
-    for (const [key, val] of entries) {
-      if (key == "data") {
-        desserts.value.push(val.user);
+    if (rlt) {
+      const entries = Object.entries(rlt);
+      for (const [key, val] of entries) {
+        if (key == "data") {
+          desserts.value.push(val.user);
+        }
       }
+      // console.log(desserts);
+      loading.value = false;
     }
-    // console.log(desserts);
-    loading.value = false;
   });
 } catch (e) {
   console.log(e);
@@ -68,9 +68,7 @@ const pageClickMove = (pagename: string, id: number) => {
       </v-col>
     </v-row>
   </v-card>
-  <div v-show="loading" class="loader">Now loading...</div>
   <v-data-table
-    v-show="!loading"
     :headers="headers"
     :items="desserts[0]"
     class="listable ma-2"
