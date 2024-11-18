@@ -117,7 +117,7 @@ const onBlur = (e: string | boolean, type: string) => {
   registButton.value = true;
   if (
     name.value &&
-    (checkLoginID(login_id.value) as any) == true &&
+    login_id.value &&
     checkPassword(password.value).length < 1
   ) {
     registButton.value = false;
