@@ -1,3 +1,5 @@
+import UserApiService from "@/services/UserApiService";
+
 export const requiredValue = (value: string, item: string) => {
   if (!value) {
     return item + "は必須です。";
@@ -11,10 +13,31 @@ export const numberValue = (value: number, item: string) => {
   return "";
 };
 
+export const checkLoginID = (value: string) => {
+  if (!value) {
+    return "ログインIDは必須です。";
+  }
+  const pattern = /^[a-zA-Z0-9]{4,8}$/;
+  if (value && !pattern.test(value)) {
+    return "ログインIDは半角英数4文字以上8文字以下で入力してください。";
+  }
+
+  const tmp = UserApiService.checkLoginID(value);
+  return tmp
+    .then(function (rlt) {
+      console.log(rlt.data === 1);
+      if (rlt.data === 1) {
+        return "ログインIDが重複しています。";
+      }
+      return true;
+    })
+    .catch(function () {
+      return true;
+    });
+};
 export const checkEmail = (value: string) => {
-  if (!value) return "メールアドレスは必須です";
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailPattern.test(value)) {
+  if (value && !emailPattern.test(value)) {
     return "メールアドレスの形式に誤りがあります。";
   }
   return "";
@@ -29,12 +52,6 @@ export const checkPassword = (value: string, type = "") => {
   return "";
 };
 
-export const checkLoginID = (value: string) => {
-  if (!value) return "ログインIDは必須です";
-  if (value.length < 4 || value.length > 8)
-    return "ログインIDは4文字以上8文字以下で設定してください。";
-  return null;
-};
 export const removeTabKey = (e: any) => {
   if (e.key === "Tab") {
     e.preventDefault();

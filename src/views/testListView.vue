@@ -8,6 +8,7 @@ import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import { useRouter, useRoute } from "vue-router";
 import UserApiService from "@/services/UserApiService";
+import TestApiService from "@/services/TestApiService";
 
 const router = useRouter();
 const route = useRoute();
@@ -55,76 +56,18 @@ const testheaders = ref([
   { title: "残数", align: "start", key: "zanCount" },
   { title: "機能", align: "start", key: "method" },
 ]);
-// const headers = ref([
-//   { title: "検査種別", align: "start", key: "examType" },
-//   { title: "購入ライセンス", align: "start", key: "buyLisence" },
-//   { title: "販売可能ライセンス", align: "start", key: "saleLisence" },
-//   { title: "受検者数", align: "start", key: "examCount" },
-//   { title: "処理数", align: "start", key: "syoriCount" },
-//   { title: "残数", align: "start", key: "zanCount" },
-// ]);
-// const customerList = ref([
-//   {
-//     campany: "",
-//     examCount: 0,
-//     syoriCount: 0,
-//     zanCount: 0,
-//     method: "",
-//   },
-// ]);
-// const data = ref([
-//   {
-//     examType: "",
-//     buyLisence: 0,
-//     saleLisence: 0,
-//     examCount: 0,
-//     syoriCount: 0,
-//     zanCount: 0,
-//   },
-// ]);
 
-// // ライセンス一覧
-// let tmp = {
-//   user_id: tmpid.value,
-// };
-// UserApiService.getLisencesList(tmp)
-//   .then(function (res: any) {
-//     data.value = [];
-//     res.data.map((val: any) => {
-//       data.value.push({
-//         examType: val.code,
-//         buyLisence: val.num,
-//         saleLisence: 83457,
-//         examCount: 5400,
-//         syoriCount: 5400,
-//         zanCount: 5400,
-//       });
-//     });
-//   })
-//   .catch((e) => {
-//     alert("getLisencesList ERROR" + e);
-//   });
-// // 顧客一覧
-// let ctmp = {
-//   partner_id: tmpid.value,
-// };
-// console.log(ctmp);
-// UserApiService.getCustomerList(ctmp)
-//   .then(function (res: any) {
-//     customerList.value = [];
-//     res.data.map(function (value: any) {
-//       customerList.value.push({
-//         campany: value.name,
-//         examCount: 0,
-//         syoriCount: 0,
-//         zanCount: 0,
-//         method: "",
-//       });
-//     });
-//   })
-//   .catch((e) => {
-//     alert("getCustomerList ERROR" + e);
-//   });
+const tmp = {
+  user_id: tmpid.value,
+};
+const testList = ref();
+TestApiService.getTestList(tmp)
+  .then(function (res) {
+    testList.value = res.data;
+  })
+  .catch(function (e) {
+    console.log(e);
+  });
 
 const tableHeight = ref(100);
 const onResize = () => {
@@ -144,6 +87,7 @@ const onResize = () => {
     <v-col class="ma-1">
       <v-data-table
         :headers="testheaders"
+        :items="testList"
         class="listable ma-2 dataTableStyle"
         :height="tableHeight"
         fixed-header
@@ -151,30 +95,37 @@ const onResize = () => {
       >
         <template v-slot:item="{ item }">
           <tr>
-            <td class="w-25">{{ item.name }}</td>
-            <td class="text-right">{{ item.total }}</td>
-            <td class="text-xs-right">{{ item.length }}</td>
-            <td class="text-xs-right">{{ item.price }}</td>
-            <td class="text-xs-right">{{ item.year }}</td>
-            <td class="text-xs-right">{{ item.zan }}</td>
-            <td class="text-center">
-              <ComponentButton
-                text="企業一覧"
+            <td class="w-25">{{ item.testname }}</td>
+            <td class="text-right">{{ item.testcount }}</td>
+            <td class="text-xs-right">-</td>
+            <td class="text-xs-right">-</td>
+            <td class="text-center w-25" nowrap>
+              <ButtonView
+                text="ID/QRコード"
+                class="text-caption mb-2"
                 color="success"
-                density="compact"
-              />
-              <ComponentButton
-                text="更新"
+                size="small"
+                :href="`/testQr/` + tmpid + `/` + item.id"
+                target="_blank"
+              ></ButtonView>
+              <ButtonView
+                text="追加更新"
+                class="text-caption mb-2 ml-2"
                 color="success"
-                class="ml-2"
-                density="compact"
-              />
-              <ComponentButton
-                text="添付"
+                size="small"
+              ></ButtonView>
+              <ButtonView
+                text="削除"
+                class="text-caption mb-2 ml-2"
+                color="red"
+                size="small"
+              ></ButtonView>
+              <ButtonView
+                text="複製"
+                class="text-caption mb-2 ml-2"
                 color="success"
-                class="ml-2"
-                density="compact"
-              />
+                size="small"
+              ></ButtonView>
             </td>
           </tr>
         </template>

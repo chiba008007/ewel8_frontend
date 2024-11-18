@@ -75,11 +75,12 @@ const inputData = ref({
 const prefs = ref();
 const myimage_path = ref();
 
-const onBlurButton = () => {
+const onBlurButton = async () => {
   registButton.value = true;
   if (
     !requiredValue(inputData.value.name, "顧客企業名") &&
-    !checkLoginID(inputData.value.login_id) &&
+    ((await checkLoginID(inputData.value.login_id)) as boolean | string) ==
+      true &&
     !checkPassword(inputData.value.password) &&
     !requiredValue(inputData.value.tanto_name, "担当者氏名") &&
     !checkEmail(inputData.value.tanto_address)
@@ -133,7 +134,7 @@ const addRegist = () => {
     admin_id: userdata.id,
     partner_id: isPortal[0],
     name: inputData.value.name,
-    email: inputData.value.login_id,
+    // email: inputData.value.login_id,
     password: inputData.value.password,
     company_name: inputData.value.name,
     login_id: inputData.value.login_id,
@@ -221,7 +222,7 @@ const addRegist = () => {
         :requriredIcon="true"
         messages="4文字以上8文字以下で入力してください"
         @onBlur="(ev) => ((inputData.login_id = ev), onBlurButton())"
-        :rules="checkLoginID(inputData.login_id)"
+        :rules="checkLoginID(inputData.login_id) as any"
       ></addPartnerForm>
       <addPartnerForm
         title="パスワード"

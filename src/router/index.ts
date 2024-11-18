@@ -19,6 +19,7 @@ import ExamListView from "../views/examinate/ExamListView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import testListView from "../views/testListView.vue";
 import testAddView from "../views/testAddView.vue";
+import testQrView from "../views/testQrView.vue";
 
 import store from "@/store";
 
@@ -113,6 +114,14 @@ const routes: Array<RouteRecordRaw> = [
     path: "/testAdd/:id",
     name: "testAdd",
     component: testAddView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/testQr/:testid/:id",
+    name: "testQr",
+    component: testQrView,
     meta: {
       requiresAuth: true,
     },

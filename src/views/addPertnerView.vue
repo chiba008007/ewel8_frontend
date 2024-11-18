@@ -16,7 +16,7 @@ import ComponentTextField from "../components/TextFieldView.vue";
 import { Core as YubinBangoCore } from "yubinbango-core2";
 
 import UserApiService from "@/services/UserApiService";
-import { checkEmail, checkPassword } from "../plugins/validate";
+import { checkEmail, checkPassword, checkLoginID } from "../plugins/validate";
 const router = useRouter();
 const pankuzu = [
   { title: "HOME", href: router.resolve({ name: "List" }).href },
@@ -69,6 +69,7 @@ const onlicense = (e: string, type: string) => {
   licensesBody.value.push(e);
 };
 const name = ref();
+const login_id = ref();
 const email = ref();
 const password = ref();
 const system_name = ref();
@@ -79,12 +80,15 @@ const person_address2 = ref();
 const person_tel = ref();
 
 const onBlur = (e: string | boolean, type: string) => {
-  registButton.value = true;
-  if (name.value && email.value && password.value) {
-    registButton.value = false;
-  }
   if (type === "name") name.value = e;
-  if (type === "email") email.value = e;
+  if (type === "login_id") {
+    login_id.value = e;
+    onLoginIDup(e);
+  }
+  if (type === "email") {
+    email.value = e;
+    onMailup(e);
+  }
   if (type === "password") password.value = e;
   if (type === "pref") preftext.value = e;
   if (type === "address") addressText.value = e;
@@ -109,9 +113,18 @@ const onBlur = (e: string | boolean, type: string) => {
   if (type === "element10") elements.value[9].note = e;
   if (type === "element11") elements.value[10].note = e;
   if (type === "element12") elements.value[11].note = e;
+
+  registButton.value = true;
+  if (
+    name.value &&
+    checkLoginID(login_id.value).length < 1 &&
+    checkPassword(password.value).length < 1
+  ) {
+    registButton.value = false;
+  }
 };
 const errormessage = ref("");
-const onMailup = (e: string, type: string) => {
+const onMailup = (e: any) => {
   if (e) {
     let tmp = UserApiService.checkEmail(e);
     tmp
@@ -125,6 +138,23 @@ const onMailup = (e: string, type: string) => {
       });
   }
 };
+const errormessageLoginId = ref("");
+const onLoginIDup = (e: any) => {
+  if (e) {
+    let tmp = UserApiService.checkLoginID(e);
+    tmp
+      .then(function (rlt) {
+        registButton.value = false;
+        if (rlt.data == true) {
+          errormessageLoginId.value = "ログインIDが重複しています。";
+          registButton.value = true;
+        }
+      })
+      .catch(function () {
+        errormessageLoginId.value = "";
+      });
+  }
+};
 const requestFlag = ref(true);
 
 const registAlert = ref(false);
@@ -132,6 +162,7 @@ const addRegist = () => {
   settingData.value = {
     type: "partner",
     name: name.value,
+    login_id: login_id.value,
     email: email.value,
     password: password.value,
     post_code: post1.value + "-" + post2.value,
@@ -230,16 +261,27 @@ const formValidate = () => {
             @onBlur="(ev, type) => onBlur(ev, type)"
           ></addPartnerForm>
           <addPartnerForm
+            title="ログインID"
+            text="ログインIDを入力してください"
+            class="w-75"
+            :hideDetails="`auto`"
+            type="login_id"
+            :value="login_id"
+            messages="半角英数・4文字以上で入力してください。大文字と小文字は区別されます。"
+            :rules="checkLoginID(login_id)"
+            :errormessage="errormessageLoginId"
+            @onBlur="(ev, type) => onBlur(ev, type)"
+          ></addPartnerForm>
+          <addPartnerForm
             title="メールアドレス"
             text="メールアドレスを入力してください"
             class="w-100"
             :hideDetails="false"
-            messages="半角英数・4文字以上で入力してください。大文字と小文字は区別されます。"
+            messages="メールアドレスを入力してください。大文字と小文字は区別されます。"
             :errormessage="errormessage"
             type="email"
             :value="email"
             @onBlur="(ev, type) => onBlur(ev, type)"
-            @onKeyup="(ev, type) => onMailup(ev, type)"
             :rules="checkEmail(email)"
           ></addPartnerForm>
           <addPartnerForm

@@ -20,10 +20,9 @@ UserApiService.checkTest()
   });
 const onClick = () => {
   let data = {
-    email: userId.value,
+    login_id: userId.value,
     password: password.value,
   };
-  console.log(data);
   UserApiService.getPost(data)
     .then((response: any) => {
       console.log(response);

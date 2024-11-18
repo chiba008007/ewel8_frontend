@@ -34,6 +34,9 @@ class UserApiService {
   checkEmail(data: string) {
     return httpAuth.get("/api/user/checkEmail?email=" + data);
   }
+  checkLoginID(data: string) {
+    return httpAuth.get("/api/user/checkLoginID?loginid=" + data);
+  }
   onUpload(form: FormData): Promise<object> {
     return httpUpload.post("/api/user/upload", form);
   }
