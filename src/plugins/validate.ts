@@ -82,3 +82,18 @@ export const checkDate = (year: string, month: string, day: string) => {
 export const zeroPadding = (num: number | string) => {
   return num.toString().padStart(2, "0");
 };
+export const checkBirth = (value: string) => {
+  if (!value) return "生年月日を入力してください。";
+
+  if (!value.match(/^\d{4}\/\d{2}\/\d{2}$/)) {
+    return "生年月日の形式に誤りがあります。";
+  }
+  const y = parseInt(value.split("/")[0]);
+  const m = parseInt(value.split("/")[1]) - 1;
+  const d = parseInt(value.split("/")[2]);
+  const date = new Date(y, m, d);
+  if (date.getFullYear() != y || date.getMonth() != m || date.getDate() != d) {
+    return "生年月日の形式に誤りがあります。";
+  }
+  return "";
+};

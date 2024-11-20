@@ -3,9 +3,27 @@ import { ref } from "vue";
 import ComponentTextField from "@/components/TextFieldView.vue";
 import ComponentButton from "@/components/ButtonView.vue";
 import ExamTitle from "@/components/ExamTitle.vue";
+import AlertView from "@/components/AlertView.vue";
 import { useRouter } from "vue-router";
-
+import ExamApiService from "@/services/ExamApiService";
+import { requiredValue, checkBirth } from "@/plugins/validate";
 const router = useRouter();
+const k = router.currentRoute.value.query.k;
+
+let tmp = { params: k };
+const data = ref();
+const testname = ref("");
+const company_name = ref("");
+const errorflag = ref(false);
+ExamApiService.getExam(tmp)
+  .then(function (rlt) {
+    data.value = rlt.data;
+    company_name.value = data.value.company_name;
+    testname.value = data.value.testname;
+  })
+  .catch((e) => {
+    location.href = "/exam/error";
+  });
 
 const validForm = ref(false);
 const inputData = ref({
@@ -13,20 +31,35 @@ const inputData = ref({
   birth_date: "",
 });
 
-const rules = (value: string | null, text: string) => {
-  return !value ? text : null;
-};
-
 const onClick = () => {
-  router.push({ name: "examProfile" });
+  errorflag.value = false;
+  if (
+    !requiredValue(inputData.value.login_id, "ログインID") &&
+    !checkBirth(inputData.value.birth_date)
+  ) {
+    let tmp = {
+      email: inputData.value.login_id,
+      password: inputData.value.birth_date,
+      test_id: data.value.id,
+    };
+    ExamApiService.examLogin(tmp)
+      .then(function (rlt) {
+        errorflag.value = false;
+        router.push({ name: "examProfile" });
+      })
+      .catch(function (e) {
+        errorflag.value = true;
+        console.log(e);
+      });
+  }
 };
 </script>
 
 <template>
   <ExamTitle
     :logo-src="require('@/assets/logo.png')"
-    :customer-name="`test企業`"
-    :exam-name="`test検査`"
+    :customer-name="company_name"
+    :exam-name="testname"
   />
 
   <v-container>
@@ -45,7 +78,7 @@ const onClick = () => {
           :hideDetails="`auto`"
           @onBlur="(val) => (inputData.login_id = val)"
           class="mb-6"
-          :rules="(val:string|any) => rules(val, 'ログインIDは必須入力です')"
+          :rules="requiredValue(inputData.login_id, 'ログインID')"
         />
         <ComponentTextField
           text="生年月日"
@@ -56,9 +89,15 @@ const onClick = () => {
           @onBlur="(val) => (inputData.birth_date = val)"
           class="mb-6"
           messages="例:1995/11/07"
-          :rules="(val:string|any) => rules(val, '生年月日は必須入力です')"
+          :rules="checkBirth(inputData.birth_date)"
         />
         <div class="text-center">
+          <AlertView
+            text="ログイン失敗"
+            class="mb-2"
+            type="error"
+            v-show="errorflag"
+          ></AlertView>
           <ComponentButton
             text="ログイン"
             class="w-100"

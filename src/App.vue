@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import userLogout from "@/services/UserLogout";
 import { useStoreUser } from "../src/store/user";
 import { useRouter } from "vue-router";
+var uri = new URL(window.location.href);
+const displayFlag = ref(true);
+if (/testQr/.test(uri.pathname)) displayFlag.value = false;
 const usr = useStoreUser();
 const router = useRouter();
 const isLogin = computed(() => {
@@ -20,7 +23,7 @@ const onLogout = () => {
 </script>
 <template>
   <v-app>
-    <v-system-bar window dark v-if="isLogin">
+    <v-system-bar window dark v-if="isLogin" v-show="displayFlag">
       <v-icon>mdi-home</v-icon>
       <span>{{ system_name }}管理画面</span>
       <v-spacer></v-spacer>
