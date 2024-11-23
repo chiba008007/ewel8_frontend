@@ -13,6 +13,15 @@ let tmp = {
 TestApiService.getQRParam(tmp).then(function (res) {
   origin.value = uri.origin + "/exam/?k=" + res.data.params;
 });
+const examList = ref();
+TestApiService.getQRLists(tmp).then(function (res) {
+  examList.value = res.data;
+});
+const headers = [
+  { title: "項番", align: "start", key: "no" },
+  { title: "受検ID", align: "start", key: "exam_id" },
+  { title: "名前", align: "start", key: "name" },
+];
 </script>
 <template>
   <v-row>
@@ -21,5 +30,12 @@ TestApiService.getQRParam(tmp).then(function (res) {
       <div>{{ origin }}</div>
     </v-col>
   </v-row>
+
+  <v-data-table-virtual
+    :headers="headers"
+    :items="examList"
+    height="300"
+    fixed-header="true"
+  ></v-data-table-virtual>
 </template>
 <style lang="scss"></style>

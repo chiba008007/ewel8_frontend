@@ -10,6 +10,9 @@ class TestApiService {
   getTestList(editData: object) {
     return httpAuth.post("/api/test/getTestList", editData);
   }
+  getQRLists(editData: object) {
+    return httpAuth.post("/api/test/getQRLists", editData);
+  }
   getQRParam(data: object) {
     return httpAuth.post("/api/test/getQRParam", data);
   }

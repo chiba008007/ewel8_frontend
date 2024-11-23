@@ -24,6 +24,11 @@ export const gender: NumberCodeOrNullListType = {
   1: "男性",
   2: "女性",
 };
+export const genderArray = [
+  { value: 1, label: "男性" },
+  { value: 2, label: "女性" },
+  { value: 0, label: "選択しない" },
+];
 
 /** スリープ */
 export const sleep = (waitMsec: number) => {

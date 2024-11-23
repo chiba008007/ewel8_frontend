@@ -16,7 +16,12 @@ import ComponentTextField from "../components/TextFieldView.vue";
 import { Core as YubinBangoCore } from "yubinbango-core2";
 
 import UserApiService from "@/services/UserApiService";
-import { checkEmail, checkPassword, checkLoginID } from "../plugins/validate";
+import {
+  requiredValue,
+  checkPassword,
+  checkLoginID,
+  checkEmailRequired,
+} from "../plugins/validate";
 const router = useRouter();
 const pankuzu = [
   { title: "HOME", href: router.resolve({ name: "List" }).href },
@@ -79,16 +84,12 @@ const person2 = ref();
 const person_address2 = ref();
 const person_tel = ref();
 
-const onBlur = (e: string | boolean, type: string) => {
+const onBlur = async (e: string | boolean, type: string) => {
   if (type === "name") name.value = e;
   if (type === "login_id") {
     login_id.value = e;
-    onLoginIDup(e);
   }
-  if (type === "email") {
-    email.value = e;
-    onMailup(e);
-  }
+
   if (type === "password") password.value = e;
   if (type === "pref") preftext.value = e;
   if (type === "address") addressText.value = e;
@@ -117,44 +118,15 @@ const onBlur = (e: string | boolean, type: string) => {
   registButton.value = true;
   if (
     name.value &&
-    login_id.value &&
-    checkPassword(password.value).length < 1
+    ((await checkLoginID(login_id.value)) as boolean | string) == true &&
+    checkPassword(password.value).length < 1 &&
+    requiredValue(person.value, "主担当者氏名").length < 1 &&
+    requiredValue(person_address.value, "主担当者アドレス").length < 1
   ) {
     registButton.value = false;
   }
 };
-const errormessage = ref("");
-const onMailup = (e: any) => {
-  if (e) {
-    let tmp = UserApiService.checkEmail(e);
-    tmp
-      .then(function (rlt) {
-        if (rlt.data == true) {
-          errormessage.value = "メールアドレスが重複しています。";
-        }
-      })
-      .catch(function () {
-        errormessage.value = "";
-      });
-  }
-};
-const errormessageLoginId = ref("");
-const onLoginIDup = (e: any) => {
-  if (e) {
-    let tmp = UserApiService.checkLoginID(e);
-    tmp
-      .then(function (rlt) {
-        registButton.value = false;
-        if (rlt.data == true) {
-          errormessageLoginId.value = "ログインIDが重複しています。";
-          registButton.value = true;
-        }
-      })
-      .catch(function () {
-        errormessageLoginId.value = "";
-      });
-  }
-};
+
 const requestFlag = ref(true);
 
 const registAlert = ref(false);
@@ -206,9 +178,6 @@ const addRegist = () => {
     });
   }
 };
-const rules = (value: string | null, text: string) => {
-  return !value ? text : null;
-};
 
 const formValidate = () => {
   return true;
@@ -256,34 +225,23 @@ const formValidate = () => {
             class="w-100"
             :hideDetails="`auto`"
             type="name"
+            :requriredIcon="true"
             :value="name"
-            :rules="(val:string|any) => rules(val, '企業名は必須入力です')"
+            :rules="requiredValue(name, '企業名')"
             @onBlur="(ev, type) => onBlur(ev, type)"
           ></addPartnerForm>
           <addPartnerForm
             title="ログインID"
             text="ログインIDを入力してください"
             class="w-75"
-            :hideDetails="`auto`"
+            hideDetails="auto"
+            :requriredIcon="true"
             type="login_id"
-            :value="login_id"
             messages="半角英数・4文字以上で入力してください。大文字と小文字は区別されます。"
             :rules="checkLoginID(login_id) as any"
-            :errormessage="errormessageLoginId"
             @onBlur="(ev, type) => onBlur(ev, type)"
           ></addPartnerForm>
-          <addPartnerForm
-            title="メールアドレス"
-            text="メールアドレスを入力してください"
-            class="w-100"
-            :hideDetails="false"
-            messages="メールアドレスを入力してください。大文字と小文字は区別されます。"
-            :errormessage="errormessage"
-            type="email"
-            :value="email"
-            @onBlur="(ev, type) => onBlur(ev, type)"
-            :rules="checkEmail(email)"
-          ></addPartnerForm>
+
           <addPartnerForm
             title="パスワード"
             text="パスワードを入力してください"
@@ -292,6 +250,7 @@ const formValidate = () => {
             messages="半角8文字以上、半角15文字で入力してください。大文字と小文字は区別さ英大文字・英小文字・数、字それぞれを最低1文字ずつ含む必要があります。"
             type="password"
             :value="password"
+            :requriredIcon="true"
             @onBlur="(ev, type) => onBlur(ev, type)"
             :rules="checkPassword(password)"
           ></addPartnerForm>
@@ -370,16 +329,20 @@ const formValidate = () => {
             title="主担当者氏名"
             text="担当者氏名を入力してください"
             class="w-100"
-            :hideDetails="true"
+            :requriredIcon="true"
+            hideDetails="auto"
             type="person"
+            :rules="requiredValue(person, '主担当者氏名')"
             @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
           <addPartnerForm
             title="主担当者アドレス"
             text="担当者メールアドレスを入力してください"
             class="w-100"
-            :hideDetails="true"
+            hideDetails="auto"
+            :requriredIcon="true"
             type="person_address"
+            :rules="checkEmailRequired(person_address)"
             @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
           <addPartnerForm

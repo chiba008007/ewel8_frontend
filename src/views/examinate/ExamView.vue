@@ -7,23 +7,17 @@ import AlertView from "@/components/AlertView.vue";
 import { useRouter } from "vue-router";
 import ExamApiService from "@/services/ExamApiService";
 import { requiredValue, checkBirth } from "@/plugins/validate";
+import { useStoreUser } from "@/store/user";
+const user = useStoreUser();
+
 const router = useRouter();
 const k = router.currentRoute.value.query.k;
 
-let tmp = { params: k };
-const data = ref();
-const testname = ref("");
-const company_name = ref("");
 const errorflag = ref(false);
-ExamApiService.getExam(tmp)
-  .then(function (rlt) {
-    data.value = rlt.data;
-    company_name.value = data.value.company_name;
-    testname.value = data.value.testname;
-  })
-  .catch((e) => {
-    location.href = "/exam/error";
-  });
+const test_id = ref(0);
+const setExamData = (e: object | any) => {
+  test_id.value = e.id;
+};
 
 const validForm = ref(false);
 const inputData = ref({
@@ -40,12 +34,15 @@ const onClick = () => {
     let tmp = {
       email: inputData.value.login_id,
       password: inputData.value.birth_date,
-      test_id: data.value.id,
+      test_id: test_id.value,
     };
     ExamApiService.examLogin(tmp)
-      .then(function (rlt) {
+      .then(function (response) {
+        console.log(response.data);
+        user.setUserDataExamToken(response.data.token);
+        user.setUserExamData(response.data.user);
         errorflag.value = false;
-        router.push({ name: "examProfile" });
+        router.push({ name: "examProfile", query: { k: k } });
       })
       .catch(function (e) {
         errorflag.value = true;
@@ -56,11 +53,7 @@ const onClick = () => {
 </script>
 
 <template>
-  <ExamTitle
-    :logo-src="require('@/assets/logo.png')"
-    :customer-name="company_name"
-    :exam-name="testname"
-  />
+  <ExamTitle :loginflag="false" @onTest="(e) => setExamData(e)" />
 
   <v-container>
     <p class="pt-4 pb-6 text-center">

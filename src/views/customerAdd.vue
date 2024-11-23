@@ -79,8 +79,9 @@ const onBlurButton = async () => {
   registButton.value = true;
   if (
     !requiredValue(inputData.value.name, "顧客企業名") &&
-    ((await checkLoginID(inputData.value.login_id)) as boolean | string) ==
-      true &&
+    ((await checkLoginID(inputData.value.login_id, false)) as
+      | boolean
+      | string) == true &&
     !checkPassword(inputData.value.password) &&
     !requiredValue(inputData.value.tanto_name, "担当者氏名") &&
     !checkEmail(inputData.value.tanto_address)

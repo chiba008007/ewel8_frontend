@@ -277,6 +277,12 @@ const inputTestPart = ref({
     status: false,
     weight: {},
   },
+  BAJ3: {
+    threeflag: false,
+    weightFlag: false,
+    status: false,
+    weight: {},
+  },
 });
 </script>
 <template>
@@ -569,7 +575,24 @@ const inputTestPart = ref({
                 @onWeight="(e) => (inputTestPart.PFS.weight = e)"
                 @onStatus="(e) => (inputTestPart.PFS.status = e)"
               ></CardViewPFS>
-            </div>
+              <!--
+              <CardViewPFS
+                v-if="val.code == 'BA-J3'"
+                :title="val.jp"
+                :testcount="inputData.testcount"
+                :model="inputTestPart.BAJ3.threeflag"
+                :weightModel="inputTestPart.BAJ3.weightFlag"
+                :element="elements"
+                @onThree="
+                  (e) => (inputTestPart.BAJ3.threeflag = e ? false : true)
+                "
+                @onWeightFlag="
+                  (e) => (inputTestPart.BAJ3.weightFlag = e ? false : true)
+                "
+                @onWeight="(e) => (inputTestPart.BAJ3.weight = e)"
+                @onStatus="(e) => (inputTestPart.BAJ3.status = e)"
+              ></CardViewPFS>
+            --></div>
           </v-col>
         </v-row>
       </section>

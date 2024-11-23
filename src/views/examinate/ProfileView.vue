@@ -6,27 +6,28 @@ import ComponentButton from "@/components/ButtonView.vue";
 import ComponentDialogButton from "@/components/DialogButton.vue";
 import ExamTitle from "@/components/ExamTitle.vue";
 import ExamProfileForm from "@/components/ExamProfileForm.vue";
-
+import { requiredValue } from "@/plugins/validate";
+import { genderArray } from "@/plugins/const";
+import RadioView from "@/components/RadioView.vue";
+import ExamApiService from "@/services/ExamApiService";
 const router = useRouter();
+const k = router.currentRoute.value.query.k;
 
 const profile = ref({
-  login_id: "test",
-  name1: "テスト",
-  name2: "花子",
-  kana1: "てすと",
-  kana2: "はなこ",
-  gender: 2,
-  birth_date: "1999/01/01",
+  login_id: "",
+  name1: "",
+  name2: "",
+  kana1: "",
+  kana2: "",
+  genders: 0,
+  birth_date: "",
 });
 
-const dialog = ref(false);
-
-const rules = (value: string | null, text: string) => {
-  return !value ? text : null;
-};
-
+const login_id = ref();
+const buttonFlag = ref(false);
 const onClick = () => {
-  router.push({ name: "examCheckConfirm" });
+  // router.push({ name: "examCheckConfirm" });
+  router.push({ name: "examList", query: { k: k } });
 };
 
 const convertDateFormat = (date: string) => {
@@ -36,21 +37,34 @@ const convertDateFormat = (date: string) => {
   const d = dt.getDate().toString().padStart(2, "0");
   return `${y}年${m}月${d}日`;
 };
+const password = ref();
+ExamApiService.getExamData().then(function (res) {
+  password.value = res?.data.password;
+  profile.value.name1 = res?.data.name1;
+  profile.value.name2 = res?.data.name2;
+  profile.value.kana1 = res?.data.kana1;
+  profile.value.kana2 = res?.data.kana2;
+});
+const buttonCheck = () => {
+  if (
+    requiredValue(profile.value.name1, "姓").length === 0 &&
+    requiredValue(profile.value.name2, "名").length === 0 &&
+    requiredValue(profile.value.kana1, "姓かな").length === 0 &&
+    requiredValue(profile.value.kana2, "名かな").length === 0
+  ) {
+    buttonFlag.value = false;
+  }
+};
 </script>
 
 <template>
-  <ExamTitle
-    :logo-src="require('@/assets/logo.png')"
-    :customer-name="`test企業`"
-    :exam-name="`test検査`"
-  />
-
+  <ExamTitle @onLoginId="(e) => (login_id = e)" />
   <v-container>
     <div class="text-h6">個人情報属性</div>
 
     <v-container>
       <ExamProfileForm title="ログインID">
-        {{ profile.login_id }}
+        {{ login_id }}
       </ExamProfileForm>
       <ExamProfileForm title="氏名" :requriredIcon="true">
         <v-row>
@@ -62,9 +76,9 @@ const convertDateFormat = (date: string) => {
               variant="outlined"
               :hideDetails="`auto`"
               messages="例:佐藤"
-              :rules="(val:string|any) => rules(val, '姓は必須入力です')"
+              :rules="requiredValue(profile.name1, '姓')"
               :value="profile.name1"
-              @onBlur="(val) => (profile.name1 = val)"
+              @onBlur="(val) => ((profile.name1 = val), buttonCheck())"
             ></ComponentTextField>
           </v-col>
           <v-col cols="12" sm="6">
@@ -75,9 +89,9 @@ const convertDateFormat = (date: string) => {
               variant="outlined"
               :hideDetails="`auto`"
               messages="例:太郎"
-              :rules="(val:string|any) => rules(val, '名は必須入力です')"
               :value="profile.name2"
-              @onBlur="(val) => (profile.name2 = val)"
+              :rules="requiredValue(profile.name2, '名')"
+              @onBlur="(val) => ((profile.name2 = val), buttonCheck())"
             ></ComponentTextField>
           </v-col>
         </v-row>
@@ -92,9 +106,9 @@ const convertDateFormat = (date: string) => {
               variant="outlined"
               :hideDetails="`auto`"
               messages="例:さとう"
-              :rules="(val:string|any) => rules(val, '姓は必須入力です')"
               :value="profile.kana1"
-              @onBlur="(val) => (profile.kana1 = val)"
+              :rules="requiredValue(profile.kana1, '姓かな')"
+              @onBlur="(val) => ((profile.kana1 = val), buttonCheck())"
             ></ComponentTextField>
           </v-col>
           <v-col cols="12" sm="6">
@@ -105,23 +119,22 @@ const convertDateFormat = (date: string) => {
               variant="outlined"
               :hideDetails="`auto`"
               messages="例:たろう"
-              :rules="(val:string|any) => rules(val, '名は必須入力です')"
               :value="profile.kana2"
-              @onBlur="(val) => (profile.kana2 = val)"
+              :rules="requiredValue(profile.kana2, '名かな')"
+              @onBlur="(val) => ((profile.kana2 = val), buttonCheck())"
             ></ComponentTextField>
           </v-col>
         </v-row>
       </ExamProfileForm>
       <ExamProfileForm title="性別">
-        <v-radio-group inline :hideDetails="true" v-model="profile.gender">
-          <v-radio label="男性" :value="1"></v-radio>
-          <v-radio label="女性" :value="2"></v-radio>
-          <v-radio label="選択しない" :value="0"></v-radio>
-        </v-radio-group>
-        <small class="text-red">※必須項目ではありません</small>
+        <RadioView
+          :items="genderArray"
+          :model="profile.genders"
+          @onClick="(e) => (profile.genders = e)"
+        ></RadioView>
       </ExamProfileForm>
-      <ExamProfileForm title="生年月日">
-        {{ convertDateFormat(profile.birth_date) }}
+      <ExamProfileForm title="生年月日" v-if="password">
+        {{ convertDateFormat(password) }}
       </ExamProfileForm>
     </v-container>
 
@@ -148,7 +161,12 @@ const convertDateFormat = (date: string) => {
         message="ログイン画面に戻ります。よろしいですか？"
         @onOkClick="$router.back()"
       />
-      <ComponentButton text="次へ" color="primary" @onClick="onClick()" />
+      <ComponentButton
+        text="次へ"
+        color="primary"
+        @onClick="onClick()"
+        :disabled="buttonFlag"
+      />
     </div>
   </v-container>
 </template>

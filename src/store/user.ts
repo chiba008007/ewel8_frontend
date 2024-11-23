@@ -5,8 +5,11 @@ export const useStoreUser = defineStore("user", {
     count: 1,
     count2: 2,
     isLogin: false,
+    isExamLogin: false,
     userdata: {},
     userToken: {},
+    userTokenExam: {},
+    userExam: {},
     home: "HOME",
     customerInfoList: "顧客企業一覧",
     testList: "検査一覧",
@@ -24,6 +27,10 @@ export const useStoreUser = defineStore("user", {
     increment() {
       this.count++;
     },
+    setUserDataExamToken(data: string) {
+      this.userTokenExam = data;
+      this.isExamLogin = true;
+    },
     setUserDataToken(data: string) {
       this.userToken = data;
       this.isLogin = true;
@@ -31,11 +38,17 @@ export const useStoreUser = defineStore("user", {
     setUserData(data: object) {
       this.userdata = data;
     },
+    setUserExamData(data: object) {
+      this.userExam = data;
+    },
     getUserData() {
       return JSON.parse(JSON.stringify(this.userdata));
     },
     IsLogout() {
       this.isLogin = false;
+    },
+    IsLogoutExam() {
+      this.isExamLogin = false;
     },
 
     // ログインした人のIDとパラメータのIDが同じ確認
