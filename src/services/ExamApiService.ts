@@ -9,6 +9,9 @@ class ExamApiService {
   getExam(editData: object) {
     return http.post("/api/exam/getExam", editData);
   }
+  getTestExamMenu(data: object) {
+    return httpAuth.post("/api/exam/getTestExamMenu", data);
+  }
   async getExamData(data = {}) {
     // return httpAuth.post("/api/exam/getExamData");
     const token = localStorage.getItem("user") as string;
