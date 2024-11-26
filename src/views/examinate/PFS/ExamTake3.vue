@@ -1,0 +1,102 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import ExamTitle from "@/components/ExamTitle.vue";
+import ExamParts from "@/components/ExamParts.vue";
+import ExamPage from "./ExamPage.vue";
+import ExamQuestion from "./ExamQuestion.vue";
+import ButtonView from "@/components/ButtonView.vue";
+import exampfs from "@/plugins/exampfs";
+const page = 3;
+const router = useRouter();
+const route = useRoute();
+const k = router.currentRoute.value.query.k;
+
+const disabledFlag = ref(true);
+const examObj = exampfs();
+const questions = examObj.questions.value.question3;
+const testparts_id = route.params.testparts_id;
+const onMenuBack = () => {
+  router.push({
+    name: "examPfsTake2",
+    params: { testparts_id: testparts_id, page: page },
+    query: { k: k },
+  });
+};
+const selectPoint: { [key: string]: number } = {};
+const onSelected = (sel: any) => {
+  sel.value.map(function (value: number, key: number) {
+    if (key > 0) selectPoint[key] = value;
+  });
+  setLoop();
+};
+const onclick = (key: number, point: number) => {
+  selectPoint[key] = point;
+  setLoop();
+};
+const setLoop = () => {
+  disabledFlag.value = false;
+  for (let i = 21; i <= 30; i++) {
+    if (!selectPoint[i]) disabledFlag.value = true;
+  }
+};
+</script>
+
+<template>
+  <ExamTitle />
+  <ExamParts />
+  <v-container fluid class="mt-0">
+    <ExamPage :page="page" />
+    <ExamQuestion
+      :params="k"
+      :testparts_id="testparts_id"
+      :questions="questions"
+      @onSelected="(e:object) => onSelected(e)"
+      @onClick="(key:number, value:number) => onclick(key, value)"
+    />
+    <ButtonView
+      class="mt-3"
+      text="前のページに戻る"
+      :color="`red`"
+      @onClick="onMenuBack()"
+    ></ButtonView>
+    <ButtonView
+      class="mt-3"
+      text="次のページ"
+      :color="`blue`"
+      :class="`ml-2`"
+      :disabled="disabledFlag"
+      @onClick="
+        examObj.onStart(
+          $route.params.testparts_id,
+          k,
+          parseInt(page.toString()) + 1,
+          selectPoint
+        )
+      "
+    ></ButtonView>
+  </v-container>
+</template>
+<style type="text\css" scss>
+.pfs-table {
+  border-collapse: collapse;
+  th.min {
+    width: 40px;
+    padding: 5px;
+    &.ver {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+    }
+  }
+}
+input[type="radio"] {
+  width: 30px;
+  height: 30px;
+  border-radius: 0%;
+  &:checked {
+    width: 35px;
+    height: 35px;
+    transition: all ease-out 100ms;
+  }
+}
+</style>

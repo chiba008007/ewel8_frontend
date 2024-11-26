@@ -29,20 +29,10 @@ let params = {
 };
 const testLength = ref(0);
 ExamApiService.getTestExamMenu(params).then(function (rlt) {
-  console.log(rlt.data);
-  examList.value = rlt.data;
-  testLength.value = rlt.data.length;
+  console.log(rlt?.data);
+  examList.value = rlt?.data;
+  testLength.value = rlt?.data.length;
 });
-/*
-// NOTE: サンプル検査データ
-for (let i of [1, 2, 3]) {
-  examList.value.push({
-    id: i,
-    title: `BA-J${i}`,
-    isComplete: i === 3,
-  });
-}
-*/
 
 const registerAnswer = () => {
   console.log(answerList.value);
@@ -52,6 +42,16 @@ const registerAnswer = () => {
 const test_id = ref(0);
 const setExamData = (e: object | any) => {
   test_id.value = e.id;
+};
+const openTest = (code: string, testparts_id: number) => {
+  let name = "";
+  if (code == "PFS") name = "examPfsGuide";
+  if (name == "") alert("error");
+  router.push({
+    name: name,
+    params: { testparts_id: testparts_id },
+    query: { k: k },
+  });
 };
 </script>
 
@@ -66,7 +66,7 @@ const setExamData = (e: object | any) => {
 
   <v-container>
     <div class="text-h6 mb-4">検査選択メニュー</div>
-    <div class="mb-4 text-center">
+    <div class="mb-4 text-left">
       <div>
         受検して頂く検査は{{ testLength }}つです。<br />
         下記の検査名をクリックして検査をはじめて下さい。
@@ -76,8 +76,16 @@ const setExamData = (e: object | any) => {
         おつかれさまでした。
       </div>
     </div>
-    <div class="text-center mb-4">
-      <v-btn
+    <div class="text-left mb-4">
+      <ComponentButton
+        v-for="exam in examList"
+        :key="exam.testparts_id"
+        :text="exam.code"
+        color="primary"
+        class="w-100 mb-2"
+        @onClick="openTest(exam.code, exam.testparts_id)"
+      ></ComponentButton>
+      <!-- <v-btn
         v-for="exam in examList"
         :key="exam.testparts_id"
         color="primary"
@@ -85,12 +93,12 @@ const setExamData = (e: object | any) => {
       >
         <span class="text-red mr-4">受検済み</span>
         {{ exam.code }}
-      </v-btn>
+      </v-btn> -->
     </div>
-    <div class="text-center w-75 ma-auto">
+    <div class="text-center w-100 ma-auto">
       <iframe
         width="100%"
-        height="315"
+        height="200"
         src="https://www.youtube.com/embed/rxKmGgpWibc"
         title="YouTube video player"
         frameborder="0"

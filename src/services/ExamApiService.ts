@@ -6,11 +6,32 @@ import axios, { AxiosInstance } from "axios";
 import { d_Path } from "@/plugins/const";
 
 class ExamApiService {
+  async getPFS(data: object) {
+    try {
+      return await httpAuth.post("/api/exam/getPFS", data);
+    } catch (e) {
+      alert("error");
+      //location.href = "/exam/error";
+    }
+  }
+  setPFS(data: object) {
+    return httpAuth.post("/api/exam/setPFS", data);
+  }
+  editPFS(data: object) {
+    return httpAuth.post("/api/exam/editPFS", data);
+  }
   getExam(editData: object) {
     return http.post("/api/exam/getExam", editData);
   }
-  getTestExamMenu(data: object) {
-    return httpAuth.post("/api/exam/getTestExamMenu", data);
+  getExamTestParts(data: object) {
+    return httpAuth.post("/api/exam/getExamTestParts", data);
+  }
+  async getTestExamMenu(data: object) {
+    try {
+      return await httpAuth.post("/api/exam/getTestExamMenu", data);
+    } catch (e) {
+      location.href = "/exam/error";
+    }
   }
   async getExamData(data = {}) {
     // return httpAuth.post("/api/exam/getExamData");

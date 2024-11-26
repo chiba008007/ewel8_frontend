@@ -26,26 +26,35 @@ ExamApiService.getExam(tmp)
     company_name.value = data.value.company_name;
     testname.value = data.value.testname;
   })
-  .catch((e) => {
+  .catch(() => {
     location.href = "/exam/error";
   });
 </script>
 
 <template>
   <v-container fluid>
-    <v-row class="pa-4 align-center bg-white">
+    <v-row class="pa-1 align-center bg-white">
       <v-col md="1" cols="3">
         <ComponentImg
           :maxHeight="50"
           :src="require('@/assets/logo.png')"
         ></ComponentImg>
       </v-col>
-      <v-col class="text-h6 pl-2 font-weight-bold" md="11" cols="9">{{
-        company_name
-      }}</v-col>
+      <v-col class="text-h6 pl-2 font-weight-bold" md="11" cols="9">
+        {{ company_name }}
+      </v-col>
     </v-row>
+
+    <div>
+      <v-alert
+        border="top"
+        border-color="primary"
+        elevation="2"
+        v-if="testname"
+        class="w-100 text-caption pa-2 pt-4 ma-1"
+      >
+        {{ testname }}
+      </v-alert>
+    </div>
   </v-container>
-  <div v-if="testname" class="text-h6 font-weight-bold text-center">
-    {{ testname }}
-  </div>
 </template>

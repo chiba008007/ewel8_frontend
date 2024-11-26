@@ -20,6 +20,12 @@ import NotFoundView from "../views/NotFoundView.vue";
 import testListView from "../views/testListView.vue";
 import testAddView from "../views/testAddView.vue";
 import testQrView from "../views/testQrView.vue";
+import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
+import ExamPfsTake from "../views/examinate/PFS/ExamTake.vue";
+import ExamPfsTake2 from "../views/examinate/PFS/ExamTake2.vue";
+import ExamPfsTake3 from "../views/examinate/PFS/ExamTake3.vue";
+import ExamPfsTake4 from "../views/examinate/PFS/ExamTake4.vue";
+import ExamPfsTakeFin from "../views/examinate/PFS/ExamTakeFin.vue";
 
 import store from "@/store";
 
@@ -158,7 +164,36 @@ const routes: Array<RouteRecordRaw> = [
     name: "examList",
     component: ExamListView,
   },
-
+  {
+    path: "/exam/pfs/:testparts_id/guide",
+    name: "examPfsGuide",
+    component: ExamPfsGuide,
+  },
+  {
+    path: "/exam/pfs/:testparts_id/page/1/take",
+    name: "examPfsTake",
+    component: ExamPfsTake,
+  },
+  {
+    path: "/exam/pfs/:testparts_id/page/2/take",
+    name: "examPfsTake2",
+    component: ExamPfsTake2,
+  },
+  {
+    path: "/exam/pfs/:testparts_id/page/3/take",
+    name: "examPfsTake3",
+    component: ExamPfsTake3,
+  },
+  {
+    path: "/exam/pfs/:testparts_id/page/4/take",
+    name: "examPfsTake4",
+    component: ExamPfsTake4,
+  },
+  {
+    path: "/exam/pfs/:testparts_id/page/fin/take",
+    name: "ExamPfsTakeFin",
+    component: ExamPfsTakeFin,
+  },
   {
     path: "/:pathMatch(.*)*",
     name: "notFound",

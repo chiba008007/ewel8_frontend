@@ -12,7 +12,7 @@ interface Props {
   tooltipflag?: boolean;
   defaultyear?: number;
   defaultmonth?: number | string;
-  defaultday?: number | string;
+  defaultday?: number | string | any;
   defaultstarttime?: number | string;
   defaultstartminute?: number | string;
   defaultendtime?: number | string;
@@ -36,11 +36,15 @@ const emit = defineEmits<{
 }>();
 
 const today = new Date();
-
+const yesterday = new Date(
+  today.getFullYear(),
+  today.getMonth(),
+  today.getDate() - 1
+);
 const startdate = ref({
-  startyear: today.getFullYear().toString(),
-  startmonth: zeroPadding(today.getMonth() + 1),
-  startday: zeroPadding(today.getDate()),
+  startyear: yesterday.getFullYear().toString(),
+  startmonth: zeroPadding(yesterday.getMonth() + 1),
+  startday: zeroPadding(yesterday.getDate()),
   starttime: "00",
   startminute: "00",
 });
@@ -51,7 +55,6 @@ const enddate = ref({
   endtime: "23",
   endminute: "59",
 });
-
 const requestDateTime = () => {
   const datetimes =
     startdate.value.startyear +
@@ -118,7 +121,7 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="dayArray"
               class="w-25"
-              :text="props.defaultday"
+              :text="props.defaultday - 1"
               @onBlur="
                 (e) => (
                   (startdate.startday = zeroPadding(e)), requestDateTime()
