@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";
-import ComponentTextField from "../components/TextFieldView.vue";
 
 const props = defineProps<{
   title?: string;

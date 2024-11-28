@@ -16,6 +16,7 @@ const props = defineProps<{
   disabled?: boolean;
   variant?: TVariant;
   density?: TVDensity;
+  status?: string | number;
 }>();
 </script>
 <template>
@@ -26,6 +27,8 @@ const props = defineProps<{
     :disabled="props.disabled"
     :class="props.class"
     @click="emit('onClick')"
-    >{{ props.text }}</v-btn
+  >
+    <span v-if="props.status == 1" class="text-red mr-4">受検済み</span>
+    {{ props.text }}</v-btn
   >
 </template>

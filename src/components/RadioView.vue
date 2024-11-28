@@ -2,14 +2,14 @@
 import { defineProps, defineEmits } from "vue";
 
 const props = defineProps<{
-  model: number;
+  model: number | string;
   items: Array<{
     label: string;
     value: any;
   }>;
 }>();
 const emit = defineEmits<{
-  (e: "onClick", value: number): void;
+  (e: "onChange", value: number): void;
 }>();
 </script>
 <template>
@@ -19,7 +19,7 @@ const emit = defineEmits<{
       :key="item.value"
       :label="item.label"
       :value="item.value"
-      @change="emit('onClick', $event.target.value)"
+      @change="emit('onChange', $event.target.value)"
     ></v-radio>
   </v-radio-group>
 </template>

@@ -24,12 +24,24 @@ const profile = ref({
 });
 
 const login_id = ref();
-const buttonFlag = ref(false);
+const buttonFlag = ref(true);
 const onClick = () => {
+  let tmp = {
+    name: profile.value.name1 + "　" + profile.value.name2,
+    kana: profile.value.kana1 + "　" + profile.value.kana2,
+    gender: profile.value.genders,
+  };
+  ExamApiService.editExamData(tmp).then(function (res) {
+    if (res.data) {
+      router.push({ name: "examList", query: { k: k } });
+    }
+  });
   // router.push({ name: "examCheckConfirm" });
-  router.push({ name: "examList", query: { k: k } });
 };
 
+const onGender = (e: number) => {
+  profile.value.genders = e;
+};
 const convertDateFormat = (date: string) => {
   const dt = new Date(date);
   const y = dt.getFullYear();
@@ -39,11 +51,15 @@ const convertDateFormat = (date: string) => {
 };
 const password = ref();
 ExamApiService.getExamData().then(function (res) {
-  password.value = res?.data.password;
-  profile.value.name1 = res?.data.name1;
-  profile.value.name2 = res?.data.name2;
-  profile.value.kana1 = res?.data.kana1;
-  profile.value.kana2 = res?.data.kana2;
+  if (res) {
+    password.value = res?.data.password;
+    profile.value.name1 = res?.data.name1;
+    profile.value.name2 = res?.data.name2;
+    profile.value.kana1 = res?.data.kana1;
+    profile.value.kana2 = res?.data.kana2;
+    profile.value.genders = res?.data.gender;
+    buttonCheck();
+  }
 });
 const buttonCheck = () => {
   if (
@@ -130,7 +146,7 @@ const buttonCheck = () => {
         <RadioView
           :items="genderArray"
           :model="profile.genders"
-          @onClick="(e) => (profile.genders = e)"
+          @onChange="(e) => onGender(e)"
         ></RadioView>
       </ExamProfileForm>
       <ExamProfileForm title="生年月日" v-if="password">

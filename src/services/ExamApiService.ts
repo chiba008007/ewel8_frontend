@@ -26,6 +26,12 @@ class ExamApiService {
   getExamTestParts(data: object) {
     return httpAuth.post("/api/exam/getExamTestParts", data);
   }
+  checkStatus(data: object) {
+    return httpAuth.post("/api/exam/checkStatus", data);
+  }
+  editExamData(data: object) {
+    return httpAuth.post("/api/exam/editExamData", data);
+  }
   async getTestExamMenu(data: object) {
     try {
       return await httpAuth.post("/api/exam/getTestExamMenu", data);
@@ -46,11 +52,16 @@ class ExamApiService {
           Authorization: "Bearer " + JSON.parse(token)?.userTokenExam,
         },
       });
+      if (!res) {
+        return res;
+      }
       return res;
     } catch (e) {
+      return false;
       console.log(e);
-      location.reload();
+      //  location.reload();
     }
+    return false;
   }
   examLogin(editData: object) {
     return http.post("/api/exam/login", editData);

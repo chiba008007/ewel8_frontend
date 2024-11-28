@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import ExamTitle from "@/components/ExamTitle.vue";
 import ExamParts from "@/components/ExamParts.vue";
 import ButtonView from "@/components/ButtonView.vue";
@@ -8,14 +8,17 @@ import exampfs from "@/plugins/exampfs";
 const router = useRouter();
 const k = router.currentRoute.value.query.k;
 const examObj = exampfs();
-const page = ref(1);
+const route = useRoute();
+const testparts_id = route.params.testparts_id;
 
+const page = ref(1);
 const onMenuBack = () => {
   router.push({
     name: "examList",
     query: { k: k },
   });
 };
+examObj.checkStatus(testparts_id, k);
 </script>
 
 <template>

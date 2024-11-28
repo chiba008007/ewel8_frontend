@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, Ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ExamApiService from "@/services/ExamApiService";
 export declare type LocationQueryValue = string | null;
@@ -290,11 +290,30 @@ export default function () {
       });
     }
   };
-
+  const checkStatus = (
+    testparts_id: number | string[] | string,
+    k: string | LocationQueryValue | LocationQueryValue[]
+  ) => {
+    const tmp = {
+      testparts_id: testparts_id,
+    };
+    ExamApiService.checkStatus(tmp).then(function (rlt: any) {
+      if (!rlt.data) {
+        return true;
+      } else {
+        router.push({
+          name: "examList",
+          query: { k: k },
+        });
+        return false;
+      }
+    });
+  };
   return {
     onStart,
     questions,
     heads,
     getPFS,
+    checkStatus,
   };
 }

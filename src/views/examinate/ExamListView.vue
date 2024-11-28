@@ -29,9 +29,13 @@ let params = {
 };
 const testLength = ref(0);
 ExamApiService.getTestExamMenu(params).then(function (rlt) {
-  console.log(rlt?.data);
   examList.value = rlt?.data;
-  testLength.value = rlt?.data.length;
+  let done = 0;
+  rlt?.data.map(function (val: object | any) {
+    console.log(val);
+    if (val.examstatus == 1) done += 1;
+  });
+  testLength.value = rlt?.data.length - done;
 });
 
 const registerAnswer = () => {
@@ -83,17 +87,10 @@ const openTest = (code: string, testparts_id: number) => {
         :text="exam.code"
         color="primary"
         class="w-100 mb-2"
+        :status="exam.examstatus ? 1 : ''"
+        :disabled="exam.examstatus ? true : false"
         @onClick="openTest(exam.code, exam.testparts_id)"
       ></ComponentButton>
-      <!-- <v-btn
-        v-for="exam in examList"
-        :key="exam.testparts_id"
-        color="primary"
-        class="w-75 mb-2"
-      >
-        <span class="text-red mr-4">受検済み</span>
-        {{ exam.code }}
-      </v-btn> -->
     </div>
     <div class="text-center w-100 ma-auto">
       <iframe
