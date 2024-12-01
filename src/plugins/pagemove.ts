@@ -16,10 +16,18 @@ export default function () {
   const pageClickMoveLink = (pgName: string, code: string) => {
     location.href = "/" + pgName + "?code=" + code;
   };
-
+  const pageTestListModeParam = (
+    pgName: string,
+    testid: number | string,
+    id: number | string
+  ) => {
+    //alert(1234);
+    router.push({ name: pgName, params: { testid: testid, id: id } });
+  };
   return {
     pageClickMoveParam,
     pageClickMoveParamCode,
     pageClickMoveLink,
+    pageTestListModeParam,
   };
 }

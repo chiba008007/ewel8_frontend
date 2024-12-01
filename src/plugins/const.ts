@@ -24,6 +24,12 @@ export const gender: NumberCodeOrNullListType = {
   1: "男性",
   2: "女性",
 };
+/** 合否 */
+export const passArray: object = {
+  0: "未指定",
+  1: "合格",
+  2: "不合格",
+};
 export const genderArray = [
   { value: 1, label: "男性" },
   { value: 2, label: "女性" },
@@ -173,4 +179,27 @@ export const pdfArray = [
   { key: 29, groupId: 7, text: "BMS検査結果レポート（面接版）" },
   { key: 30, groupId: 8, text: "ブランド感度力診断" },
   { key: 31, groupId: 9, text: "BCO" },
+];
+/** CSVヘッダ */
+export const csvHead = [
+  "検査名",
+  "パートナー企業",
+  "顧客企業",
+  "集団適応力",
+  "最大偏差値の要素名",
+];
+export const csvHeader = [
+  "番号",
+  "受検者ID",
+  "受検者名",
+  "受検者名かな",
+  "生年月日",
+  "年齢",
+  "性別",
+  "合否",
+  "メモ１",
+  "メモ２",
+  "受検日",
+  "受検開始時間",
+  "受検時間",
 ];

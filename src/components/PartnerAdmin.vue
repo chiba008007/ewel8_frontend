@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, defineProps } from "vue";
 import UserApiService from "@/services/UserApiService";
+import { useRouter } from "vue-router";
 
 const props = defineProps<{
   coded?: string | undefined;
 }>();
-let key = location.pathname.replace(/[^0-9]/g, "");
+
+const router = useRouter();
+let key = router.currentRoute.value.params.id;
 const tmp = {
   partnerId: key,
   type: props.coded ? props.coded : "partner",

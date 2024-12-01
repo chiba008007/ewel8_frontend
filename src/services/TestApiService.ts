@@ -16,6 +16,12 @@ class TestApiService {
   getQRParam(data: object) {
     return httpAuth.post("/api/test/getQRParam", data);
   }
+  getExam(data: object) {
+    return httpAuth.post("/api/test/getTestDetail", data);
+  }
+  getCsvList(data: object) {
+    return httpAuth.post("/api/test/getCsvList", data);
+  }
 }
 
 export default new TestApiService();

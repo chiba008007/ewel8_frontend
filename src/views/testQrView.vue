@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import TestApiService from "@/services/TestApiService";
 var uri = new URL(window.location.href);
 const origin = ref();
 const route = useRoute();
-const ex = route.path.split("/");
+const router = useRouter();
+let key = router.currentRoute.value.params.id;
+let testid = router.currentRoute.value.params.testid;
 let tmp = {
-  user_id: ex[2],
-  test_id: ex[3],
+  user_id: key,
+  test_id: testid,
 };
 TestApiService.getQRParam(tmp).then(function (res) {
   origin.value = uri.origin + "/exam/?k=" + res.data.params;

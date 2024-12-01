@@ -60,7 +60,8 @@ const onLogout = () => {
   &.dataTableStyle {
     table {
       th {
-        background-color: green !important;
+        background-color: rgb(6, 146, 6) !important;
+        white-space: nowrap;
       }
     }
   }

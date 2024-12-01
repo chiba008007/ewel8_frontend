@@ -11,6 +11,9 @@ class UserApiService {
   checkTest() {
     return http.get("/api/test");
   }
+  getUserElement(data: object) {
+    return httpAuth.post("/api/user/getUserElement", data);
+  }
   editLoginAdmin(editData: object) {
     return httpAuth.post("/api/user/adminEdit", editData);
   }
@@ -38,8 +41,13 @@ class UserApiService {
       location.reload();
     }
   }
-  getPartnerDetail(data: object): Promise<object> {
-    return httpAuth.post("/api/user/getPartnerDetail", data);
+  async getPartnerDetail(data: object) {
+    try {
+      return await httpAuth.post("/api/user/getPartnerDetail", data);
+    } catch (e) {
+      alert("error");
+      //location.href="/error"
+    }
   }
   setPartner(data: object): Promise<object> {
     return httpAuth.post("/api/user/setUserData", data);

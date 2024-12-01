@@ -20,6 +20,7 @@ import NotFoundView from "../views/NotFoundView.vue";
 import testListView from "../views/testListView.vue";
 import testAddView from "../views/testAddView.vue";
 import testQrView from "../views/testQrView.vue";
+import testExamListView from "../views/testExamListView.vue";
 import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
 import ExamPfsTake from "../views/examinate/PFS/ExamTake.vue";
 import ExamPfsTake2 from "../views/examinate/PFS/ExamTake2.vue";
@@ -125,9 +126,17 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/testQr/:testid/:id",
+    path: "/testQr/:id/test/:testid",
     name: "testQr",
     component: testQrView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/testExamList/:id/test/:testid",
+    name: "testExamList",
+    component: testExamListView,
     meta: {
       requiresAuth: true,
     },

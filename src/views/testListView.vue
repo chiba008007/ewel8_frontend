@@ -9,7 +9,9 @@ import ButtonView from "@/components/ButtonView.vue";
 import { useRouter, useRoute } from "vue-router";
 import UserApiService from "@/services/UserApiService";
 import TestApiService from "@/services/TestApiService";
-
+import pageClickMove from "@/plugins/pagemove";
+import pankuzuTestList from "../components/pankuzuTestList.vue";
+const move = pageClickMove();
 const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
@@ -18,36 +20,6 @@ const tmpid = ref(route.path.replace(/[^0-9]/g, ""));
 
 // const userdata = user.userdata;
 // console.log(user.userdata);
-
-const partner_id = ref();
-const pankuzu = ref();
-if ((user.userdata as any).type === "partner") {
-  pankuzu.value = [{ title: user.customerInfoList }];
-} else {
-  let pid = UserApiService.getPartnerid({
-    id: tmpid.value,
-    type: "customer",
-  });
-  pid.then((e: any) => {
-    partner_id.value = parseInt(e.data);
-
-    pankuzu.value = [
-      { title: user.home, href: router.resolve({ name: "List" }).href },
-      {
-        title: user.customerInfoList,
-        href: router.resolve({
-          name: "customerList",
-          params: {
-            id: partner_id.value,
-          },
-        }).href,
-      },
-      {
-        title: user.testList,
-      },
-    ];
-  });
-}
 
 const testheaders = ref([
   { title: "企業名", align: "start", key: "campany" },
@@ -82,8 +54,8 @@ const onResize = () => {
     <TestMenu />
   </v-row>
 
-  <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
-  <v-row>
+  <pankuzuTestList></pankuzuTestList>
+  <v-row v-resize="onResize">
     <v-col class="ma-1">
       <v-data-table
         :headers="testheaders"
@@ -95,7 +67,15 @@ const onResize = () => {
       >
         <template v-slot:item="{ item }">
           <tr>
-            <td class="w-25">{{ item.testname }}</td>
+            <td class="w-25">
+              <a
+                class="text-link"
+                @click="
+                  move.pageTestListModeParam('testExamList', item.id, tmpid)
+                "
+                >{{ item.testname }}</a
+              >
+            </td>
             <td class="text-right">{{ item.testcount }}</td>
             <td class="text-xs-right">-</td>
             <td class="text-xs-right">-</td>
@@ -105,8 +85,8 @@ const onResize = () => {
                 class="text-caption mb-2"
                 color="success"
                 size="small"
-                :href="`/testQr/` + tmpid + `/` + item.id"
                 target="_blank"
+                @click="move.pageTestListModeParam('testQr', item.id, tmpid)"
               ></ButtonView>
               <ButtonView
                 text="追加更新"
@@ -133,4 +113,14 @@ const onResize = () => {
     </v-col>
   </v-row>
 </template>
-<style lang="scss"></style>
+<style lang="scss">
+a.text-link {
+  color: #0400ff;
+  cursor: pointer;
+  transition: 0.5s;
+  &:hover {
+    color: #00ff00;
+    transition: 0.5s;
+  }
+}
+</style>
