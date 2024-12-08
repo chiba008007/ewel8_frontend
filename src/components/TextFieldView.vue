@@ -58,7 +58,6 @@ const emit = defineEmits<{
     :class="props.class"
     :rules="props.rules ? [props.rules] : undefined"
     :maxlength="props.maxlength"
-    @keydown="removeTabKey($event)"
     @keyup="emit('onKeyup', $event.target.value, props.name ?? '')"
     @blur="emit('onBlur', $event.target.value, props.name ?? '')"
   ></v-text-field>

@@ -54,7 +54,8 @@ export const pfsCsv = (params: tmpType) => {
       const items = [] as any;
       let no = 1;
       const pass = ref();
-      data.data.forEach((value: any) => {
+      const testname = data.data.test;
+      data.data.list.forEach((value: any) => {
         const k = value.pfs.max;
         let maxes = "";
         if (k) {
@@ -137,16 +138,16 @@ export const pfsCsv = (params: tmpType) => {
         no++;
       });
 
-      downloadCSV(head, header, items);
+      downloadCSV(head, header, items, testname);
     });
   });
 };
 
-const downloadCSV = (head: any, header: string, items: any) => {
+const downloadCSV = (head: any, header: string, items: any, testname: any) => {
   let csv = "";
-  csv += "\ufeff" + head[0] + "\n";
-  csv += "\ufeff" + head[1] + "\n";
-  csv += "\ufeff" + head[2] + "\n";
+  csv += "\ufeff" + head[0] + "," + testname["testname"] + "\n";
+  csv += "\ufeff" + head[1] + "," + testname["partnername"] + "\n";
+  csv += "\ufeff" + head[2] + "," + testname["customername"] + "\n";
   csv += "\ufeff" + header;
   items.forEach((el: any) => {
     const line =

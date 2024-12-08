@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ComponentTextField from "@/components/TextFieldView.vue";
+import BirthComponent from "@/components/BirthComponent.vue";
+
 import ComponentButton from "@/components/ButtonView.vue";
 import ExamTitle from "@/components/ExamTitle.vue";
 import AlertView from "@/components/AlertView.vue";
 import { useRouter } from "vue-router";
 import ExamApiService from "@/services/ExamApiService";
-import { requiredValue, checkBirth } from "@/plugins/validate";
+import { requiredValue, checkBirth, zeroPadding } from "@/plugins/validate";
 import { useStoreUser } from "@/store/user";
-const user = useStoreUser();
 
+const user = useStoreUser();
 const router = useRouter();
 const k = router.currentRoute.value.query.k;
-
 const errorflag = ref(false);
 const test_id = ref(0);
+
 const setExamData = (e: object | any) => {
   test_id.value = e.id;
 };
@@ -23,17 +25,23 @@ const validForm = ref(false);
 const inputData = ref({
   login_id: "",
   birth_date: "",
+  birth_year: "",
+  birth_month: "1",
+  birth_day: "1",
 });
 
 const onClick = () => {
   errorflag.value = false;
-  if (
-    !requiredValue(inputData.value.login_id, "ログインID") &&
-    !checkBirth(inputData.value.birth_date)
-  ) {
+  const password =
+    inputData.value.birth_year +
+    "/" +
+    zeroPadding(inputData.value.birth_month) +
+    "/" +
+    zeroPadding(inputData.value.birth_day);
+  if (!requiredValue(inputData.value.login_id, "ログインID")) {
     let tmp = {
       email: inputData.value.login_id,
-      password: inputData.value.birth_date,
+      password: password,
       test_id: test_id.value,
     };
     ExamApiService.examLogin(tmp)
@@ -73,18 +81,16 @@ const onClick = () => {
           class="mb-6"
           :rules="requiredValue(inputData.login_id, 'ログインID')"
         />
-        <ComponentTextField
-          text="生年月日"
-          name="birth_date"
-          density="compact"
-          variant="outlined"
-          :hideDetails="`auto`"
-          @onBlur="(val) => (inputData.birth_date = val)"
-          class="mb-6"
-          messages="例:1995/11/07"
-          :rules="checkBirth(inputData.birth_date)"
-        />
-        <div class="text-center">
+
+        <BirthComponent
+          :monthValue="inputData.birth_month"
+          :dayValue="inputData.birth_day"
+          :yearValue="inputData.birth_year"
+          @onMonthChange="(e) => (inputData.birth_month = e)"
+          @onDayChange="(e) => (inputData.birth_day = e)"
+          @onYear="(e) => (inputData.birth_year = e)"
+        ></BirthComponent>
+        <div class="text-center mt-5">
           <AlertView
             text="ログイン失敗"
             class="mb-2"

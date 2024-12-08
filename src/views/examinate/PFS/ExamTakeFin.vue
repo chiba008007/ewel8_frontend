@@ -45,14 +45,4 @@ const onMenuBack = () => {
     }
   }
 }
-input[type="radio"] {
-  width: 30px;
-  height: 30px;
-  border-radius: 0%;
-  &:checked {
-    width: 35px;
-    height: 35px;
-    transition: all ease-out 100ms;
-  }
-}
 </style>

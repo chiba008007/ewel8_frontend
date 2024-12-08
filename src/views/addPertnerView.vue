@@ -42,6 +42,8 @@ const fax = ref();
 const registButton = ref(true);
 const settingData = ref();
 const settingLicense = ref();
+const errorTab1 = ref(3);
+const errorTab2 = ref(2);
 const onSearch = (ev: string) => {
   licenses.value = LicenseApiService.getSearchData(ev);
 };
@@ -116,6 +118,17 @@ const onBlur = async (e: string | boolean, type: string) => {
   if (type === "element12") elements.value[11].note = e;
 
   registButton.value = true;
+
+  errorTab1.value = 3;
+  if (name.value.length > 0) errorTab1.value -= 1;
+  if (((await checkLoginID(login_id.value)) as boolean | string) == true)
+    errorTab1.value -= 1;
+  if (checkPassword(password.value).length < 1) errorTab1.value -= 1;
+  if (requiredValue(person.value, "主担当者氏名").length < 1)
+    errorTab2.value -= 1;
+  if (requiredValue(person_address.value, "主担当者アドレス").length < 1)
+    errorTab2.value -= 1;
+
   if (
     name.value &&
     ((await checkLoginID(login_id.value)) as boolean | string) == true &&
@@ -188,12 +201,20 @@ const formValidate = () => {
     <AdminMenu />
   </v-row>
   <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
-
+  <p class="text-lowercase ml-2">赤丸内の数が残り必須入力数になります。</p>
   <v-tabs v-model="tab">
-    <v-tab value="1">パートナー情報</v-tab>
-    <v-tab value="2">担当者情報</v-tab>
-    <v-tab value="3">行動価値用要素名</v-tab>
+    <v-tab value="1">
+      <v-badge color="error" :content="errorTab1" floating>
+        パートナー情報
+      </v-badge>
+    </v-tab>
+    <v-tab value="2">
+      <v-badge color="error" :content="errorTab2" floating>
+        担当者情報
+      </v-badge>
+    </v-tab>
     <v-tab value="4">ライセンス</v-tab>
+    <v-tab value="3">行動価値用要素名</v-tab>
   </v-tabs>
 
   <v-row no-gutters>

@@ -7,7 +7,7 @@ type TVDensity = VTextField["$props"]["density"];
 
 interface Props {
   type?: string;
-  items?: object[];
+  items?: object[] | string[] | string | number[];
   name?: string;
   text?: string | number;
   placeholder?: string;
@@ -37,6 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
   (e: "onBlur", value: string): void;
+  (e: "onChange", value: string): void;
 }>();
 </script>
 <template>
@@ -52,5 +53,6 @@ const emit = defineEmits<{
     :model-value="props.text"
     @keydown="removeTabKey($event)"
     @blur="emit('onBlur', $event.target.value)"
+    @update:modelValue="emit('onChange', $event)"
   ></v-select>
 </template>

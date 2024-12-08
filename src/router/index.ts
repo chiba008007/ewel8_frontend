@@ -213,6 +213,9 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior: function (to, from, savedPosition) {
+    document.getElementById("app")?.scrollIntoView();
+  },
 });
 
 router.beforeEach((to, from, next) => {

@@ -144,6 +144,7 @@ const buttonCheck = () => {
       </ExamProfileForm>
       <ExamProfileForm title="性別">
         <RadioView
+          :default="profile.genders"
           :items="genderArray"
           :model="profile.genders"
           @onChange="(e) => onGender(e)"

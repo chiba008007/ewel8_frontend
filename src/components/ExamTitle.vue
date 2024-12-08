@@ -4,7 +4,14 @@ import { defineProps } from "vue";
 import ComponentImg from "@/components/imgView.vue";
 import ExamApiService from "@/services/ExamApiService";
 import { useRouter } from "vue-router";
+import { useStoreUser } from "@/store/user";
+import userLogout from "@/services/UserLogout";
 
+const usr = useStoreUser();
+if (usr.isLogin) {
+  userLogout.logout();
+  usr.IsLogout();
+}
 const emit = defineEmits<{
   (e: "onTest", value: object): void;
   (e: "onLoginId", value: string): void;
