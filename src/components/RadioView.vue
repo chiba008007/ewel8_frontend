@@ -20,7 +20,8 @@ const emit = defineEmits<{
       :key="item.value"
       :label="item.label"
       :value="item.value"
-      @change="emit('onChange', $event.target.value)"
+      @mousedown="emit('onChange', $event.target.value)"
+      @click:append="emit('onChange', $event.target.value)"
     ></v-radio>
   </v-radio-group>
 </template>

@@ -54,7 +54,6 @@ const onClick = () => {
       })
       .catch(function (e) {
         errorflag.value = true;
-        console.log(e);
       });
   }
 };

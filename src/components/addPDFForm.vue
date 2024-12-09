@@ -5,7 +5,7 @@ import TextFieldView from "./TextFieldView.vue";
 import ComponentSwitch from "@/components/SwitchView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
 import { monthArray, dayArray } from "@/plugins/const";
-import { zeroPadding, numberValue } from "@/plugins/validate";
+import { zeroPadding, numberValue, zeroZapress } from "@/plugins/validate";
 const props = defineProps<{
   title?: string;
   hideDetails?: boolean | "auto";
@@ -80,7 +80,7 @@ const pdfCount = ref(0);
       <div class="mt-6">
         <p>PDF出力可能期間</p>
         <v-row no-gutters>
-          <v-col cols="6">
+          <v-col cols="8">
             <p class="text-caption">【開始日付】</p>
             <div class="d-flex">
               <TextFieldView
@@ -92,9 +92,13 @@ const pdfCount = ref(0);
               <span class="mt-3 text-caption">年</span>
               <SelectFieldView
                 :items="monthArray"
-                :text="props.defaultmonth"
+                :text="
+                  startdate.startmonth
+                    ? zeroZapress(startdate.startmonth)
+                    : props.defaultmonth
+                "
                 class="w-25"
-                @onBlur="
+                @onChange="
                   (e) => (
                     (startdate.startmonth = zeroPadding(e)), requestDateTime()
                   )
@@ -103,8 +107,12 @@ const pdfCount = ref(0);
               <SelectFieldView
                 :items="dayArray"
                 class="w-25"
-                :text="props.defaultday"
-                @onBlur="
+                :text="
+                  startdate.startday
+                    ? zeroZapress(startdate.startday)
+                    : props.defaultday
+                "
+                @onChange="
                   (e) => (
                     (startdate.startday = zeroPadding(e)), requestDateTime()
                   )
@@ -112,7 +120,7 @@ const pdfCount = ref(0);
               /><span class="mt-3 text-caption">日</span>
             </div>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="8">
             <p class="text-caption">【終了日付】</p>
             <div class="d-flex">
               <TextFieldView
@@ -124,9 +132,13 @@ const pdfCount = ref(0);
               <span class="mt-3 text-caption">年</span>
               <SelectFieldView
                 :items="monthArray"
-                :text="props.defaultmonth"
+                :text="
+                  enddate.endmonth
+                    ? zeroZapress(enddate.endmonth)
+                    : props.defaultmonth
+                "
                 class="w-25"
-                @onBlur="
+                @onChange="
                   (e) => (
                     (enddate.endmonth = zeroPadding(e)), requestDateTimeEND()
                   )
@@ -135,10 +147,14 @@ const pdfCount = ref(0);
               <SelectFieldView
                 :items="dayArray"
                 class="w-25"
-                :text="props.defaultday"
-                @onBlur="
+                :text="
+                  enddate.endday
+                    ? zeroZapress(enddate.endday)
+                    : props.defaultday
+                "
+                @onChange="
                   (e) => (
-                    (enddate.endmonth = zeroPadding(e)), requestDateTimeEND()
+                    (enddate.endday = zeroPadding(e)), requestDateTimeEND()
                   )
                 "
               /><span class="mt-3 text-caption">日</span>

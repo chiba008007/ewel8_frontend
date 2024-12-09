@@ -3,7 +3,7 @@ import { defineProps, defineEmits, withDefaults, ref } from "vue";
 import TextFieldView from "@/components/TextFieldView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
 import { monthArray, dayArray, timeArray, minuteArray } from "@/plugins/const";
-import { zeroPadding, requiredValue } from "@/plugins/validate";
+import { zeroPadding, zeroZapress } from "@/plugins/validate";
 interface Props {
   title?: string;
   color?: string;
@@ -110,9 +110,13 @@ const requestDateEndTime = () => {
             <span class="mt-3 text-caption">年</span>
             <SelectFieldView
               :items="monthArray"
-              :text="props.defaultmonth"
+              :text="
+                startdate.startmonth
+                  ? zeroZapress(startdate.startmonth)
+                  : props.defaultmonth
+              "
               class="w-25"
-              @onBlur="
+              @onChange="
                 (e) => (
                   (startdate.startmonth = zeroPadding(e)), requestDateTime()
                 )
@@ -121,8 +125,12 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="dayArray"
               class="w-25"
-              :text="props.defaultday - 1"
-              @onBlur="
+              :text="
+                startdate.startday
+                  ? zeroZapress(startdate.startday)
+                  : props.defaultday - 1
+              "
+              @onChange="
                 (e) => (
                   (startdate.startday = zeroPadding(e)), requestDateTime()
                 )
@@ -131,8 +139,12 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="timeArray"
               class="w-25"
-              :text="props.defaultstarttime"
-              @onBlur="
+              :text="
+                startdate.starttime
+                  ? zeroZapress(startdate.starttime)
+                  : props.defaultstarttime
+              "
+              @onChange="
                 (e) => (
                   (startdate.starttime = zeroPadding(e)), requestDateTime()
                 )
@@ -141,8 +153,12 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="minuteArray"
               class="w-25"
-              :text="props.defaultstartminute"
-              @onBlur="
+              :text="
+                startdate.startminute
+                  ? zeroZapress(startdate.startminute)
+                  : props.defaultstartminute
+              "
+              @onChange="
                 (e) => (
                   (startdate.startminute = zeroPadding(e)), requestDateTime()
                 )
@@ -165,9 +181,13 @@ const requestDateEndTime = () => {
             <span class="mt-3 text-caption">年</span>
             <SelectFieldView
               :items="monthArray"
-              :text="props.defaultmonth"
+              :text="
+                enddate.endmonth
+                  ? zeroZapress(enddate.endmonth)
+                  : props.defaultmonth
+              "
               class="w-25"
-              @onBlur="
+              @onChange="
                 (e) => (
                   (enddate.endmonth = zeroPadding(e)), requestDateEndTime()
                 )
@@ -175,17 +195,23 @@ const requestDateEndTime = () => {
             /><span class="mt-3 text-caption">月</span>
             <SelectFieldView
               :items="dayArray"
-              :text="props.defaultday"
+              :text="
+                enddate.endday ? zeroZapress(enddate.endday) : props.defaultday
+              "
               class="w-25"
-              @onBlur="
+              @onChange="
                 (e) => ((enddate.endday = zeroPadding(e)), requestDateEndTime())
               "
             /><span class="mt-3 text-caption">日</span>
             <SelectFieldView
               :items="timeArray"
               class="w-25"
-              :text="props.defaultendtime"
-              @onBlur="
+              :text="
+                enddate.endtime
+                  ? zeroZapress(enddate.endtime)
+                  : props.defaultendtime
+              "
+              @onChange="
                 (e) => (
                   (enddate.endtime = zeroPadding(e)), requestDateEndTime()
                 )
@@ -194,10 +220,14 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="minuteArray"
               class="w-25"
-              :text="props.defaultendminute"
-              @onBlur="
+              :text="
+                enddate.endminute
+                  ? zeroZapress(enddate.endminute)
+                  : props.defaultendminute
+              "
+              @onChange="
                 (e) => (
-                  (enddate.endtime = zeroPadding(e)), requestDateEndTime()
+                  (enddate.endminute = zeroPadding(e)), requestDateEndTime()
                 )
               "
             /><span class="mt-3 text-caption">分</span>

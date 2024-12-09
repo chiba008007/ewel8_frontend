@@ -31,6 +31,7 @@ const onClick = () => {
     kana: profile.value.kana1 + "　" + profile.value.kana2,
     gender: profile.value.genders,
   };
+  console.log(tmp);
   ExamApiService.editExamData(tmp).then(function (res) {
     if (res.data) {
       router.push({ name: "examList", query: { k: k } });
@@ -50,17 +51,19 @@ const convertDateFormat = (date: string) => {
   return `${y}年${m}月${d}日`;
 };
 const password = ref();
-ExamApiService.getExamData().then(function (res) {
-  if (res) {
-    password.value = res?.data.password;
-    profile.value.name1 = res?.data.name1;
-    profile.value.name2 = res?.data.name2;
-    profile.value.kana1 = res?.data.kana1;
-    profile.value.kana2 = res?.data.kana2;
-    profile.value.genders = res?.data.gender;
-    buttonCheck();
-  }
-});
+ExamApiService.getExamData()
+  .then(function (res) {
+    if (res) {
+      password.value = res?.data.password;
+      profile.value.name1 = res?.data.name1;
+      profile.value.name2 = res?.data.name2;
+      profile.value.kana1 = res?.data.kana1;
+      profile.value.kana2 = res?.data.kana2;
+      profile.value.genders = res?.data.gender;
+      buttonCheck();
+    }
+  })
+  .catch((error) => console.log(error));
 const buttonCheck = () => {
   if (
     requiredValue(profile.value.name1, "姓").length === 0 &&

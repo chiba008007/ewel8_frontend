@@ -251,6 +251,7 @@ const onClick = () => {
     pdflimitcount: inputData.value.testcount,
     pdf: inputPDf.value,
     parts: inputTestPart.value,
+    status: 1,
   };
   try {
     TestApiService.setTest(tmp).then((res) => {
@@ -575,24 +576,7 @@ const inputTestPart = ref({
                 @onWeight="(e) => (inputTestPart.PFS.weight = e)"
                 @onStatus="(e) => (inputTestPart.PFS.status = e)"
               ></CardViewPFS>
-              <!--
-              <CardViewPFS
-                v-if="val.code == 'BA-J3'"
-                :title="val.jp"
-                :testcount="inputData.testcount"
-                :model="inputTestPart.BAJ3.threeflag"
-                :weightModel="inputTestPart.BAJ3.weightFlag"
-                :element="elements"
-                @onThree="
-                  (e) => (inputTestPart.BAJ3.threeflag = e ? false : true)
-                "
-                @onWeightFlag="
-                  (e) => (inputTestPart.BAJ3.weightFlag = e ? false : true)
-                "
-                @onWeight="(e) => (inputTestPart.BAJ3.weight = e)"
-                @onStatus="(e) => (inputTestPart.BAJ3.status = e)"
-              ></CardViewPFS>
-            --></div>
+            </div>
           </v-col>
         </v-row>
       </section>

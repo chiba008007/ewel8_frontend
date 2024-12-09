@@ -4,11 +4,14 @@ import router from "../router";
 import { useStoreUser } from "../store/user";
 //import SampleApiService from "@/services/SampleApiService";
 import UserApiService from "@/services/UserApiService";
-
+import UserLogout from "@/services/UserLogout";
 const userId = ref<string>();
 const password = ref<string>();
 const user = useStoreUser();
-
+if (user.isLogin) {
+  UserLogout.logout();
+  user.IsLogout();
+}
 UserApiService.checkTest()
   .then((response: any) => {
     console.log(response);

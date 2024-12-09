@@ -42,6 +42,7 @@ class ExamApiService {
   async getExamData(data = {}) {
     // return httpAuth.post("/api/exam/getExamData");
     const token = localStorage.getItem("user") as string;
+    console.log(JSON.parse(token)?.userTokenExam);
     try {
       const res = await axios.post(d_Path + "/api/exam/getExamData", data, {
         headers: {
@@ -58,10 +59,8 @@ class ExamApiService {
       return res;
     } catch (e) {
       return false;
-      console.log(e);
       //  location.reload();
     }
-    return false;
   }
   examLogin(editData: object) {
     return http.post("/api/exam/login", editData);
