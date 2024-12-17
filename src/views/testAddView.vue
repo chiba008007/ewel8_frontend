@@ -278,12 +278,12 @@ const inputTestPart = ref({
     status: false,
     weight: {},
   },
-  BAJ3: {
-    threeflag: false,
-    weightFlag: false,
-    status: false,
-    weight: {},
-  },
+  // BAJ3: {
+  //   threeflag: false,
+  //   weightFlag: false,
+  //   status: false,
+  //   weight: {},
+  // },
 });
 </script>
 <template>

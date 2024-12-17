@@ -10,8 +10,13 @@ import { useRouter } from "vue-router";
 import ExamApiService from "@/services/ExamApiService";
 import { requiredValue, checkBirth, zeroPadding } from "@/plugins/validate";
 import { useStoreUser } from "@/store/user";
+import userLogout from "@/services/UserLogout";
 
 const user = useStoreUser();
+if (user.isExamLogin) {
+  //  userLogout.logout();
+  user.IsLogoutExam();
+}
 const router = useRouter();
 const k = router.currentRoute.value.query.k;
 const errorflag = ref(false);
@@ -46,11 +51,11 @@ const onClick = () => {
     };
     ExamApiService.examLogin(tmp)
       .then(function (response) {
-        console.log(response.data);
         user.setUserDataExamToken(response.data.token);
         user.setUserExamData(response.data.user);
         errorflag.value = false;
-        router.push({ name: "examProfile", query: { k: k } });
+        //router.push({ name: "examProfile", query: { k: k } });
+        location.href = "/exam/profile?k=" + k;
       })
       .catch(function (e) {
         errorflag.value = true;

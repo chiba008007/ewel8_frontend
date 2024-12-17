@@ -35,12 +35,15 @@ const onClick = () => {
   ExamApiService.editExamData(tmp).then(function (res) {
     if (res.data) {
       router.push({ name: "examList", query: { k: k } });
+    } else {
+      alert("登録失敗しました。");
     }
   });
   // router.push({ name: "examCheckConfirm" });
 };
 const params = ref();
 const setExamData = (rlt: any) => {
+  console.log(rlt);
   params.value = rlt.params;
 };
 const onGender = (e: number) => {
