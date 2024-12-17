@@ -6,18 +6,17 @@ import UserApiService from "@/services/UserApiService";
 import pankuzuTestList from "../components/pankuzuTestList.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import csvDownload from "@/components/csvDownload.vue";
-
+import ExamPfsView from "@/components/ExamPfsView.vue";
 import { passArray } from "@/plugins/const";
 
-const headers = [
-  { title: "番号", sortable: false, key: "no" },
-  { title: "ID", sortable: true, key: "email" },
-  { title: "氏名", sortable: true, key: "name" },
-  { title: "ふりがな", sortable: false, key: "kana" },
-  { title: "生年月日", sortable: false, key: "birth" },
-  { title: "合否", sortable: false, key: "passflag" },
-  { title: "PFS", sortable: false, key: "PFS" },
-];
+const headers = ref([
+  { title: "番号", sortable: false, key: "no", cols: 1, row: 2 },
+  { title: "ID", sortable: true, key: "email", cols: 1, row: 2 },
+  { title: "氏名", sortable: true, key: "name", cols: 1, row: 2 },
+  { title: "ふりがな", sortable: false, key: "kana", cols: 1, row: 2 },
+  { title: "生年月日", sortable: false, key: "birth", cols: 1, row: 2 },
+  { title: "合否", sortable: false, key: "passflag", cols: 1, row: 2 },
+]);
 const examList = ref();
 const router = useRouter();
 const detail = ref();
@@ -27,6 +26,18 @@ let tmp = {
   user_id: params.id,
   test_id: params.testid,
 };
+const typed = { code: "" };
+TestApiService.getTestTableTh(tmp).then(function (rlt) {
+  rlt.data.forEach((x: typeof typed) => {
+    headers.value.push({
+      title: x.code,
+      sortable: false,
+      key: x.code,
+      cols: 3, //pfs用
+      row: 1, //pfs用
+    });
+  });
+});
 TestApiService.getExam(tmp).then(function (rlt) {
   detail.value = rlt;
   title.value = detail.value.data.detail.testname;
@@ -61,7 +72,22 @@ const onResize = () => {
           <template v-slot:headers="{ columns }">
             <tr>
               <template v-for="column in columns" :key="column.key">
-                <th>{{ column.title }}</th>
+                <th :colspan="column.cols" :rowspan="column.row">
+                  {{ column.title }}
+                </th>
+              </template>
+            </tr>
+            <tr>
+              <template v-for="column in columns" :key="column.key">
+                <th class="text-center" v-if="column.key == 'PFS'">
+                  ステータス
+                </th>
+                <th class="text-center" v-if="column.key == 'PFS'">
+                  行動価値適合度
+                </th>
+                <th class="text-center" v-if="column.key == 'PFS'">
+                  ストレス強制レベル
+                </th>
               </template>
             </tr>
           </template>
@@ -73,7 +99,7 @@ const onResize = () => {
               <td class="text-xs-right">{{ item.kana }}</td>
               <td class="text-xs-right">{{ item.birth }}</td>
               <td class="text-xs-right text-center">{{ item.passText }}</td>
-              <td class="text-center">sss</td>
+              <ExamPfsView></ExamPfsView>
             </tr>
           </template>
         </v-data-table>

@@ -24,10 +24,14 @@ export default function () {
     //alert(1234);
     router.push({ name: pgName, params: { testid: testid, id: id } });
   };
+  const pageQRBlank = (url: string, itemid: string, tmpid: string) => {
+    window.open("/" + url + "/" + tmpid + "/test/" + itemid, "_blank");
+  };
   return {
     pageClickMoveParam,
     pageClickMoveParamCode,
     pageClickMoveLink,
     pageTestListModeParam,
+    pageQRBlank,
   };
 }

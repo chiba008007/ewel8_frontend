@@ -30,8 +30,8 @@ const onClick = () => {
     name: profile.value.name1 + "　" + profile.value.name2,
     kana: profile.value.kana1 + "　" + profile.value.kana2,
     gender: profile.value.genders,
+    k: params.value,
   };
-  console.log(tmp);
   ExamApiService.editExamData(tmp).then(function (res) {
     if (res.data) {
       router.push({ name: "examList", query: { k: k } });
@@ -39,7 +39,10 @@ const onClick = () => {
   });
   // router.push({ name: "examCheckConfirm" });
 };
-
+const params = ref();
+const setExamData = (rlt: any) => {
+  params.value = rlt.params;
+};
 const onGender = (e: number) => {
   profile.value.genders = e;
 };
@@ -77,7 +80,10 @@ const buttonCheck = () => {
 </script>
 
 <template>
-  <ExamTitle @onLoginId="(e) => (login_id = e)" />
+  <ExamTitle
+    @onLoginId="(e) => (login_id = e)"
+    @onTest="(e) => setExamData(e)"
+  />
   <v-container>
     <div class="text-h6">個人情報属性</div>
 

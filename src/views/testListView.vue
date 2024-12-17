@@ -86,7 +86,7 @@ const onResize = () => {
                 color="success"
                 size="small"
                 target="_blank"
-                @click="move.pageTestListModeParam('testQr', item.id, tmpid)"
+                @click="move.pageQRBlank('testQr', item.id, tmpid)"
               ></ButtonView>
               <ButtonView
                 text="追加更新"

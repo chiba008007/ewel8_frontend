@@ -201,7 +201,12 @@ const formValidate = () => {
     <AdminMenu />
   </v-row>
   <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
-  <p class="text-lowercase ml-2">赤丸内の数が残り必須入力数になります。</p>
+  <p class="text-lowercase ml-2 text-caption">
+    赤丸内の数が残り必須入力数になります。
+  </p>
+  <p class="text-lowercase ml-2 text-caption">
+    担当者情報も必須です。担当者情報タブで担当者情報を入力してください。
+  </p>
   <v-tabs v-model="tab">
     <v-tab value="1">
       <v-badge color="error" :content="errorTab1" floating>

@@ -79,7 +79,7 @@ const inputData = ref({
   mailremaincount: 0,
   startdaytime: getTodayDateTime("start"),
   enddaytime: getTodayDateTime("end"),
-  resultflag: true,
+  resultflag: false,
   envcheckflag: false,
   enqflag: false,
   lisencedownloadflag: false,

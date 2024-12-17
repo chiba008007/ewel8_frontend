@@ -22,7 +22,6 @@ const k = router.currentRoute.value.query.k;
 const data = ref();
 const company_name = ref("");
 const testname = ref("");
-
 let tmp = { params: k };
 ExamApiService.getExam(tmp)
   .then(function (rlt) {
