@@ -28,7 +28,7 @@ const route = useRoute();
 const user = useStoreUser();
 const tmpid = ref(route.path.replace(/[^0-9]/g, ""));
 const today = new Date();
-
+const errorTab1 = ref(2);
 // const userdata = user.userdata;
 // console.log(user.userdata);
 
@@ -122,6 +122,13 @@ pdfLists.value.forEach(function (val) {
 const registButton = ref<boolean>(true);
 const onBlurButton = () => {
   registButton.value = true;
+  errorTab1.value = 2;
+  if (inputData.value.testname) {
+    errorTab1.value = errorTab1.value - 1;
+  }
+  if (inputData.value.testcount > 0) {
+    errorTab1.value = errorTab1.value - 1;
+  }
   if (inputData.value.testname && inputData.value.testcount > 0) {
     registButton.value = false;
   }
@@ -221,6 +228,7 @@ const onSearch = (e: string) => {
     console.log(exc);
   }
 };
+
 const alertFlag = ref(false);
 const onClick = () => {
   alertFlag.value = false;
@@ -292,8 +300,17 @@ const inputTestPart = ref({
     <TestMenu />
   </v-row>
   <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
+  <p class="text-lowercase ml-2 text-caption">
+    検査内容を入力してください。 <br />
+    赤丸内の数が残り必須入力数になります。<br />
+    入力し終えたら「次へ」ボタンを押下してください。「販売可能ライセンス」まで遷移すると表示される「検査登録実行」ボタンを押下し検査登録を行ってください。<br />
+  </p>
   <v-tabs v-model="tab" class="ma-1">
-    <v-tab value="0">検査新規登録</v-tab>
+    <v-tab value="0">
+      <v-badge color="error" :content="errorTab1" floating>
+        検査新規登録
+      </v-badge>
+    </v-tab>
     <v-tab value="1">出力PDF選択</v-tab>
     <v-tab value="2">検査種別</v-tab>
     <v-tab value="3">販売可能ライセンス</v-tab>
@@ -306,9 +323,25 @@ const inputTestPart = ref({
       v-show="alertFlag"
     ></AlertView>
     <ButtonView
-      text="更新"
+      v-if="tab > 0"
+      text="戻る"
+      color="purple"
+      class="mt-3 mb-3 mr-2"
+      @onClick="tab = tab - 1"
+    />
+    <ButtonView
+      v-if="tab <= 2"
+      text="次へ"
       color="lime"
       class="mt-3 mb-3"
+      :disabled="registButton"
+      @onClick="tab = tab + 1"
+    />
+    <ButtonView
+      v-else
+      text="検査登録実行"
+      color="green"
+      class="mt-3 mb-3 ml-2"
       :disabled="registButton"
       @onClick="onClick()"
     />
@@ -317,7 +350,6 @@ const inputTestPart = ref({
   <v-window v-model="tab">
     <v-window-item value="0">
       <section class="pa-2">
-        検査内容を入力してください。
         <addPartnerForm
           v-show="partnerDetail?.name"
           title="パートナー企業名"

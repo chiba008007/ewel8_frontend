@@ -11,6 +11,9 @@ import UserApiService from "@/services/UserApiService";
 import TestApiService from "@/services/TestApiService";
 import pageClickMove from "@/plugins/pagemove";
 import pankuzuTestList from "../components/pankuzuTestList.vue";
+import dayjs from "dayjs";
+import "dayjs/locale/ja";
+dayjs.locale("ja");
 const move = pageClickMove();
 const router = useRouter();
 const route = useRoute();
@@ -23,6 +26,7 @@ const tmpid = ref(route.path.replace(/[^0-9]/g, ""));
 
 const testheaders = ref([
   { title: "企業名", align: "start", key: "campany" },
+  { title: "実施期間", align: "start", key: "examCount" },
   { title: "受検者数", align: "start", key: "examCount" },
   { title: "処理数", align: "start", key: "syoriCount" },
   { title: "残数", align: "start", key: "zanCount" },
@@ -60,7 +64,7 @@ const onResize = () => {
       <v-data-table
         :headers="testheaders"
         :items="testList"
-        class="listable ma-2 dataTableStyle"
+        class="listable ma-2 dataTableStyle dataTestList"
         :height="tableHeight"
         fixed-header
         color="green"
@@ -75,6 +79,11 @@ const onResize = () => {
                 "
                 >{{ item.testname }}</a
               >
+            </td>
+            <td class="text-xs-right" nowrap>
+              {{ dayjs(item.startdaytime).format("YYYY/M/DD HH:mm") }}～{{
+                dayjs(item.enddaytime).format("YYYY/M/DD HH:mm")
+              }}
             </td>
             <td class="text-right">{{ item.testcount }}</td>
             <td class="text-xs-right">-</td>
@@ -121,6 +130,13 @@ a.text-link {
   &:hover {
     color: #00ff00;
     transition: 0.5s;
+  }
+}
+.dataTestList {
+  div {
+    table {
+      width: auto !important;
+    }
   }
 }
 </style>
