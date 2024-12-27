@@ -39,6 +39,7 @@ TestApiService.getTestTableTh(tmp).then(function (rlt) {
   });
 });
 TestApiService.getExam(tmp).then(function (rlt) {
+  console.log(rlt);
   detail.value = rlt;
   title.value = detail.value.data.detail.testname;
   examList.value = detail.value.data.exams;
@@ -99,7 +100,11 @@ const onResize = () => {
               <td class="text-xs-right">{{ item.kana }}</td>
               <td class="text-xs-right">{{ item.birth }}</td>
               <td class="text-xs-right text-center">{{ item.passText }}</td>
-              <ExamPfsView></ExamPfsView>
+              <ExamPfsView
+                :endtime="item.endtime"
+                :level="item.level"
+                :lv="item.lv"
+              ></ExamPfsView>
             </tr>
           </template>
         </v-data-table>

@@ -129,6 +129,9 @@ const onBlur = async (e: string | boolean, type: string) => {
   if (requiredValue(person_address.value, "主担当者アドレス").length < 1)
     errorTab2.value -= 1;
 
+  errorTab1.value = errorTab1.value < 0 ? 0 : errorTab1.value;
+  errorTab2.value = errorTab2.value < 0 ? 0 : errorTab2.value;
+
   if (
     name.value &&
     ((await checkLoginID(login_id.value)) as boolean | string) == true &&

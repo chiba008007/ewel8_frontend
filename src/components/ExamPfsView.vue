@@ -5,10 +5,13 @@ import { useRouter } from "vue-router";
 
 const props = defineProps<{
   coded?: string | undefined;
+  endtime?: string;
+  level?: string;
+  lv?: string;
 }>();
 </script>
 <template>
-  <td>sssst</td>
-  <td>sssst</td>
-  <td>sssst</td>
+  <td class="text-center">{{ endtime }}</td>
+  <td class="text-center">{{ level }}</td>
+  <td class="text-center">{{ lv }}</td>
 </template>

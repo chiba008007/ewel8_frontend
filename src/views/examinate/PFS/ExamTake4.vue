@@ -62,7 +62,7 @@ const setLoop = () => {
     ></ButtonView>
     <ButtonView
       class="mt-3"
-      text="次のページ"
+      text="完了"
       :color="`blue`"
       :class="`ml-2`"
       :disabled="disabledFlag"
