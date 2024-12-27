@@ -46,9 +46,12 @@ TestApiService.getTestList(tmp)
   });
 
 const tableHeight = ref(100);
+const tableWidth = ref(500);
 const onResize = () => {
   const wHeight = window.innerHeight;
   tableHeight.value = wHeight - 300;
+  const wWidth = window.innerWidth;
+  tableWidth.value = wWidth;
 };
 </script>
 <template>

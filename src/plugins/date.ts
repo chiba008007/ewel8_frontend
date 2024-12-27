@@ -3,9 +3,25 @@ import { zeroPadding } from "./validate";
 
 export const getTodayDateTime = (type: string) => {
   const today = new Date();
-  const year = today.getFullYear();
-  const month = zeroPadding(today.getMonth() + 1);
-  const date = zeroPadding(today.getDate());
+
+  const yesterday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 1
+  );
+  let year = 0;
+  let month = "";
+  let date = "";
+  if (type == "start") {
+    year = yesterday.getFullYear();
+    month = zeroPadding(yesterday.getMonth() + 1);
+    date = zeroPadding(yesterday.getDate());
+  } else {
+    year = today.getFullYear();
+    month = zeroPadding(today.getMonth() + 1);
+    date = zeroPadding(today.getDate());
+  }
+
   const time = ref("00");
   const time1 = ref("00");
   if (type == "end") {
