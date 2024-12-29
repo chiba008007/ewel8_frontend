@@ -25,6 +25,9 @@ class TestApiService {
   getCsvList(data: object) {
     return httpAuth.post("/api/test/getCsvList", data);
   }
+  getPFSTestDetail(data: object) {
+    return httpAuth.post("/api/test/getPFSTestDetail", data);
+  }
 }
 
 export default new TestApiService();

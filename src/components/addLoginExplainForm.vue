@@ -39,7 +39,7 @@ const emit = defineEmits<{
     </v-col>
     <v-col sm="9" class="pa-1 border-sm">
       <ComponentSwitch
-        label="編集する"
+        :label="props.label"
         :type="props.type"
         :model="props.loginModel"
         @onClick="(e) => emit('onClick', e)"

@@ -2,7 +2,13 @@
 import { ref, defineEmits } from "vue";
 import { useStoreUser } from "../store/user";
 import { getTodayDateTime, getTodayDate } from "@/plugins/date";
-import { movieArray, pdfArray } from "@/plugins/const";
+import {
+  movieArray,
+  pdfArray,
+  displayStatus,
+  settingStatus,
+  edittingStatus,
+} from "@/plugins/const";
 
 import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
@@ -293,6 +299,15 @@ const inputTestPart = ref({
   //   weight: {},
   // },
 });
+const displayString = (type: boolean) => {
+  return type ? displayStatus[1] : displayStatus[0];
+};
+const settingString = (type: boolean) => {
+  return type ? settingStatus[1] : settingStatus[0];
+};
+const edittingString = (type: boolean) => {
+  return type ? edittingStatus[1] : edittingStatus[0];
+};
 </script>
 <template>
   <PartnerAdmin coded="customer" />
@@ -437,19 +452,19 @@ const inputTestPart = ref({
         ></addDateForm>
         <addSwitchForm
           title="検査結果画面"
-          :label="`表示する`"
+          :label="displayString(inputData.resultflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.resultflag"
           :tooltipflag="true"
-          tooltipMessage="検査結果の表示可否を選択します。"
+          :tooltipMessage="`検査結果の表示可否を選択します。`"
           @onClick="
             () => (inputData.resultflag = inputData.resultflag ? false : true)
           "
         ></addSwitchForm>
         <addSwitchForm
           title="事前環境チェックの有無"
-          :label="`表示する`"
+          :label="displayString(inputData.envcheckflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.envcheckflag"
@@ -462,7 +477,7 @@ const inputTestPart = ref({
         ></addSwitchForm>
         <addSwitchForm
           title="強みアンケート利用"
-          :label="`表示する`"
+          :label="displayString(inputData.enqflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.enqflag"
@@ -474,7 +489,7 @@ const inputTestPart = ref({
         ></addSwitchForm>
         <addSwitchForm
           title="受検証明書ダウンロード設定"
-          :label="`表示する`"
+          :label="displayString(inputData.lisencedownloadflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.lisencedownloadflag"
@@ -489,12 +504,12 @@ const inputTestPart = ref({
         ></addSwitchForm>
         <addSwitchForm
           title="受検者ダウンロード設定"
-          :label="`設定する`"
+          :label="settingString(inputData.examlistdownloadflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.examlistdownloadflag"
           :tooltipflag="true"
-          tooltipMessage="受検者ダウンロード設定可否を行います。"
+          :tooltipMessage="`受検者ダウンロード設定可否を行います。`"
           @onClick="
             () =>
               (inputData.examlistdownloadflag = inputData.examlistdownloadflag
@@ -504,7 +519,7 @@ const inputTestPart = ref({
         ></addSwitchForm>
         <addSwitchForm
           title="一括ダウンロード設定"
-          :label="`設定する`"
+          :label="settingString(inputData.totaldownloadflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.totaldownloadflag"
@@ -519,7 +534,7 @@ const inputTestPart = ref({
         ></addSwitchForm>
         <addSwitchForm
           title="推奨ブラウザ説明文"
-          :label="`表示する`"
+          :label="displayString(inputData.recomendflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.recomendflag"
@@ -532,6 +547,7 @@ const inputTestPart = ref({
         ></addSwitchForm>
         <addLoginForm
           title="ログイン説明文"
+          :label="edittingString(inputData.loginflag)"
           color="bg-lime"
           variant="outlined"
           :loginModel="inputData.loginflag"

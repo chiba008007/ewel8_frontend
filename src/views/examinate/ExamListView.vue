@@ -29,6 +29,7 @@ let params = {
 };
 const testLength = ref(0);
 ExamApiService.getTestExamMenu(params).then(function (rlt) {
+  console.log(rlt);
   examList.value = rlt?.data;
   let done = 0;
   rlt?.data.map(function (val: object | any) {

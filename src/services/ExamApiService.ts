@@ -52,9 +52,7 @@ class ExamApiService {
           Authorization: "Bearer " + JSON.parse(token)?.userTokenExam,
         },
       });
-      if (!res) {
-        return res;
-      }
+      console.log(res);
       return res;
     } catch (e) {
       return false;

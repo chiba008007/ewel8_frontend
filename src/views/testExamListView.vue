@@ -8,10 +8,12 @@ import PartnerAdmin from "../components/PartnerAdmin.vue";
 import csvDownload from "@/components/csvDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
 import { passArray } from "@/plugins/const";
+import ButtonView from "@/components/ButtonView.vue";
+import ComponentImg from "@/components/imgView.vue";
 
 const headers = ref([
-  { title: "番号", sortable: false, key: "no", cols: 1, row: 2 },
-  { title: "ID", sortable: true, key: "email", cols: 1, row: 2 },
+  { title: "番号", sortable: false, key: "no", cols: 1, row: 2, width: "20px" },
+  { title: "ID", sortable: true, key: "email", cols: 1, row: 2, width: "30px" },
   { title: "氏名", sortable: true, key: "name", cols: 1, row: 2 },
   { title: "ふりがな", sortable: false, key: "kana", cols: 1, row: 2 },
   { title: "生年月日", sortable: false, key: "birth", cols: 1, row: 2 },
@@ -27,19 +29,32 @@ let tmp = {
   test_id: params.testid,
 };
 const typed = { code: "" };
+const testCount = ref(0);
+const tableWidth = ref("100%");
 TestApiService.getTestTableTh(tmp).then(function (rlt) {
+  testCount.value = rlt.data.length;
+  tableWidth.value = 1600 + 100 * testCount.value + "px";
   rlt.data.forEach((x: typeof typed) => {
-    headers.value.push({
-      title: x.code,
-      sortable: false,
-      key: x.code,
-      cols: 3, //pfs用
-      row: 1, //pfs用
-    });
+    if (x.code === "PFS") {
+      headers.value.push({
+        title: x.code,
+        sortable: false,
+        key: x.code,
+        cols: 3, //pfs用
+        row: 1, //pfs用
+      });
+    }
   });
+
+  headers.value.push(
+    { title: "メモ1", sortable: false, key: "no", cols: 1, row: 2 },
+    { title: "メモ2", sortable: false, key: "no", cols: 1, row: 2 },
+    { title: "PDF", sortable: false, key: "no", cols: 1, row: 2 },
+    { title: "機能", sortable: false, key: "no", cols: 1, row: 2 }
+  );
 });
+
 TestApiService.getExam(tmp).then(function (rlt) {
-  console.log(rlt);
   detail.value = rlt;
   title.value = detail.value.data.detail.testname;
   examList.value = detail.value.data.exams;
@@ -48,17 +63,62 @@ TestApiService.getExam(tmp).then(function (rlt) {
   });
 });
 const tableHeight = ref(100);
+const dialogFlag = ref(false);
+const pfsDialogText = ref({
+  text1: "",
+  text2: "",
+  text3: "",
+  text4: "",
+  text5: "",
+});
+const pfsDialog = (e: number) => {
+  let tmp = {
+    exam_id: e,
+    testparts_id: params.testid,
+  };
+  TestApiService.getPFSTestDetail(tmp).then((rlt) => {
+    console.log(rlt.data);
+    pfsDialogText.value.text1 = rlt.data[0];
+    pfsDialogText.value.text2 = rlt.data[1];
+    pfsDialogText.value.text3 = rlt.data[2];
+    pfsDialogText.value.text4 = rlt.data[3];
+    pfsDialogText.value.text5 = rlt.data[4];
+  });
+  dialogFlag.value = true;
+};
+
 const onResize = () => {
   const wHeight = window.innerHeight;
-  tableHeight.value = wHeight - 300;
+  tableHeight.value = wHeight - 320;
 };
+
+const dialog = ref(false);
 </script>
 <template>
   <PartnerAdmin coded="customer" />
   <pankuzuTestList></pankuzuTestList>
+
+  <div class="text-center pa-4">
+    <v-dialog v-model="dialogFlag" width="auto">
+      <v-card max-width="400" class="pa-4">
+        <p>{{ pfsDialogText.text1 }}</p>
+        <p class="text-center">{{ pfsDialogText.text2 }}</p>
+        <p class="text-center">{{ pfsDialogText.text3 }}</p>
+        <p class="text-center">
+          <ComponentImg
+            v-if="pfsDialogText.text4"
+            :maxHeight="140"
+            :src="require('@/assets/exam/pfs/' + pfsDialogText.text4)"
+          ></ComponentImg>
+        </p>
+        <p>{{ pfsDialogText.text5 }}</p>
+      </v-card>
+    </v-dialog>
+  </div>
+
   <div id="divoverflow">
     <v-row v-resize="onResize" style="width: auto">
-      <v-col class="ma-1">
+      <v-col class="ma-1" style="overflow: scroll">
         <v-data-table
           :headers="headers"
           :items="examList"
@@ -69,11 +129,16 @@ const onResize = () => {
           color="green"
           items-per-page-text="表示数"
           :items-per-page="50"
+          :style="`min-width:` + tableWidth"
         >
           <template v-slot:headers="{ columns }">
             <tr>
               <template v-for="column in columns" :key="column.key">
-                <th :colspan="column.cols" :rowspan="column.row">
+                <th
+                  :colspan="column.cols"
+                  :rowspan="column.row"
+                  class="text-center"
+                >
                   {{ column.title }}
                 </th>
               </template>
@@ -102,9 +167,36 @@ const onResize = () => {
               <td class="text-xs-right text-center">{{ item.passText }}</td>
               <ExamPfsView
                 :endtime="item.endtime"
+                :id="item.id"
                 :level="item.level"
                 :lv="item.lv"
+                @onClick="(e) => pfsDialog(e)"
               ></ExamPfsView>
+              <td class="text-xs-right text-center">{{ item.memo1 }}</td>
+              <td class="text-xs-right text-center">{{ item.memo2 }}</td>
+              <td class="text-xs-right text-center">未出力</td>
+              <td class="text-xs-right text-center d-flex pt-3">
+                <ButtonView
+                  text="更新"
+                  variant="tonal"
+                  density="compact"
+                  color="primary"
+                ></ButtonView>
+                <ButtonView
+                  text="PDF"
+                  variant="tonal"
+                  density="compact"
+                  color="success"
+                  class="ml-1"
+                ></ButtonView>
+                <ButtonView
+                  text="証書"
+                  variant="tonal"
+                  density="compact"
+                  color="purple"
+                  class="ml-1"
+                ></ButtonView>
+              </td>
             </tr>
           </template>
         </v-data-table>
@@ -122,6 +214,6 @@ const onResize = () => {
   justify-content: flex-start;
 }
 #divoverflow {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 </style>

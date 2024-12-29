@@ -15,6 +15,7 @@ if (usr.isLogin) {
 const emit = defineEmits<{
   (e: "onTest", value: object): void;
   (e: "onLoginId", value: string): void;
+  (e: "onResultFlag", value: number): void;
 }>();
 
 const router = useRouter();
@@ -25,12 +26,14 @@ const testname = ref("");
 let tmp = { params: k };
 ExamApiService.getExam(tmp)
   .then(function (rlt) {
+    console.log(rlt.data);
     emit("onTest", rlt.data);
     let ls = localStorage.getItem("user") as string;
     emit("onLoginId", JSON.parse(ls)?.userExam.email);
     data.value = rlt.data;
     company_name.value = data.value.company_name;
     testname.value = data.value.testname;
+    emit("onResultFlag", rlt.data.resultflag);
   })
   .catch(() => {
     location.href = "/exam/error";

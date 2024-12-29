@@ -36,6 +36,13 @@ export const genderArray = [
   { value: 0, label: "選択しない" },
 ];
 
+/** 表示可否ステータス*/
+export const displayStatus = ["表示しない", "表示する"];
+/**設定可否ステータス */
+export const settingStatus = ["設定しない", "設定する"];
+/**編集可否ステータス */
+export const edittingStatus = ["編集しない", "編集する"];
+
 /** スリープ */
 export const sleep = (waitMsec: number) => {
   const startMsec = new Date();

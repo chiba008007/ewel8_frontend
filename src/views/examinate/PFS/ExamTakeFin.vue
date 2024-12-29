@@ -5,10 +5,35 @@ import ExamTitle from "@/components/ExamTitle.vue";
 import ExamParts from "@/components/ExamParts.vue";
 
 import ButtonView from "@/components/ButtonView.vue";
+import AlertView from "@/components/AlertView.vue";
+import CardView from "@/components/CardView.vue";
+import exampfs from "@/plugins/exampfs";
 const router = useRouter();
+const route = useRoute();
+const examObj = exampfs();
+const testparts_id = route.params.testparts_id as unknown as number;
+const k = router.currentRoute.value.query.k as string;
 
-const k = router.currentRoute.value.query.k;
+const result = ref({
+  text1: "",
+  text2: "",
+  text3: "",
+  text4: "",
+  image: "",
+});
+examObj.getPFS(k, testparts_id).then((res) => {
+  console.log(res);
+  result.value.text1 = res.result[0];
+  result.value.text2 = res.result[1];
+  result.value.text3 = res.result[2];
+  result.value.text4 = res.result[4];
+  result.value.image = res.result[3];
+});
 
+const resultFlag = ref();
+const onResultFlag = (e: number) => {
+  resultFlag.value = e;
+};
 const onMenuBack = () => {
   router.push({
     name: "examList",
@@ -18,12 +43,33 @@ const onMenuBack = () => {
 </script>
 
 <template>
-  <ExamTitle />
+  <ExamTitle @onResultFlag="(e) => onResultFlag(e)" />
   <ExamParts />
   <v-container fluid class="mt-0">
-    <p>
-      お疲れ様でした。以上で検査終了となります。<br />未受検の検査がないかメニュー画面に移動し、確認してください。
-    </p>
+    <CardView
+      v-if="resultFlag != 1"
+      style="white-space: pre-wrap"
+      :text1="`お疲れ様でした。以上で検査終了となります。
+未受検の検査がないかメニュー画面に移動し、確認してください。`"
+    ></CardView>
+
+    <CardView
+      v-else
+      :text1="result.text1"
+      :text2="result.text2"
+      :text3="result.text3"
+      :text4="result.text4"
+      :image="result.image"
+    >
+    </CardView>
+
+    <AlertView
+      class="mt-3"
+      type="warning"
+      style="white-space: pre-wrap"
+      :text="`注意：通信等の問題でまれに受検終了していないことがあります。
+必ずメニュー画面に戻り、未受検検査がないか確認してください。`"
+    ></AlertView>
 
     <ButtonView
       class="mt-3"
