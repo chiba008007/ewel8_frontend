@@ -13,6 +13,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
+  (e: "onChange", value: string): void;
 }>();
 </script>
 <template>
@@ -28,6 +29,7 @@ const emit = defineEmits<{
         :class="props.class"
         :text="props.value"
         @onBlur="emit('onBlur', $event, props.type ?? '')"
+        @onChange="emit('onChange', $event)"
       ></ComponentSelectField>
     </v-col>
   </v-row>

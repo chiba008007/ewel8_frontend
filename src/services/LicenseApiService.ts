@@ -2,7 +2,7 @@ import http from "@/user-common";
 import { ref } from "vue";
 class LicenseApiService {
   list = ref();
-  async getElementData() {
+  async getLicenseData() {
     const tmp = ref();
     await this.getData().then((response) => {
       tmp.value = response.data.license;

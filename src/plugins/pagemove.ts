@@ -16,6 +16,9 @@ export default function () {
   const pageClickMoveLink = (pgName: string, code: string) => {
     location.href = "/" + pgName + "?code=" + code;
   };
+  const pageClickMoveLinkParam = (pgName: string, code: string) => {
+    location.href = "/" + pgName + "/" + code;
+  };
   const pageTestListModeParam = (
     pgName: string,
     testid: number | string,
@@ -33,5 +36,6 @@ export default function () {
     pageClickMoveLink,
     pageTestListModeParam,
     pageQRBlank,
+    pageClickMoveLinkParam,
   };
 }

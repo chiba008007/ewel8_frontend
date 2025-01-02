@@ -8,6 +8,7 @@ class ElementApiService {
       for (let i = 0; i < leng; i++) {
         tmp.push({
           id: response.data.element[i].id,
+          text: response.data.element[i].note,
           note: response.data.element[i].note,
         });
       }

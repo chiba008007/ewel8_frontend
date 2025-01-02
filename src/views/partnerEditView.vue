@@ -51,20 +51,27 @@ PrefApiService.getPrefData().then((res) => {
   prefs.value = res;
 });
 
-// 管理者ではないときログインした人のIDとパラメータのIDが同じ確認
-if (userType != "admin") {
-  user.sameIdChecked(userid, paramId as number);
+const pankuzu = ref([]) as any | object;
+
+if ((user.userdata as any).type === "partner") {
+  pankuzu.value = [
+    {
+      title: user.home,
+      href: router.resolve({ name: "customerList", params: { id: paramId } })
+        .href,
+    },
+  ];
+} else {
+  pankuzu.value = [
+    { title: user.home, href: router.resolve({ name: "List" }).href },
+    {
+      title: user.customerInfoList,
+      href: router.resolve({ name: "customerList", params: { id: paramId } })
+        .href,
+    },
+  ];
 }
-const pankuzu = [] as any | object;
-pankuzu.push({
-  title: "HOME",
-  href: router.resolve({ name: "List" }).href,
-});
-pankuzu.push({
-  title: "顧客情報一覧",
-  href: router.resolve({ name: "customerList", params: { id: paramId } }).href,
-});
-pankuzu.push({ title: "企業情報変更" });
+pankuzu.value.push({ title: user.partnerEdit });
 
 const tmp = {
   partnerId: paramId,
@@ -137,11 +144,10 @@ const addRegist = () => {
     <CustomerMenu />
   </v-row>
   <v-row>
-    <v-col class="ma-1">
-      <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
-
+    <v-col class="ma-0">
+      <v-breadcrumbs :items="pankuzu" class="ml-2 pa-0"></v-breadcrumbs>
       <v-row no-gutters>
-        <v-col cols="12" class="pa-2 ma-2">
+        <v-col cols="12" class="ml-2">
           <ComponentButton
             text="登録"
             color="primary"
@@ -151,8 +157,7 @@ const addRegist = () => {
           />
         </v-col>
       </v-row>
-
-      <v-tabs v-model="tab">
+      <v-tabs class="ml-2" v-model="tab">
         <v-tab value="1">企業情報変更</v-tab>
         <v-tab value="2">行動価値用要素名</v-tab>
       </v-tabs>

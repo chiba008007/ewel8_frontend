@@ -5,9 +5,10 @@ import ComponentTextField from "../components/TextFieldView.vue";
 import AdminMenu from "../components/AdminMenu.vue";
 import UserApiService from "@/services/UserApiService";
 import { useRouter } from "vue-router";
-import { sleep } from "../plugins/const";
+import pagemove from "@/plugins/pagemove";
 const router = useRouter();
 const loading = ref(true);
+const pages = pagemove();
 const headers = [
   { title: "企業名", sortable: false, key: "name" },
   { title: "購入ライセンス", sortable: false, key: "speed" },
@@ -42,10 +43,6 @@ const tableHeight = ref(100);
 const onResize = () => {
   const wHeight = window.innerHeight;
   tableHeight.value = wHeight - 300;
-};
-
-const pageClickMove = (pagename: string, id: number) => {
-  router.push(router.resolve({ name: pagename, params: { id: id } }).href);
 };
 </script>
 <template>
@@ -88,13 +85,14 @@ const pageClickMove = (pagename: string, id: number) => {
             text="企業一覧"
             color="success"
             density="compact"
-            @onClick="pageClickMove('customerList', item.id)"
+            @onClick="pages.pageClickMoveParamCode('customerList', item.id)"
           />
           <ComponentButton
             text="更新"
             color="success"
             class="ml-2"
             density="compact"
+            @onClick="pages.pageClickMoveLinkParam('editPertner', item.id)"
           />
           <ComponentButton
             text="添付"

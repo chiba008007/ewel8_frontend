@@ -72,6 +72,14 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/editPertner/:id",
+    name: "editPertner",
+    component: addPertner,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+    },
+  },
+  {
     path: "/login",
     name: "Login",
     component: LoginView,

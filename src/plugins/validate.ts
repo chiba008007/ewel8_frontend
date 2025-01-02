@@ -52,7 +52,8 @@ export const checkEmailRequired = (value: string) => {
   }
   return "";
 };
-export const checkPassword = (value: string, type = "") => {
+export const checkPassword = (value: string, type = "", tmpid: any = "") => {
+  if (tmpid && !value) return "";
   if (type == "edit" && !value) return "";
   if (!value) return "パスワードは必須です";
   const emailPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,15}$/;

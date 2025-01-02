@@ -13,6 +13,7 @@ const tmp = {
   partnerId: key,
   type: props.coded ? props.coded : "partner",
 };
+
 const partnerDetail = ref();
 try {
   UserApiService.getPartnerDetail(tmp).then((res) => {

@@ -28,17 +28,31 @@ const route = useRoute();
 const user = useStoreUser();
 const registButton = ref<boolean>(true);
 
-const regex = /(\d+)(?!.*\d)/;
-const isPortal = ref(route.path.match(regex)).value as any;
-const pankuzu = [
-  { title: user.home, href: router.resolve({ name: "List" }).href },
-  {
-    title: user.customerInfoList,
-    href: router.resolve({ name: "customerList" }).href,
-  },
-  { title: user.customerRegist },
-];
+const tmpid = route.params.id;
 
+interface typed {
+  type: string;
+}
+let type = user.userdata as typed;
+const pankuzu = ref();
+if (type.type == "partner") {
+  pankuzu.value = [
+    {
+      title: user.home,
+      href: router.resolve({ name: "customerList" }).href,
+    },
+    { title: user.customerRegist },
+  ];
+} else {
+  pankuzu.value = [
+    { title: user.home, href: router.resolve({ name: "List" }).href },
+    {
+      title: user.customerInfoList,
+      href: router.resolve({ name: "customerList" }).href,
+    },
+    { title: user.customerRegist },
+  ];
+}
 const inputData = ref({
   name: "",
   login_id: "",
@@ -133,7 +147,7 @@ const addRegist = () => {
   let tmp = {
     type: customer,
     admin_id: userdata.id,
-    partner_id: isPortal[0],
+    partner_id: tmpid,
     name: inputData.value.name,
     // email: inputData.value.login_id,
     password: inputData.value.password,

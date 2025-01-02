@@ -12,7 +12,7 @@ interface Props {
   placeholder?: string;
   variant?: TVariant;
   density?: TVDensity;
-  value?: string | number;
+  value?: string | number | boolean;
   hideDetails?: boolean | "auto";
   messages?: string;
   person?: string;

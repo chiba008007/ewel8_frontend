@@ -6,6 +6,8 @@ const props = defineProps<{
   title?: string;
   class?: string;
   value?: string;
+  post1?: string;
+  post2?: string;
   hideDetails?: boolean;
 }>();
 const getPost = (type: number) => {

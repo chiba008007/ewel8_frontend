@@ -52,8 +52,8 @@ class UserApiService {
   setPartner(data: object): Promise<object> {
     return httpAuth.post("/api/user/setUserData", data);
   }
-  editPartner(data: object): Promise<object> {
-    return httpAuth.post("/api/user/editPartner", data);
+  editPartnerData(data: object) {
+    return httpAuth.post("/api/user/editPartnerData", data);
   }
   setLicense(data: object): Promise<object> {
     return httpAuth.post("/api/user/setUserLicense", data);
@@ -84,6 +84,9 @@ class UserApiService {
   }
   getUserLisenceCalc(data: object): Promise<object> {
     return httpAuth.post("/api/user/getUserLisenceCalc", data);
+  }
+  async getUserData(data: object): Promise<object> {
+    return await httpAuth.post("/api/user/getUserData", data);
   }
 }
 

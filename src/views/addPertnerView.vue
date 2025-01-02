@@ -1,37 +1,40 @@
 <script setup lang="ts">
 import { ref, defineEmits } from "vue";
 import AdminMenu from "../components/AdminMenu.vue";
+import AlertView from "@/components/AlertView.vue";
 import ComponentButton from "../components/ButtonView.vue";
-import ComponentCheckbox from "../components/CheckboxView.vue";
 import addPartnerForm from "../components/addPartnerForm.vue";
 import addPostCodeForm from "../components/addPostCodeForm.vue";
 import addPrefCodeForm from "../components/addPrefCodeForm.vue";
 import addSwitchForm from "../components/addSwitchForm.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import PrefApiService from "@/services/PrefApiService";
 import ElementApiService from "@/services/ElementApiService";
 import LicenseApiService from "@/services/LicenseApiService";
-import PdfApiService from "@/services/PdfApiService";
 import ComponentTextField from "../components/TextFieldView.vue";
 import { Core as YubinBangoCore } from "yubinbango-core2";
-
 import UserApiService from "@/services/UserApiService";
+import { useStoreUser } from "../store/user";
 import {
   requiredValue,
   checkPassword,
   checkLoginID,
   checkEmailRequired,
 } from "../plugins/validate";
+import { displayStatus } from "@/plugins/const";
+const user = useStoreUser();
 const router = useRouter();
+const route = useRoute();
+const tmpid = route.params.id;
 const pankuzu = [
-  { title: "HOME", href: router.resolve({ name: "List" }).href },
-  { title: "新規パートナー登録" },
+  { title: user.home, href: router.resolve({ name: "List" }).href },
+  { title: tmpid ? user.editPartner : user.addPartner },
 ];
 const tab = ref();
 const prefs = ref();
 const elements = ref();
 const licenses = ref();
-const pdfs = ref();
+const post_code = ref();
 const post1 = ref();
 const post2 = ref();
 const preftext = ref();
@@ -53,7 +56,7 @@ PrefApiService.getPrefData().then((res) => {
 ElementApiService.getElementData().then((res) => {
   elements.value = res;
 });
-LicenseApiService.getElementData().then((res) => {
+LicenseApiService.getLicenseData().then((res) => {
   licenses.value = res.value;
 });
 
@@ -67,7 +70,9 @@ const postBlur = (e: string, type: string) => {
     });
   }
 };
-
+const onChange = (e: string) => {
+  preftext.value = e;
+};
 const licensesKey = ref<string[]>([]);
 const licensesBody = ref<string[]>([]);
 // const codes = ref([]);
@@ -85,13 +90,126 @@ const person_address = ref();
 const person2 = ref();
 const person_address2 = ref();
 const person_tel = ref();
+const licenseVal = ref({}) as any;
+// 編集用データ取得
+if (tmpid) {
+  UserApiService.getUserData({ id: tmpid })
+    .then((rlt) => {
+      const objWithData = rlt as {
+        data: {
+          name: string;
+          login_id: string;
+          post_code: string;
+          post1: string;
+          post2: string;
+          pref: string;
+          address1: string;
+          address2: string;
+          tel: string;
+          fax: string;
+          requestFlag: boolean;
+          system_name: string;
+          person: string;
+          person_address: string;
+          person2: string;
+          person_address2: string;
+          person_tel: string;
+          licenses: number[];
+          element1: string;
+          element2: string;
+          element3: string;
+          element4: string;
+          element5: string;
+          element6: string;
+          element7: string;
+          element8: string;
+          element9: string;
+          element10: string;
+          element11: string;
+          element12: string;
+          element13: string;
+          element14: string;
+        };
+      };
+      name.value = objWithData.data.name;
+      login_id.value = objWithData.data.login_id;
+      post_code.value = objWithData.data.post_code.replace(/undefined/g, "");
+      let tmp = objWithData.data.post_code.split("-");
+      post1.value = tmp[0];
+      post2.value = tmp[1];
+      preftext.value = objWithData.data.pref;
+      addressText.value = objWithData.data.address1;
+      addressText2.value = objWithData.data.address2;
+      tel.value = objWithData.data.tel;
+      fax.value = objWithData.data.fax;
+      requestFlag.value = objWithData.data.requestFlag;
+      system_name.value = objWithData.data.system_name;
+      person.value = objWithData.data.person;
+      person_address.value = objWithData.data.person_address;
+      person2.value = objWithData.data.person2;
+      person_address2.value = objWithData.data.person_address2;
+      person_tel.value = objWithData.data.person_tel;
+      const entries = Object.entries(objWithData.data.licenses);
+      for (const [key, val] of entries) {
+        licensesKey.value.push(key);
+        licensesBody.value.push(val.toString());
+      }
+      licenseVal.value = objWithData.data.licenses;
+      elements.value[0].note = objWithData.data.element1
+        ? objWithData.data.element1
+        : "";
+      elements.value[1].note = objWithData.data.element2
+        ? objWithData.data.element2
+        : "";
+      elements.value[2].note = objWithData.data.element3
+        ? objWithData.data.element3
+        : "";
+      elements.value[3].note = objWithData.data.element4
+        ? objWithData.data.element4
+        : "";
+      elements.value[4].note = objWithData.data.element5
+        ? objWithData.data.element5
+        : "";
+      elements.value[5].note = objWithData.data.element6
+        ? objWithData.data.element6
+        : "";
+      elements.value[6].note = objWithData.data.element7
+        ? objWithData.data.element7
+        : "";
+      elements.value[7].note = objWithData.data.element8
+        ? objWithData.data.element8
+        : "";
+      elements.value[8].note = objWithData.data.element9
+        ? objWithData.data.element9
+        : "";
+      elements.value[9].note = objWithData.data.element10
+        ? objWithData.data.element10
+        : "";
+      elements.value[10].note = objWithData.data.element11
+        ? objWithData.data.element11
+        : "";
+      elements.value[11].note = objWithData.data.element12
+        ? objWithData.data.element12
+        : "";
+      elements.value[12].note = objWithData.data.element13
+        ? objWithData.data.element13
+        : "";
+      elements.value[13].note = objWithData.data.element14
+        ? objWithData.data.element14
+        : "";
 
+      errorTab1.value = 0;
+      errorTab2.value = 0;
+      registButton.value = false;
+    })
+    .catch(() => {
+      alert("編集用ユーザデータ取得エラー");
+      location.href = "/error";
+    });
+}
 const onBlur = async (e: string | boolean, type: string) => {
   if (type === "name") name.value = e;
-  if (type === "login_id") {
-    login_id.value = e;
-  }
-
+  if (type === "login_id") login_id.value = e;
   if (type === "password") password.value = e;
   if (type === "pref") preftext.value = e;
   if (type === "address") addressText.value = e;
@@ -116,14 +234,21 @@ const onBlur = async (e: string | boolean, type: string) => {
   if (type === "element10") elements.value[9].note = e;
   if (type === "element11") elements.value[10].note = e;
   if (type === "element12") elements.value[11].note = e;
+  if (type === "element13") elements.value[12].note = e;
+  if (type === "element14") elements.value[13].note = e;
 
   registButton.value = true;
+  if (!tmpid) {
+    if (name.value && name.value.length > 0) errorTab1.value -= 1;
+    if (
+      login_id.value &&
+      ((await checkLoginID(login_id.value)) as boolean | string) == true
+    ) {
+      errorTab1.value -= 1;
+    }
+    if (checkPassword(password.value).length < 1) errorTab1.value -= 1;
+  }
 
-  errorTab1.value = 3;
-  if (name.value.length > 0) errorTab1.value -= 1;
-  if (((await checkLoginID(login_id.value)) as boolean | string) == true)
-    errorTab1.value -= 1;
-  if (checkPassword(password.value).length < 1) errorTab1.value -= 1;
   if (requiredValue(person.value, "主担当者氏名").length < 1)
     errorTab2.value -= 1;
   if (requiredValue(person_address.value, "主担当者アドレス").length < 1)
@@ -131,8 +256,14 @@ const onBlur = async (e: string | boolean, type: string) => {
 
   errorTab1.value = errorTab1.value < 0 ? 0 : errorTab1.value;
   errorTab2.value = errorTab2.value < 0 ? 0 : errorTab2.value;
-
-  if (
+  if (tmpid) {
+    if (
+      requiredValue(person.value, "主担当者氏名").length < 1 &&
+      requiredValue(person_address.value, "主担当者アドレス").length < 1
+    ) {
+      registButton.value = false;
+    }
+  } else if (
     name.value &&
     ((await checkLoginID(login_id.value)) as boolean | string) == true &&
     checkPassword(password.value).length < 1 &&
@@ -141,19 +272,26 @@ const onBlur = async (e: string | boolean, type: string) => {
   ) {
     registButton.value = false;
   }
+
+  if (tmpid) {
+    if (password.value && checkPassword(password.value).length > 1) {
+      registButton.value = true;
+    }
+  }
 };
 
 const requestFlag = ref(true);
 
 const registAlert = ref(false);
 const addRegist = () => {
+  let post = post1.value + "-" + post2.value;
   settingData.value = {
     type: "partner",
-    name: name.value,
-    login_id: login_id.value,
+    name: tmpid ? "" : name.value,
+    login_id: tmpid ? "" : login_id.value,
     email: email.value,
     password: password.value,
-    post_code: post1.value + "-" + post2.value,
+    post_code: post,
     pref: preftext.value,
     address1: addressText.value,
     address2: addressText2.value,
@@ -178,14 +316,33 @@ const addRegist = () => {
     element10: elements.value[9].note,
     element11: elements.value[10].note,
     element12: elements.value[11].note,
+    element13: elements.value[12].note,
+    element14: elements.value[13].note,
   };
-  if (formValidate()) {
+  if (tmpid) {
+    settingData.value.id = tmpid;
+    UserApiService.editPartnerData(settingData.value).then((res) => {
+      console.log(res.data);
+      settingLicense.value = {
+        res: res,
+        licensesKey: licensesKey.value,
+        licensesBody: licensesBody.value,
+      };
+
+      UserApiService.setLicense(settingLicense.value).then((res) => {
+        console.log("success");
+        registButton.value = true;
+        registAlert.value = true;
+      });
+    });
+  } else {
     UserApiService.setPartner(settingData.value).then((res) => {
       settingLicense.value = {
         res: res,
         licensesKey: licensesKey.value,
         licensesBody: licensesBody.value,
       };
+
       UserApiService.setLicense(settingLicense.value).then((res) => {
         console.log("success");
         registButton.value = true;
@@ -195,12 +352,12 @@ const addRegist = () => {
   }
 };
 
-const formValidate = () => {
-  return true;
+const displayString = (type: boolean) => {
+  return type ? displayStatus[1] : displayStatus[0];
 };
 </script>
 <template>
-  <v-row justify="center">
+  <v-row justify="center" v-if="!tmpid">
     <AdminMenu />
   </v-row>
   <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
@@ -227,8 +384,12 @@ const formValidate = () => {
 
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
-      <div>
-        <v-alert text="パートナー登録を行いました" v-if="registAlert"></v-alert>
+      <AlertView
+        type="success"
+        :text="tmpid ? 'データ編集を行いました' : 'パートナー登録を行いました'"
+        v-if="registAlert"
+      ></AlertView>
+      <div class="d-flex">
         <v-btn
           v-if="registAlert"
           class="mt-2"
@@ -237,14 +398,14 @@ const formValidate = () => {
           text="一覧に戻る"
           href="/list"
         ></v-btn>
+        <ComponentButton
+          :text="tmpid ? '編集' : '登録'"
+          color="primary"
+          class="my-2 ml-2"
+          @onClick="addRegist()"
+          :disabled="registButton"
+        />
       </div>
-      <ComponentButton
-        text="登録"
-        color="primary"
-        class="my-3"
-        @onClick="addRegist()"
-        :disabled="registButton"
-      />
       <v-window v-model="tab">
         <v-window-item value="1">
           パートナー企業情報を入力してください。
@@ -255,7 +416,7 @@ const formValidate = () => {
             :hideDetails="`auto`"
             type="name"
             :requriredIcon="true"
-            :value="name"
+            :displayTextValue="tmpid ? name : ''"
             :rules="requiredValue(name, '企業名')"
             @onBlur="(ev, type) => onBlur(ev, type)"
           ></addPartnerForm>
@@ -266,6 +427,7 @@ const formValidate = () => {
             hideDetails="auto"
             :requriredIcon="true"
             type="login_id"
+            :displayTextValue="tmpid ? login_id : ''"
             messages="半角英数・4文字以上で入力してください。大文字と小文字は区別されます。"
             :rules="checkLoginID(login_id) as any"
             @onBlur="(ev, type) => onBlur(ev, type)"
@@ -281,11 +443,12 @@ const formValidate = () => {
             :value="password"
             :requriredIcon="true"
             @onBlur="(ev, type) => onBlur(ev, type)"
-            :rules="checkPassword(password)"
+            :rules="checkPassword(password, '', tmpid)"
           ></addPartnerForm>
           <addPostCodeForm
             title="郵便番号"
             class="w-100"
+            :value="post_code"
             :hideDetails="true"
             @onBlur="(e, type) => postBlur(e, type)"
           ></addPostCodeForm>
@@ -295,9 +458,10 @@ const formValidate = () => {
             class="w-50"
             :hideDetails="true"
             :items="prefs"
-            :value="preftext ?? ``"
+            :value="preftext"
             type="pref"
             @onBlur="(e, type) => onBlur(e, type)"
+            @onChange="(e) => onChange(e)"
           ></addPrefCodeForm>
           <addPartnerForm
             title="住所"
@@ -312,12 +476,14 @@ const formValidate = () => {
             title="建物名"
             text="建物名を入力してください"
             class="w-100"
+            :value="addressText2 ?? ``"
             :hideDetails="true"
             type="address2"
             @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
           <addPartnerForm
             title="電話番号"
+            :value="tel"
             text="電話番号を入力してください"
             class="w-100"
             :hideDetails="false"
@@ -329,6 +495,7 @@ const formValidate = () => {
             title="FAX番号"
             text="FAX番号を入力してください"
             class="w-100"
+            :value="fax"
             :hideDetails="false"
             messages="例)03-0000-0000"
             type="fax"
@@ -336,7 +503,7 @@ const formValidate = () => {
           ></addPartnerForm>
           <addSwitchForm
             title="申込み検査ボタン"
-            :label="`表示する`"
+            :label="displayString(requestFlag)"
             density="compact"
             :model="requestFlag"
             :tooltipflag="true"
@@ -349,6 +516,7 @@ const formValidate = () => {
             class="w-100"
             :hideDetails="true"
             type="system_name"
+            :value="system_name"
             @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
         </v-window-item>
@@ -359,6 +527,7 @@ const formValidate = () => {
             text="担当者氏名を入力してください"
             class="w-100"
             :requriredIcon="true"
+            :value="person"
             hideDetails="auto"
             type="person"
             :rules="requiredValue(person, '主担当者氏名')"
@@ -370,6 +539,7 @@ const formValidate = () => {
             class="w-100"
             hideDetails="auto"
             :requriredIcon="true"
+            :value="person_address"
             type="person_address"
             :rules="checkEmailRequired(person_address)"
             @onBlur="(e, type) => onBlur(e, type)"
@@ -379,6 +549,7 @@ const formValidate = () => {
             text="担当者氏名を入力してください"
             class="w-100"
             :hideDetails="true"
+            :value="person2"
             type="person2"
             @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
@@ -387,6 +558,7 @@ const formValidate = () => {
             text="担当者メールアドレスを入力してください"
             class="w-100"
             :hideDetails="true"
+            :value="person_address2"
             type="person_address2"
             @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
@@ -396,6 +568,7 @@ const formValidate = () => {
             class="w-100"
             :hideDetails="true"
             type="person_tel"
+            :value="person_tel"
             @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
         </v-window-item>
@@ -405,7 +578,7 @@ const formValidate = () => {
           <addPartnerForm
             v-for="element in elements"
             :key="element.id"
-            :title="element.note"
+            :title="element.text"
             :value="element.note"
             text="要素名を入力してください"
             class="w-100"
@@ -446,6 +619,7 @@ const formValidate = () => {
                     density="compact"
                     variant="outlined"
                     placeholder="0"
+                    :value="licenseVal[value.code]"
                     :name="value.code"
                     @onBlur="(e, type) => onlicense(e, type)"
                   />

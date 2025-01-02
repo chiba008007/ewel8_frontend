@@ -14,12 +14,12 @@ const move = pageClickMove();
 const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
-const tmpid = ref(route.path.replace(/[^0-9]/g, ""));
+const tmpid = route.params.id;
 // const userdata = user.userdata;
 // console.log(user.userdata);
 const pankuzu = ref();
 if ((user.userdata as any).type === "partner") {
-  pankuzu.value = [{ title: user.customerInfoList }];
+  pankuzu.value = [{ title: user.home }];
 } else {
   pankuzu.value = [
     { title: user.home, href: router.resolve({ name: "List" }).href },
@@ -63,9 +63,7 @@ const data = ref([
   },
 ]);
 // ライセンス一覧
-let tmp = {
-  user_id: tmpid.value,
-};
+let tmp = { user_id: tmpid };
 UserApiService.getLisencesList(tmp)
   .then(function (res: any) {
     data.value = [];
@@ -81,12 +79,10 @@ UserApiService.getLisencesList(tmp)
     });
   })
   .catch((e) => {
-    alert("getLisencesList ERROR" + e);
+    alert("ライセンス取得 ERROR" + e);
   });
 // 顧客一覧
-let ctmp = {
-  partner_id: tmpid.value,
-};
+let ctmp = { partner_id: tmpid };
 UserApiService.getCustomerList(ctmp)
   .then(function (res: any) {
     customerList.value = [];
@@ -102,7 +98,7 @@ UserApiService.getCustomerList(ctmp)
     });
   })
   .catch((e) => {
-    alert("getCustomerList ERROR" + e);
+    location.href = "/error";
   });
 
 const tab = ref(0);
@@ -116,7 +112,6 @@ const onMove = (param: string, key: number) => {
   <v-row justify="center">
     <CustomerMenu />
   </v-row>
-
   <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
   <v-row>
     <v-col class="ma-1">
