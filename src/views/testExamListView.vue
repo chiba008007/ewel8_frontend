@@ -58,6 +58,7 @@ TestApiService.getExam(tmp).then(function (rlt) {
   detail.value = rlt;
   title.value = detail.value.data.detail.testname;
   examList.value = detail.value.data.exams;
+  console.log(examList.value);
   examList.value.map((value: any, k: number) => {
     examList.value[k]["passText"] = (passArray as any)[value.passflag];
   });
