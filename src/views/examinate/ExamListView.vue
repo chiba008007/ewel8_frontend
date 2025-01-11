@@ -72,11 +72,11 @@ const openTest = (code: string, testparts_id: number) => {
   <v-container>
     <div class="text-h6 mb-4">検査選択メニュー</div>
     <div class="mb-4 text-left">
-      <div>
+      <div v-if="testLength != 0">
         受検して頂く検査は{{ testLength }}つです。<br />
         下記の検査名をクリックして検査をはじめて下さい。
       </div>
-      <div>
+      <div v-else>
         すべての検査が完了しました。<br />
         おつかれさまでした。
       </div>

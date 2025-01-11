@@ -32,7 +32,7 @@ import AlertView from "@/components/AlertView.vue";
 const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
-const tmpid = ref(route.path.replace(/[^0-9]/g, ""));
+const tmpid = ref(route.params.id);
 const today = new Date();
 const errorTab1 = ref(2);
 // const userdata = user.userdata;
@@ -142,14 +142,14 @@ const onBlurButton = () => {
 
 const partnerDetail = ref();
 let tmp = {
-  partnerId: tmpid.value,
-  type: "customer",
+  editId: tmpid.value,
+  type: "partner",
 };
 
 try {
   UserApiService.getPartnerDetail(tmp).then((res) => {
-    const entries = (res as any).data.user;
-    partnerDetail.value = entries;
+    partnerDetail.value = res?.data;
+    partner_id.value = res?.data.id;
   });
 } catch (e) {
   console.log(e);
@@ -158,18 +158,19 @@ try {
 // 顧客企業名の取得
 const customerDetail = ref();
 tmp = {
-  partnerId: tmpid.value,
-  type: "guest",
+  editId: tmpid.value,
+  type: "customer",
 };
 try {
   UserApiService.getPartnerDetail(tmp).then((res) => {
-    const entries = (res as any).data.user;
+    const entries = res?.data;
     customerDetail.value = entries;
   });
 } catch (e) {
   alert("detail error");
   console.log(e);
 }
+
 const dateErrorMessage = ref("");
 const onDateTime = (e: string) => {
   let tmpDate = e.split(" ")[0].split("-");
@@ -236,9 +237,12 @@ const onSearch = (e: string) => {
 };
 
 const alertFlag = ref(false);
+
 const onClick = () => {
   alertFlag.value = false;
   let tmp = {
+    partner_id: partner_id.value,
+    customer_id: tmpid.value,
     user_id: tmpid.value,
     testname: inputData.value.testname,
     testcount: inputData.value.testcount,
@@ -311,7 +315,7 @@ const edittingString = (type: boolean) => {
 </script>
 <template>
   <PartnerAdmin coded="customer" />
-  <v-row justify="center">
+  <v-row justify="center" class="mt-5">
     <TestMenu />
   </v-row>
   <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>

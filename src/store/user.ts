@@ -14,6 +14,7 @@ export const useStoreUser = defineStore("user", {
     customerInfoList: "顧客企業一覧",
     testList: "検査一覧",
     testExamList: "検査結果一覧",
+    examSearch: "受検者検索",
     testAdd: "検査登録",
     customerRegist: "新規顧客登録",
     partnerEdit: "企業情報変更",

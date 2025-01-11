@@ -70,7 +70,7 @@ const pageClickMoveParam = (pagename: string, id: number) => {
         density="compact"
         color="primary"
         class="ml-1 w-25"
-        @onClick="pageClickMove('addPertner')"
+        @onClick="pageClickMove('addPartner')"
       ></ComponentButton>
       <ComponentButton
         text="検査申込み履歴"

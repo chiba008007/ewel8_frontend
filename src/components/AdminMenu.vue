@@ -24,7 +24,7 @@ const pageClickMove = (pagename: string) => {
         density="compact"
         color="primary"
         class="ml-1 w-25"
-        @onClick="pageClickMove('addPertner')"
+        @onClick="pageClickMove('addPartner')"
       ></ComponentButton>
       <ComponentButton
         text="受検者検索"
@@ -32,6 +32,7 @@ const pageClickMove = (pagename: string) => {
         density="compact"
         color="primary"
         class="ml-1 w-25"
+        @onClick="pageClickMove('searchExam')"
       ></ComponentButton>
       <ComponentButton
         text="検査ログ"

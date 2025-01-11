@@ -29,6 +29,7 @@ const user = useStoreUser();
 const registButton = ref<boolean>(true);
 
 const tmpid = route.params.id;
+const editid = route.params.editid;
 
 interface typed {
   type: string;
@@ -188,6 +189,18 @@ const addRegist = () => {
       alert(e);
     });
 };
+
+// editidがあるとき編集用データの取得
+if (editid) {
+  let editTmp = {
+    type: "customer",
+    partnerId: tmpid,
+    editId: editid,
+  };
+  UserApiService.getPartnerDetail(editTmp).then((rst) => {
+    console.log(rst);
+  });
+}
 </script>
 <template>
   <InfoAreaView />

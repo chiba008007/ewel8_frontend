@@ -28,6 +28,9 @@ class TestApiService {
   getPFSTestDetail(data: object) {
     return httpAuth.post("/api/test/getPFSTestDetail", data);
   }
+  async getSearchExam(data = {}) {
+    return httpAuth.post("/api/test/getSearchExam", data);
+  }
 }
 
 export default new TestApiService();

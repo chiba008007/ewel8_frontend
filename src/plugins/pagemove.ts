@@ -13,6 +13,13 @@ export default function () {
   const pageClickMoveParamCode = (pgName: string, code: string | number) => {
     router.push({ name: pgName, params: { id: code } });
   };
+  const pageClickMoveParamCodeList = (
+    pgName: string,
+    code: string | number | string[] | number[],
+    editid: string | number
+  ) => {
+    router.push({ name: pgName, params: { id: code, editid: editid } });
+  };
   const pageClickMoveLink = (pgName: string, code: string) => {
     location.href = "/" + pgName + "?code=" + code;
   };
@@ -37,5 +44,6 @@ export default function () {
     pageTestListModeParam,
     pageQRBlank,
     pageClickMoveLinkParam,
+    pageClickMoveParamCodeList,
   };
 }

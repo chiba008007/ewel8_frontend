@@ -93,119 +93,114 @@ const person_tel = ref();
 const licenseVal = ref({}) as any;
 // 編集用データ取得
 if (tmpid) {
-  UserApiService.getUserData({ id: tmpid })
-    .then((rlt) => {
-      const objWithData = rlt as {
-        data: {
-          name: string;
-          login_id: string;
-          post_code: string;
-          post1: string;
-          post2: string;
-          pref: string;
-          address1: string;
-          address2: string;
-          tel: string;
-          fax: string;
-          requestFlag: boolean;
-          system_name: string;
-          person: string;
-          person_address: string;
-          person2: string;
-          person_address2: string;
-          person_tel: string;
-          licenses: number[];
-          element1: string;
-          element2: string;
-          element3: string;
-          element4: string;
-          element5: string;
-          element6: string;
-          element7: string;
-          element8: string;
-          element9: string;
-          element10: string;
-          element11: string;
-          element12: string;
-          element13: string;
-          element14: string;
-        };
+  UserApiService.getUserData({ id: tmpid }).then((rlt) => {
+    const objWithData = rlt as {
+      data: {
+        name: string;
+        login_id: string;
+        post_code: string;
+        post1: string;
+        post2: string;
+        pref: string;
+        address1: string;
+        address2: string;
+        tel: string;
+        fax: string;
+        requestFlag: boolean;
+        system_name: string;
+        person: string;
+        person_address: string;
+        person2: string;
+        person_address2: string;
+        person_tel: string;
+        licenses: number[];
+        element1: string;
+        element2: string;
+        element3: string;
+        element4: string;
+        element5: string;
+        element6: string;
+        element7: string;
+        element8: string;
+        element9: string;
+        element10: string;
+        element11: string;
+        element12: string;
+        element13: string;
+        element14: string;
       };
-      name.value = objWithData.data.name;
-      login_id.value = objWithData.data.login_id;
-      post_code.value = objWithData.data.post_code.replace(/undefined/g, "");
-      let tmp = objWithData.data.post_code.split("-");
-      post1.value = tmp[0];
-      post2.value = tmp[1];
-      preftext.value = objWithData.data.pref;
-      addressText.value = objWithData.data.address1;
-      addressText2.value = objWithData.data.address2;
-      tel.value = objWithData.data.tel;
-      fax.value = objWithData.data.fax;
-      requestFlag.value = objWithData.data.requestFlag;
-      system_name.value = objWithData.data.system_name;
-      person.value = objWithData.data.person;
-      person_address.value = objWithData.data.person_address;
-      person2.value = objWithData.data.person2;
-      person_address2.value = objWithData.data.person_address2;
-      person_tel.value = objWithData.data.person_tel;
-      const entries = Object.entries(objWithData.data.licenses);
-      for (const [key, val] of entries) {
-        licensesKey.value.push(key);
-        licensesBody.value.push(val.toString());
-      }
-      licenseVal.value = objWithData.data.licenses;
-      elements.value[0].note = objWithData.data.element1
-        ? objWithData.data.element1
-        : "";
-      elements.value[1].note = objWithData.data.element2
-        ? objWithData.data.element2
-        : "";
-      elements.value[2].note = objWithData.data.element3
-        ? objWithData.data.element3
-        : "";
-      elements.value[3].note = objWithData.data.element4
-        ? objWithData.data.element4
-        : "";
-      elements.value[4].note = objWithData.data.element5
-        ? objWithData.data.element5
-        : "";
-      elements.value[5].note = objWithData.data.element6
-        ? objWithData.data.element6
-        : "";
-      elements.value[6].note = objWithData.data.element7
-        ? objWithData.data.element7
-        : "";
-      elements.value[7].note = objWithData.data.element8
-        ? objWithData.data.element8
-        : "";
-      elements.value[8].note = objWithData.data.element9
-        ? objWithData.data.element9
-        : "";
-      elements.value[9].note = objWithData.data.element10
-        ? objWithData.data.element10
-        : "";
-      elements.value[10].note = objWithData.data.element11
-        ? objWithData.data.element11
-        : "";
-      elements.value[11].note = objWithData.data.element12
-        ? objWithData.data.element12
-        : "";
-      elements.value[12].note = objWithData.data.element13
-        ? objWithData.data.element13
-        : "";
-      elements.value[13].note = objWithData.data.element14
-        ? objWithData.data.element14
-        : "";
+    };
+    name.value = objWithData.data.name;
+    login_id.value = objWithData.data.login_id;
+    post_code.value = objWithData.data.post_code.replace(/undefined/g, "");
+    let tmp = objWithData.data.post_code.split("-");
+    post1.value = tmp[0];
+    post2.value = tmp[1];
+    preftext.value = objWithData.data.pref;
+    addressText.value = objWithData.data.address1;
+    addressText2.value = objWithData.data.address2;
+    tel.value = objWithData.data.tel;
+    fax.value = objWithData.data.fax;
+    requestFlag.value = objWithData.data.requestFlag;
+    system_name.value = objWithData.data.system_name;
+    person.value = objWithData.data.person;
+    person_address.value = objWithData.data.person_address;
+    person2.value = objWithData.data.person2;
+    person_address2.value = objWithData.data.person_address2;
+    person_tel.value = objWithData.data.person_tel;
+    const entries = Object.entries(objWithData.data.licenses);
+    for (const [key, val] of entries) {
+      licensesKey.value.push(key);
+      licensesBody.value.push(val.toString());
+    }
+    licenseVal.value = objWithData.data.licenses;
+    elements.value[0].note = objWithData?.data?.element1
+      ? objWithData?.data?.element1
+      : "";
+    elements.value[1].note = objWithData?.data?.element2
+      ? objWithData?.data?.element2
+      : "";
+    elements.value[2].note = objWithData?.data?.element3
+      ? objWithData?.data?.element3
+      : "";
+    elements.value[3].note = objWithData?.data?.element4
+      ? objWithData?.data?.element4
+      : "";
+    elements.value[4].note = objWithData?.data?.element5
+      ? objWithData?.data?.element5
+      : "";
+    elements.value[5].note = objWithData?.data?.element6
+      ? objWithData?.data?.element6
+      : "";
+    elements.value[6].note = objWithData?.data?.element7
+      ? objWithData?.data?.element7
+      : "";
+    elements.value[7].note = objWithData?.data?.element8
+      ? objWithData?.data?.element8
+      : "";
+    elements.value[8].note = objWithData?.data?.element9
+      ? objWithData?.data?.element9
+      : "";
+    elements.value[9].note = objWithData?.data?.element10
+      ? objWithData?.data?.element10
+      : "";
+    elements.value[10].note = objWithData?.data?.element11
+      ? objWithData?.data?.element11
+      : "";
+    elements.value[11].note = objWithData?.data?.element12
+      ? objWithData?.data?.element12
+      : "";
+    elements.value[12].note = objWithData?.data?.element13
+      ? objWithData?.data?.element13
+      : "";
+    elements.value[13].note = objWithData?.data?.element14
+      ? objWithData?.data?.element14
+      : "";
 
-      errorTab1.value = 0;
-      errorTab2.value = 0;
-      registButton.value = false;
-    })
-    .catch(() => {
-      alert("編集用ユーザデータ取得エラー");
-      location.href = "/error";
-    });
+    errorTab1.value = 0;
+    errorTab2.value = 0;
+    registButton.value = false;
+  });
 }
 const onBlur = async (e: string | boolean, type: string) => {
   if (type === "name") name.value = e;
@@ -322,7 +317,6 @@ const addRegist = () => {
   if (tmpid) {
     settingData.value.id = tmpid;
     UserApiService.editPartnerData(settingData.value).then((res) => {
-      console.log(res.data);
       settingLicense.value = {
         res: res,
         licensesKey: licensesKey.value,

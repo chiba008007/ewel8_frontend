@@ -92,7 +92,7 @@ const onResize = () => {
             color="success"
             class="ml-2"
             density="compact"
-            @onClick="pages.pageClickMoveLinkParam('editPertner', item.id)"
+            @onClick="pages.pageClickMoveLinkParam('editPartner', item.id)"
           />
           <ComponentButton
             text="添付"

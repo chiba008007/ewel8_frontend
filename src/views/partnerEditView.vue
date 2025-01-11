@@ -78,8 +78,8 @@ const tmp = {
   type: "partner",
 };
 const userDetail = ref();
-UserApiService.getPartnerDetail(tmp).then((res) => {
-  const entries = (res as any).data.user;
+UserApiService.getPartnerDetailData(tmp).then((res) => {
+  const entries = res?.data;
   userDetail.value = entries;
   form.value.post = userDetail.value.post_code;
   form.value.preftext = userDetail.value.pref;
@@ -139,7 +139,7 @@ const addRegist = () => {
 };
 </script>
 <template>
-  <PartnerAdmin />
+  <PartnerAdmin coded="customerTOP" />
   <v-row align="center" justify="center">
     <CustomerMenu />
   </v-row>
@@ -183,7 +183,7 @@ const addRegist = () => {
               <addPartnerForm
                 title="ID"
                 :hideDetails="`auto`"
-                :displayTextValue="userDetail?.email"
+                :displayTextValue="userDetail?.login_id"
               ></addPartnerForm>
               <addPartnerForm
                 title="パスワード"
@@ -210,7 +210,7 @@ const addRegist = () => {
                 :items="prefs"
                 :value="form.preftext ?? ``"
                 type="pref"
-                @onBlur="(e) => (form.preftext = e)"
+                @onChange="(e) => (form.preftext = e)"
               ></addPrefCodeForm>
               <addPartnerForm
                 title="住所"

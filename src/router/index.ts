@@ -6,9 +6,11 @@ import LoginView from "../views/LoginView.vue";
 import ListView from "../views/ListView.vue";
 import partnerRegistView from "../views/partnerRegistView.vue";
 import partnerEditView from "../views/partnerEditView.vue";
-import addPertner from "../views/addPertnerView.vue";
+import addPartner from "../views/addPartnerView.vue";
+import searchExam from "../views/searchExam.vue";
 import customerList from "../views/customerListView.vue";
 import customerAdd from "../views/customerAdd.vue";
+import customerEdit from "../views/customerAdd.vue";
 import ErrorView from "../views/errorView.vue";
 import ExamView from "../views/examinate/ExamView.vue";
 import ExamProfileView from "../views/examinate/ProfileView.vue";
@@ -35,9 +37,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/home",
     name: "Home",
     component: HomeView,
-    meta: {
-      requiresAuth: true, // ログインしないと入れないページ
-    },
+    meta: { requiresAuth: true },
   },
   {
     path: "/list",
@@ -64,17 +64,25 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/addPertner",
-    name: "addPertner",
-    component: addPertner,
+    path: "/addPartner",
+    name: "addPartner",
+    component: addPartner,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
     },
   },
   {
-    path: "/editPertner/:id",
-    name: "editPertner",
-    component: addPertner,
+    path: "/editPartner/:id",
+    name: "editPartner",
+    component: addPartner,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+    },
+  },
+  {
+    path: "/searchExam",
+    name: "searchExam",
+    component: searchExam,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
     },
@@ -112,6 +120,14 @@ const routes: Array<RouteRecordRaw> = [
     path: "/customerAdd/:id",
     name: "customerAdd",
     component: customerAdd,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/customerEdit/edit/:id/:editid",
+    name: "customerEdit",
+    component: customerEdit,
     meta: {
       requiresAuth: true,
     },

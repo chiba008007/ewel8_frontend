@@ -32,6 +32,7 @@ class ExamApiService {
   editExamData(data: object) {
     return httpAuth.post("/api/exam/editExamData", data);
   }
+
   async getTestExamMenu(data: object) {
     try {
       return await httpAuth.post("/api/exam/getTestExamMenu", data);

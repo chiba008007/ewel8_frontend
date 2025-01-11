@@ -107,7 +107,7 @@ const onMove = (param: string, key: number) => {
 };
 </script>
 <template>
-  <PartnerAdmin coded="partner" />
+  <PartnerAdmin coded="customerTOP" />
   <InfoAreaView />
   <v-row justify="center">
     <CustomerMenu />
@@ -146,6 +146,13 @@ const onMove = (param: string, key: number) => {
                     color="success"
                     size="small"
                     class="ml-1"
+                    @click="
+                      move.pageClickMoveParamCodeList(
+                        'customerEdit',
+                        tmpid,
+                        item.id
+                      )
+                    "
                   ></ButtonView>
                   <ButtonView
                     text="削除"

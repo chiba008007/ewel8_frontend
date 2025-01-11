@@ -15,15 +15,12 @@ const tmp = {
 };
 
 const partnerDetail = ref();
-try {
-  UserApiService.getPartnerDetail(tmp).then((res) => {
+await UserApiService.getPartnerDetail(tmp).then((res) => {
+  if (res) {
     const entries = (res as any).data.user;
     partnerDetail.value = entries;
-  });
-} catch (e) {
-  alert("detail error");
-  console.log(e);
-}
+  }
+});
 </script>
 <template>
   <h3 class="ma-4">{{ partnerDetail?.system_name }} 管理画面</h3>
