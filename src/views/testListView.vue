@@ -135,11 +135,4 @@ a.text-link {
     transition: 0.5s;
   }
 }
-.dataTestList {
-  div {
-    table {
-      width: auto !important;
-    }
-  }
-}
 </style>

@@ -346,7 +346,7 @@ const edittingString = (type: boolean) => {
       text="戻る"
       color="purple"
       class="mt-3 mb-3 mr-2"
-      @onClick="tab = tab - 1"
+      @onClick="tab = parseInt((tab - 1) as unknown as string)"
     />
     <ButtonView
       v-if="tab <= 2"
@@ -354,7 +354,11 @@ const edittingString = (type: boolean) => {
       color="lime"
       class="mt-3 mb-3"
       :disabled="registButton"
-      @onClick="tab = tab + 1"
+      @onClick="
+        tab = parseInt(
+          (parseInt(tab as unknown as string) + 1) as unknown as string
+        )
+      "
     />
     <ButtonView
       v-else
@@ -406,7 +410,7 @@ const edittingString = (type: boolean) => {
         ></addPartnerForm>
         <addSwitchForm
           title="氏名の入力"
-          :label="`表示する`"
+          :label="displayString(inputData.nameuseflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.nameuseflag"
@@ -418,7 +422,7 @@ const edittingString = (type: boolean) => {
         ></addSwitchForm>
         <addSwitchForm
           title="性別の入力"
-          :label="`表示する`"
+          :label="displayString(inputData.genderuseflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.genderuseflag"
@@ -584,10 +588,10 @@ const edittingString = (type: boolean) => {
           :items="movieArray"
           :value="inputData.pdfuseflag"
           :valuePDF="inputData.pdfcountflag"
-          @onUpdate="(e:boolean) => (inputData.pdfuseflag = inputData.pdfuseflag?!e:e)"
+          @onClick="(e:boolean) => (inputData.pdfuseflag = e)"
           @onDateTime="(e:string) => pdfDateTime(e,'start')"
           @onDateEndTime="(e:string) => pdfDateTime(e,'end')"
-          @PDFCountFlag="(e:boolean)=>(inputData.pdfcountflag = inputData.pdfcountflag?!e:e)"
+          @PDFCountFlag="(e:boolean)=>(inputData.pdfcountflag = e)"
           @onPdfCount="(e:number) => (inputData.pdfcount = e)"
         ></addPDFForm>
         <TextFieldView

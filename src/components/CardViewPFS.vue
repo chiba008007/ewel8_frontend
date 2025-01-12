@@ -3,6 +3,11 @@ import { defineProps, withDefaults, defineEmits, ref } from "vue";
 import AddSwitchForm from "./addSwitchForm.vue";
 import TextField from "@/components/TextFieldView.vue";
 import ButtonView from "./ButtonView.vue";
+import { settingStatus } from "@/plugins/const";
+const settingString = (type: boolean) => {
+  return type ? settingStatus[1] : settingStatus[0];
+};
+
 interface Props {
   title?: string;
   testcount?: number | string;
@@ -76,6 +81,7 @@ const onClick = (status: number) => {
       <v-row no-gutters>
         <v-col>
           <AddSwitchForm
+            :label="settingString(props.model)"
             title="３要素を用いるストレス共生力算出"
             color="white border-none pl-2"
             class="border-none pl-0"
@@ -87,6 +93,7 @@ const onClick = (status: number) => {
       <v-row no-gutters>
         <v-col>
           <AddSwitchForm
+            :label="settingString(props.weightModel)"
             :title="`重付け【` + props.title + `】`"
             color="white border-none pl-2"
             class="border-none pl-0"

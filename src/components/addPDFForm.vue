@@ -6,6 +6,11 @@ import ComponentSwitch from "@/components/SwitchView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
 import { monthArray, dayArray } from "@/plugins/const";
 import { zeroPadding, numberValue, zeroZapress } from "@/plugins/validate";
+import { settingStatus } from "@/plugins/const";
+const settingString = (type: boolean) => {
+  return type ? settingStatus[1] : settingStatus[0];
+};
+
 const props = defineProps<{
   title?: string;
   hideDetails?: boolean | "auto";
@@ -72,9 +77,10 @@ const pdfCount = ref(0);
       <div class="mt-6">
         <p>PDF出力期間を設定する</p>
         <ComponentSwitch
+          :label="settingString(props.value ? true : false)"
           :title="props.title"
           :model="props.value"
-          @onUpdate="(e, type) => emit('onUpdate', e, type ?? '')"
+          @onClick="emit('onClick', props.value ? false : true)"
         ></ComponentSwitch>
       </div>
       <div class="mt-6">
@@ -169,9 +175,10 @@ const pdfCount = ref(0);
       <div class="mt-6">
         <p>PDF出力人数を設定する</p>
         <ComponentSwitch
+          :label="settingString(props.valuePDF ? true : false)"
           :title="props.title"
           :model="props.valuePDF"
-          @onUpdate="(e) => emit('PDFCountFlag', e)"
+          @onClick="emit('PDFCountFlag', props.valuePDF ? false : true)"
         ></ComponentSwitch>
         <p>PDF出力制限数</p>
         <TextFieldView

@@ -28,12 +28,14 @@ let params = {
   params: k,
 };
 const testLength = ref(0);
+const movietype = ref(1);
+const moviedisplayurl = ref();
 ExamApiService.getTestExamMenu(params).then(function (rlt) {
-  console.log(rlt);
   examList.value = rlt?.data;
+  movietype.value = rlt?.data[0].movietype;
+  moviedisplayurl.value = rlt?.data[0].moviedisplayurl;
   let done = 0;
   rlt?.data.map(function (val: object | any) {
-    console.log(val);
     if (val.examstatus == 1) done += 1;
   });
   testLength.value = rlt?.data.length - done;
@@ -93,11 +95,14 @@ const openTest = (code: string, testparts_id: number) => {
         @onClick="openTest(exam.code, exam.testparts_id)"
       ></ComponentButton>
     </div>
-    <div class="text-center w-100 ma-auto">
+    <div
+      class="text-center w-100 ma-auto"
+      v-if="movietype == 1 || (movietype == 2 && testLength === 0)"
+    >
       <iframe
         width="100%"
-        height="200"
-        src="https://www.youtube.com/embed/rxKmGgpWibc"
+        height="400"
+        :src="moviedisplayurl"
         title="YouTube video player"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

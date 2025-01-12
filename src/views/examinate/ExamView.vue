@@ -155,7 +155,7 @@ const onClick = () => {
       </v-card>
     </div>
     <div v-else>
-      <v-card variant="tonal" class="mt-4">
+      <v-card variant="tonal" class="mt-4" v-if="logintext">
         <v-card-text style="white-space: pre-wrap; word-wrap: break-word">{{
           logintext
         }}</v-card-text>
