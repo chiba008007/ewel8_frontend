@@ -2,12 +2,13 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
+import { d_Front } from "../plugins/const";
 
 pdfMake.fonts = {
   Roboto: {
-    normal: "http://localhost:8080/examples/fonts/GenShinGothic-Medium.ttf",
-    bold: "http://localhost:8080/examples/fonts/GenShinGothic-Medium.ttf",
-    italics: "http://localhost:8080/examples/fonts/GenShinGothic-Medium.ttf",
+    normal: d_Front + "/examples/fonts/GenShinGothic-Medium.ttf",
+    bold: d_Front + "/examples/fonts/GenShinGothic-Medium.ttf",
+    italics: d_Front + "/examples/fonts/GenShinGothic-Medium.ttf",
   },
 };
 

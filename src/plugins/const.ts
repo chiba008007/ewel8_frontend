@@ -7,13 +7,17 @@ interface NumberCodeOrNullListType {
 const uri = new URL(window.location.href);
 const reg = /localhost/;
 let tmp = "";
+let frontpath = "";
 if (reg.test(uri.toString())) {
   tmp = "http://localhost:8000";
+  frontpath = "http://localhost:8080";
 } else {
   tmp = "https://ewelmanage.uh-oh.jp";
+  frontpath = "https://ewel.uh-oh.jp";
 }
 
 export const d_Path = tmp;
+export const d_Front = frontpath;
 //export const d_Path = "https://paperadmin.uh-oh.jp";
 /** 画像 */
 export const imagePath = d_Path + "/storage/app/myImage/";
