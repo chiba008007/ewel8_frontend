@@ -13,7 +13,9 @@
     "axios": "^1.6.8",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.13",
+    "html-to-pdfmake": "^2.5.20",
     "moment": "^2.30.1",
+    "pdfmake": "^0.2.18",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
     "react-use-cookie": "^1.5.0",
@@ -29,7 +31,9 @@
     "yubinbango-core2": "^0.6.3"
   },
   "devDependencies": {
+    "@types/html-to-pdfmake": "^2.4.4",
     "@types/jest": "^27.0.1",
+    "@types/pdfmake": "^0.2.11",
     "@types/webfontloader": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",

@@ -78,7 +78,6 @@ const pfsDialog = (e: number) => {
     testparts_id: params.testid,
   };
   TestApiService.getPFSTestDetail(tmp).then((rlt) => {
-    console.log(rlt.data);
     pfsDialogText.value.text1 = rlt.data[0];
     pfsDialogText.value.text2 = rlt.data[1];
     pfsDialogText.value.text3 = rlt.data[2];
@@ -94,6 +93,13 @@ const onResize = () => {
 };
 
 const dialog = ref(false);
+
+const onPDfOutput = (id: number) => {
+  router.push({
+    name: "testExamPdf",
+    params: { id: params.id, testid: params.testid, examid: id },
+  });
+};
 </script>
 <template>
   <PartnerAdmin coded="customer" />
@@ -176,7 +182,7 @@ const dialog = ref(false);
               <td class="text-xs-right text-center">{{ item.memo1 }}</td>
               <td class="text-xs-right text-center">{{ item.memo2 }}</td>
               <td class="text-xs-right text-center">未出力</td>
-              <td class="text-xs-right text-center d-flex pt-3">
+              <td class="text-xs-right text-center d-flex pt-3 justify-center">
                 <ButtonView
                   text="更新"
                   variant="tonal"
@@ -184,11 +190,13 @@ const dialog = ref(false);
                   color="primary"
                 ></ButtonView>
                 <ButtonView
+                  :disabled="item.endtime ? false : true"
                   text="PDF"
                   variant="tonal"
                   density="compact"
                   color="success"
                   class="ml-1"
+                  @onClick="onPDfOutput(item.id)"
                 ></ButtonView>
                 <ButtonView
                   text="証書"
