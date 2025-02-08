@@ -7,9 +7,18 @@ import pankuzuTestList from "../components/pankuzuTestList.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import csvDownload from "@/components/csvDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
-import { passArray } from "@/plugins/const";
+import { passArray, d_Path } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
+import { pfsOutput } from "@/plugins/PDF/pfs";
+
+const pdfcode = ref();
+const onPDfOutput = (id: number, code: string, birth: string) => {
+  pdfcode.value = id;
+  birth = birth.replace(/\//g, "-");
+  const path = d_Path + "/pdf/" + id + "/code/" + code + "/birth/" + birth;
+  location.href = path;
+};
 
 const headers = ref([
   { title: "番号", sortable: false, key: "no", cols: 1, row: 2, width: "20px" },
@@ -58,7 +67,6 @@ TestApiService.getExam(tmp).then(function (rlt) {
   detail.value = rlt;
   title.value = detail.value.data.detail.testname;
   examList.value = detail.value.data.exams;
-  console.log(examList.value);
   examList.value.map((value: any, k: number) => {
     examList.value[k]["passText"] = (passArray as any)[value.passflag];
   });
@@ -93,18 +101,10 @@ const onResize = () => {
 };
 
 const dialog = ref(false);
-
-const onPDfOutput = (id: number) => {
-  router.push({
-    name: "testExamPdf",
-    params: { id: params.id, testid: params.testid, examid: id },
-  });
-};
 </script>
 <template>
   <PartnerAdmin coded="customer" />
   <pankuzuTestList></pankuzuTestList>
-
   <div class="text-center pa-4">
     <v-dialog v-model="dialogFlag" width="auto">
       <v-card max-width="400" class="pa-4">
@@ -140,7 +140,7 @@ const onPDfOutput = (id: number) => {
         >
           <template v-slot:headers="{ columns }">
             <tr>
-              <template v-for="column in columns" :key="column.key">
+              <template v-for="column in columns as any" :key="column.key">
                 <th
                   :colspan="column.cols"
                   :rowspan="column.row"
@@ -151,7 +151,7 @@ const onPDfOutput = (id: number) => {
               </template>
             </tr>
             <tr>
-              <template v-for="column in columns" :key="column.key">
+              <template v-for="column in columns as any" :key="column.key">
                 <th class="text-center" v-if="column.key == 'PFS'">
                   ステータス
                 </th>
@@ -167,20 +167,26 @@ const onPDfOutput = (id: number) => {
           <template v-slot:item="{ item, index }">
             <tr>
               <td width="40">{{ index + 1 }}</td>
-              <td width="80">{{ item.email }}</td>
-              <td class="text-xs-right">{{ item.name }}</td>
-              <td class="text-xs-right">{{ item.kana }}</td>
-              <td class="text-xs-right">{{ item.birth }}</td>
-              <td class="text-xs-right text-center">{{ item.passText }}</td>
+              <td width="80">{{ (item as any).email }}</td>
+              <td class="text-xs-right">{{ (item as any).name }}</td>
+              <td class="text-xs-right">{{ (item as any).kana }}</td>
+              <td class="text-xs-right">{{ (item as any).birth }}</td>
+              <td class="text-xs-right text-center">
+                {{ (item as any).passText }}
+              </td>
               <ExamPfsView
-                :endtime="item.endtime"
-                :id="item.id"
-                :level="item.level"
-                :lv="item.lv"
-                @onClick="(e) => pfsDialog(e)"
+                :endtime="(item as any).endtime"
+                :id="(item as any).id"
+                :level="(item as any).level"
+                :lv="(item as any).lv"
+                @onClick="(e:any) => pfsDialog(e)"
               ></ExamPfsView>
-              <td class="text-xs-right text-center">{{ item.memo1 }}</td>
-              <td class="text-xs-right text-center">{{ item.memo2 }}</td>
+              <td class="text-xs-right text-center">
+                {{ (item as any).memo1 }}
+              </td>
+              <td class="text-xs-right text-center">
+                {{ (item as any).memo2 }}
+              </td>
               <td class="text-xs-right text-center">未出力</td>
               <td class="text-xs-right text-center d-flex pt-3 justify-center">
                 <ButtonView
@@ -190,13 +196,19 @@ const onPDfOutput = (id: number) => {
                   color="primary"
                 ></ButtonView>
                 <ButtonView
-                  :disabled="item.endtime ? false : true"
+                  :disabled="(item as any).endtime ? false : true"
                   text="PDF"
                   variant="tonal"
                   density="compact"
                   color="success"
                   class="ml-1"
-                  @onClick="onPDfOutput(item.id)"
+                  @onClick="
+                    onPDfOutput(
+                      (item as any).id,
+                      (item as any).email,
+                      (item as any).birth
+                    )
+                  "
                 ></ButtonView>
                 <ButtonView
                   text="証書"

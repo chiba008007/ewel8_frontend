@@ -28,6 +28,7 @@ const onclick = (id: number | undefined) => {
       density="compact"
       @onClick="onclick(props.id)"
       v-if="endtime"
+      class="bg-blue"
     ></ButtonView>
   </td>
   <td class="text-center">{{ level }}</td>

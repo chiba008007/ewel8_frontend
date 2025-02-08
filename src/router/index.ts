@@ -23,7 +23,6 @@ import testListView from "../views/testListView.vue";
 import testAddView from "../views/testAddView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
-import testExamPdfView from "../views/testExamPdfView.vue";
 import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
 import ExamPfsTake from "../views/examinate/PFS/ExamTake.vue";
 import ExamPfsTake2 from "../views/examinate/PFS/ExamTake2.vue";
@@ -162,14 +161,6 @@ const routes: Array<RouteRecordRaw> = [
     path: "/testExamList/:id/test/:testid",
     name: "testExamList",
     component: testExamListView,
-    meta: {
-      requiresAuth: true,
-    },
-  },
-  {
-    path: "/testExamPdf/:id/test/:testid/PDF/:examid",
-    name: "testExamPdf",
-    component: testExamPdfView,
     meta: {
       requiresAuth: true,
     },

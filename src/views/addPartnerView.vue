@@ -234,6 +234,8 @@ const onBlur = async (e: string | boolean, type: string) => {
 
   registButton.value = true;
   if (!tmpid) {
+    errorTab1.value = 3;
+    errorTab2.value = 2;
     if (name.value && name.value.length > 0) errorTab1.value -= 1;
     if (
       login_id.value &&
