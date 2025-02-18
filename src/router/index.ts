@@ -10,7 +10,7 @@ import addPartner from "../views/addPartnerView.vue";
 import searchExam from "../views/searchExam.vue";
 import customerList from "../views/customerListView.vue";
 import customerAdd from "../views/customerAdd.vue";
-import customerEdit from "../views/customerAdd.vue";
+import customerEdit from "../views/customerEdit.vue";
 import ErrorView from "../views/errorView.vue";
 import ExamView from "../views/examinate/ExamView.vue";
 import ExamProfileView from "../views/examinate/ProfileView.vue";

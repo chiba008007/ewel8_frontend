@@ -4,6 +4,7 @@ import { defineProps, defineEmits, ref } from "vue";
 import { useStoreUser } from "../store/user";
 import TextAreaField from "../components/TextAreaFieldView.vue";
 import type { VTextField } from "vuetify/components";
+import { edittingStatus } from "@/plugins/const";
 type TVariant = VTextField["$props"]["variant"];
 type TVDensity = VTextField["$props"]["density"];
 import ComponentSwitch from "../components/SwitchView.vue";
@@ -18,9 +19,10 @@ const props = defineProps<{
   variant?: TVariant;
   hideDetails?: boolean | "auto";
   height?: number;
-  value?: string;
+  value?: string | number;
   disabled?: boolean;
   privacyModel?: boolean;
+  textarea?: string;
 }>();
 
 //const model = ref<boolean>(true);
@@ -38,7 +40,7 @@ const emit = defineEmits<{
     </v-col>
     <v-col sm="9" class="pa-1 border-sm">
       <ComponentSwitch
-        label="編集/利用する"
+        :label="edittingStatus[!props.value ? 0 : 1]"
         :type="props.type"
         :model="props.privacyModel"
         @onClick="(e) => emit('onClick', e)"
@@ -48,7 +50,7 @@ const emit = defineEmits<{
         :variant="props.variant"
         :hideDetails="props.hideDetails"
         :height="props.height"
-        :value="privacy"
+        :value="props.textarea ? props.textarea : privacy"
         :disabled="props.disabled"
         @onBlur="(e:string) => emit('onBlur', e)"
       ></TextAreaField>

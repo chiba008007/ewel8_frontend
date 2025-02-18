@@ -14,7 +14,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "onUpdate", value: string, name: string | undefined): void;
+  (
+    e: "onUpdate",
+    value: string | File[] | File,
+    name: string | undefined
+  ): void;
 }>();
 </script>
 <template>

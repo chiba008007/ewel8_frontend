@@ -20,15 +20,18 @@ import {
   checkEmail,
 } from "../plugins/validate";
 import UserApiService from "@/services/UserApiService";
-import { imagePath, customer } from "@/plugins/const";
+import { imagePath, customer, displayStatus } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
 import customerEdit from "@/plugins/customerEdit";
 
+const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
-const registButton = ref<boolean>(true);
+const registButton = ref<boolean>(false);
 
 const tmpid = route.params.id;
+const editid = route.params.editid;
+
 const pankuzu = ref(customerEdit.pankuzu(user.userdata as { type: "" }));
 
 const inputData = ref({
@@ -71,10 +74,7 @@ const onBlurButton = async () => {
   registButton.value = true;
   if (
     !requiredValue(inputData.value.name, "顧客企業名") &&
-    ((await checkLoginID(inputData.value.login_id, false)) as
-      | boolean
-      | string) == true &&
-    !checkPassword(inputData.value.password) &&
+    (!inputData.value.password || !checkPassword(inputData.value.password)) &&
     !requiredValue(inputData.value.tanto_name, "担当者氏名") &&
     !checkEmail(inputData.value.tanto_address)
   ) {
@@ -85,6 +85,7 @@ const onBlurButton = async () => {
 const postBlur = (e: string, type: string) => {
   if (type === "post1") inputData.value.post1 = e;
   if (type === "post2") inputData.value.post2 = e;
+
   if (inputData.value.post1 && inputData.value.post2) {
     new YubinBangoCore(inputData.value.post1 + inputData.value.post2, function (
       addr: any
@@ -96,6 +97,7 @@ const postBlur = (e: string, type: string) => {
     });
   }
 };
+
 PrefApiService.getPrefData().then((res) => {
   prefs.value = res;
 });
@@ -109,6 +111,7 @@ const onUpdate = () => {
   imageUrl = window.URL.createObjectURL(blob);
   formData.append("photo", blob, "image.jpg");
   myimage_path.value = imageUrl;
+
   UserApiService.onUpload(formData)
     .then((res: any) => {
       inputData.value.logoImagePath = imagePath + res.data;
@@ -118,8 +121,11 @@ const onUpdate = () => {
     });
 };
 const successAlertFlag = ref(false);
+
 const addRegist = () => {
   console.log(inputData.value);
+
+  /*
   let userdata = user.userdata as any;
   let tmp = {
     type: customer,
@@ -164,6 +170,45 @@ const addRegist = () => {
     .catch(function (e) {
       alert(e);
     });
+    */
+};
+
+let editTmp = {
+  type: "customer",
+  partnerId: tmpid,
+  editId: editid,
+};
+UserApiService.getPartnerDetail(editTmp).then((rst) => {
+  console.log(rst);
+  inputData.value.name = rst?.data.name;
+  inputData.value.login_id = rst?.data.login_id;
+  inputData.value.postCode = rst?.data.post_code;
+  inputData.value.preftext = rst?.data.pref;
+  inputData.value.addressText = rst?.data.address1;
+  inputData.value.addressText2 = rst?.data.address2;
+  inputData.value.tel = rst?.data.tel;
+  inputData.value.fax = rst?.data.fax;
+  inputData.value.displayTrendFlag = rst?.data.displayFlag;
+  inputData.value.displayCsvFlag = rst?.data.csvFlag;
+  inputData.value.displayPdfFlag = rst?.data.pdfFlag;
+  inputData.value.displayWeightFlag = rst?.data.weightFlag;
+  inputData.value.displayExcelFlag = rst?.data.excelFlag;
+  inputData.value.displayCustomFlag = rst?.data.customFlag;
+  inputData.value.displaySslFlag = rst?.data.sslFlag;
+  myimage_path.value = rst?.data.logoImagePath;
+  inputData.value.logoImagePath = rst?.data.logoImagePath;
+  inputData.value.customerDisplayFlag = rst?.data.customerDisplayFlag;
+  inputData.value.privacy.privacyText = rst?.data.privacyText;
+  inputData.value.tanto_name = rst?.data.tanto_name;
+  inputData.value.tanto_address = rst?.data.tanto_address;
+  inputData.value.tanto_busyo = rst?.data.tanto_busyo;
+  inputData.value.tanto_tel1 = rst?.data.tanto_tel1;
+  inputData.value.tanto_tel2 = rst?.data.tanto_tel2;
+  inputData.value.tanto_name2 = rst?.data.tanto_name2;
+  inputData.value.tanto_address2 = rst?.data.tanto_address2;
+});
+const displayString = (type: boolean) => {
+  return type ? displayStatus[1] : displayStatus[0];
 };
 </script>
 <template>
@@ -176,7 +221,7 @@ const addRegist = () => {
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
       <ComponentButton
-        text="登録"
+        text="編集"
         color="primary"
         class="my-3"
         @onClick="addRegist()"
@@ -185,7 +230,7 @@ const addRegist = () => {
       <ComponentAlert
         v-if="successAlertFlag"
         type="success"
-        text="登録に成功しました"
+        text="編集に成功しました"
       ></ComponentAlert>
     </v-col>
   </v-row>
@@ -210,7 +255,7 @@ const addRegist = () => {
         class="w-50"
         :hideDetails="`auto`"
         type="login_id"
-        :value="inputData.login_id"
+        :displayTextValue="inputData.login_id"
         :requriredIcon="true"
         messages="4文字以上8文字以下で入力してください"
         @onBlur="(ev) => ((inputData.login_id = ev), onBlurButton())"
@@ -281,15 +326,14 @@ const addRegist = () => {
         :value="inputData.fax"
         @onBlur="(e) => (inputData.fax = e)"
       ></addPartnerForm>
-
       <addSwitchForm
         title="受検者傾向確認ボタン表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayTrendFlag)"
         density="compact"
         type="displayTrendFlag"
         :tooltipflag="true"
         tooltipMessage="受検者傾向確認ボタンの表示可否を選択します。"
-        :model="inputData.displayTrendFlag"
+        :model="inputData.displayTrendFlag ? true : false"
         @onClick="
           () =>
             (inputData.displayTrendFlag = inputData.displayTrendFlag
@@ -299,12 +343,12 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="CSVアップロードボタン表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayCsvFlag)"
         density="compact"
         type="displayCsvFlag"
         :tooltipflag="true"
         tooltipMessage="CSVアップロードボタンの表示可否を選択します。"
-        :model="inputData.displayCsvFlag"
+        :model="inputData.displayCsvFlag ? true : false"
         @onClick="
           () =>
             (inputData.displayCsvFlag = inputData.displayCsvFlag ? false : true)
@@ -312,10 +356,10 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="PDFボタン表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayPdfFlag)"
         density="compact"
         type="displayPdfFlag"
-        :model="inputData.displayPdfFlag"
+        :model="inputData.displayPdfFlag ? true : false"
         :tooltipflag="true"
         tooltipMessage="PDFボタンの表示可否を選択します。"
         @onClick="
@@ -325,10 +369,10 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="PDF重みマスタ表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayWeightFlag)"
         density="compact"
         type="displayWeightFlag"
-        :model="inputData.displayWeightFlag"
+        :model="inputData.displayWeightFlag ? true : false"
         :tooltipflag="true"
         tooltipMessage="PDF重みマスタの表示可否を選択します。"
         @onClick="
@@ -340,10 +384,10 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="エクセル重みマスタ表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayExcelFlag)"
         density="compact"
         type="displayExcelFlag"
-        :model="inputData.displayExcelFlag"
+        :model="inputData.displayExcelFlag ? true : false"
         :tooltipflag="true"
         tooltipMessage="エクセル重みマスタの表示可否を選択します。"
         @onClick="
@@ -355,10 +399,10 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="顧客ファイルアップロード表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayCustomFlag)"
         density="compact"
         type="displayCustomFlag"
-        :model="inputData.displayCustomFlag"
+        :model="inputData.displayCustomFlag ? true : false"
         :tooltipflag="true"
         tooltipMessage="顧客ファイルアップロードの表示可否を選択します。"
         @onClick="
@@ -370,10 +414,10 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="SSL設定"
-        :label="`設定する`"
+        :label="displayString(inputData.displaySslFlag)"
         density="compact"
         type="displaySslFlag"
-        :model="inputData.displaySslFlag"
+        :model="inputData.displaySslFlag ? true : false"
         :tooltipflag="true"
         tooltipMessage="受検ページをhttps://で利用します。"
         @onClick="
@@ -382,19 +426,22 @@ const addRegist = () => {
         "
       ></addSwitchForm>
       <addImageForm
+        ref="preview"
         title="ロゴ画像"
         density="compact"
         label="アップロード画像選択"
         v-model="inputData.logoImagePath"
         :myimage_path="myimage_path"
-        :model="inputData.logoImagePath"
         @onUpdate="(e) => ((inputData.logoImagePath = e as  File | File[] | any), onUpdate())"
       ></addImageForm>
+
       <addPrivacyForm
         variant="outlined"
         :hideDetails="`auto`"
         :height="15"
         :disabled="inputData.privacy.checked ? true : false"
+        :value="inputData.privacy.checked ? 0 : 1"
+        :textarea="inputData.privacy.privacyText"
         :privacyModel="inputData.privacy.checked"
         @onClick="
           (e) =>
@@ -406,7 +453,7 @@ const addRegist = () => {
       ></addPrivacyForm>
       <addSwitchForm
         title="顧客の表示/非表示"
-        :label="`表示する`"
+        :label="displayString(inputData.customerDisplayFlag)"
         density="compact"
         type="customerDisplayFlag"
         :tooltipflag="true"
