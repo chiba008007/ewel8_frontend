@@ -62,6 +62,15 @@ export const checkPassword = (value: string, type = "", tmpid: any = "") => {
   }
   return "";
 };
+export const checkPasswordEdit = (value: string) => {
+  if (value) {
+    const emailPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,15}$/;
+    if (!emailPattern.test(value)) {
+      return "半角8文字以上、半角15文字以内。大文字と小文字は区別さ英大文字・英小文字・数、字それぞれを最低1文字ずつ含めてください";
+    }
+  }
+  return "";
+};
 
 export const removeTabKey = (e: any) => {
   if (e.key === "Tab") {

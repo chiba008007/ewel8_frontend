@@ -81,6 +81,9 @@ class UserApiService {
   setCustomerAdd(data: object): Promise<object> {
     return httpAuth.post("/api/user/setCustomerAdd", data);
   }
+  customerEdit(data: object): Promise<object> {
+    return httpAuth.post("/api/user/customerEdit", data);
+  }
   getLisencesList(data: object): Promise<object> {
     return httpAuth.post("/api/user/getLisencesList", data);
   }

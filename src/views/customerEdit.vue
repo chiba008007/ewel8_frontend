@@ -15,7 +15,7 @@ import addPrivacyForm from "../components/addPrivacyForm.vue";
 import ComponentButton from "../components/ButtonView.vue";
 import {
   checkLoginID,
-  checkPassword,
+  checkPasswordEdit,
   requiredValue,
   checkEmail,
 } from "../plugins/validate";
@@ -28,10 +28,8 @@ const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
 const registButton = ref<boolean>(false);
-
 const tmpid = route.params.id;
 const editid = route.params.editid;
-
 const pankuzu = ref(customerEdit.pankuzu(user.userdata as { type: "" }));
 
 const inputData = ref({
@@ -70,11 +68,15 @@ const inputData = ref({
 const prefs = ref();
 const myimage_path = ref();
 
+const pageBack = () => {
+  router.push({ name: "customerList", params: { id: tmpid } });
+};
 const onBlurButton = async () => {
   registButton.value = true;
   if (
     !requiredValue(inputData.value.name, "顧客企業名") &&
-    (!inputData.value.password || !checkPassword(inputData.value.password)) &&
+    (!inputData.value.password ||
+      !checkPasswordEdit(inputData.value.password)) &&
     !requiredValue(inputData.value.tanto_name, "担当者氏名") &&
     !checkEmail(inputData.value.tanto_address)
   ) {
@@ -122,14 +124,9 @@ const onUpdate = () => {
 };
 const successAlertFlag = ref(false);
 
-const addRegist = () => {
-  console.log(inputData.value);
-
-  /*
-  let userdata = user.userdata as any;
+const editData = () => {
   let tmp = {
-    type: customer,
-    admin_id: userdata.id,
+    id: editid,
     partner_id: tmpid,
     name: inputData.value.name,
     // email: inputData.value.login_id,
@@ -152,7 +149,6 @@ const addRegist = () => {
     logoImagePath: inputData.value.logoImagePath,
     privacy: inputData.value.privacy.checked ? 1 : 0,
     privacyText: inputData.value.privacy.privacyText,
-    displayFlag: 1,
     tanto_name: inputData.value.tanto_name,
     tanto_address: inputData.value.tanto_address,
     tanto_busyo: inputData.value.tanto_busyo,
@@ -162,15 +158,13 @@ const addRegist = () => {
     tanto_address2: inputData.value.tanto_address2,
   };
 
-  UserApiService.setCustomerAdd(tmp)
+  UserApiService.customerEdit(tmp)
     .then((res) => {
-      console.log("success");
       successAlertFlag.value = true;
     })
     .catch(function (e) {
       alert(e);
     });
-    */
 };
 
 let editTmp = {
@@ -179,7 +173,6 @@ let editTmp = {
   editId: editid,
 };
 UserApiService.getPartnerDetail(editTmp).then((rst) => {
-  console.log(rst);
   inputData.value.name = rst?.data.name;
   inputData.value.login_id = rst?.data.login_id;
   inputData.value.postCode = rst?.data.post_code;
@@ -188,7 +181,7 @@ UserApiService.getPartnerDetail(editTmp).then((rst) => {
   inputData.value.addressText2 = rst?.data.address2;
   inputData.value.tel = rst?.data.tel;
   inputData.value.fax = rst?.data.fax;
-  inputData.value.displayTrendFlag = rst?.data.displayFlag;
+  inputData.value.displayTrendFlag = rst?.data.trendFlag;
   inputData.value.displayCsvFlag = rst?.data.csvFlag;
   inputData.value.displayPdfFlag = rst?.data.pdfFlag;
   inputData.value.displayWeightFlag = rst?.data.weightFlag;
@@ -197,7 +190,7 @@ UserApiService.getPartnerDetail(editTmp).then((rst) => {
   inputData.value.displaySslFlag = rst?.data.sslFlag;
   myimage_path.value = rst?.data.logoImagePath;
   inputData.value.logoImagePath = rst?.data.logoImagePath;
-  inputData.value.customerDisplayFlag = rst?.data.customerDisplayFlag;
+  inputData.value.customerDisplayFlag = rst?.data.displayFlag;
   inputData.value.privacy.privacyText = rst?.data.privacyText;
   inputData.value.tanto_name = rst?.data.tanto_name;
   inputData.value.tanto_address = rst?.data.tanto_address;
@@ -221,10 +214,17 @@ const displayString = (type: boolean) => {
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
       <ComponentButton
+        text="一覧に戻る"
+        color="red"
+        class="my-3"
+        @onClick="pageBack()"
+        :disabled="registButton"
+      />
+      <ComponentButton
         text="編集"
         color="primary"
-        class="my-3"
-        @onClick="addRegist()"
+        class="my-3 ml-2"
+        @onClick="editData()"
         :disabled="registButton"
       />
       <ComponentAlert
@@ -263,14 +263,13 @@ const displayString = (type: boolean) => {
       ></addPartnerForm>
       <addPartnerForm
         title="パスワード"
-        text="パスワードを入力してください"
+        text="パスワード未入力時は変更されません"
         class="w-50"
         :hideDetails="`auto`"
         type="password"
         :value="inputData.password"
-        :requriredIcon="true"
-        :rules="checkPassword(inputData.password)"
         @onBlur="(e) => ((inputData.password = e), onBlurButton())"
+        :rules="checkPasswordEdit(inputData.password)"
       ></addPartnerForm>
       <addPostCodeForm
         title="郵便番号"
