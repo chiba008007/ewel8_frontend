@@ -273,7 +273,6 @@ const onClick = () => {
   };
   try {
     TestApiService.setTest(tmp).then((res) => {
-      console.log(res);
       alertFlag.value = true;
     });
   } catch (e) {
@@ -312,6 +311,9 @@ const settingString = (type: boolean) => {
 const edittingString = (type: boolean) => {
   return type ? edittingStatus[1] : edittingStatus[0];
 };
+const pagemove = () => {
+  router.push({ name: "testLists", params: { id: tmpid.value } });
+};
 </script>
 <template>
   <PartnerAdmin coded="customer" />
@@ -330,9 +332,8 @@ const edittingString = (type: boolean) => {
         検査新規登録
       </v-badge>
     </v-tab>
-    <v-tab value="1">出力PDF選択</v-tab>
-    <v-tab value="2">検査種別</v-tab>
-    <v-tab value="3">販売可能ライセンス</v-tab>
+    <v-tab value="1">検査種別</v-tab>
+    <v-tab value="2">出力PDF選択</v-tab>
   </v-tabs>
   <div class="ma-2">
     <AlertView
@@ -342,6 +343,12 @@ const edittingString = (type: boolean) => {
       v-show="alertFlag"
     ></AlertView>
     <ButtonView
+      text="検査一覧"
+      color="red"
+      class="mt-3 mb-3 mr-2"
+      @onClick="pagemove()"
+    />
+    <ButtonView
       v-if="tab > 0"
       text="戻る"
       color="purple"
@@ -349,7 +356,7 @@ const edittingString = (type: boolean) => {
       @onClick="tab = parseInt((tab - 1) as unknown as string)"
     />
     <ButtonView
-      v-if="tab <= 2"
+      v-if="tab <= 1"
       text="次へ"
       color="lime"
       class="mt-3 mb-3"
@@ -364,7 +371,7 @@ const edittingString = (type: boolean) => {
       v-else
       text="検査登録実行"
       color="green"
-      class="mt-3 mb-3 ml-2"
+      class="mt-3 mb-3 ml-1"
       :disabled="registButton"
       @onClick="onClick()"
     />
@@ -372,6 +379,23 @@ const edittingString = (type: boolean) => {
   </div>
   <v-window v-model="tab">
     <v-window-item value="0">
+      <p class="ml-2 text-caption">販売可能ライセンス</p>
+      <v-row no-gutters class="ml-2">
+        <v-col
+          cols="1"
+          v-for="lisence in lisenceViewCalc"
+          :key="lisence.id"
+          class="text-cener"
+        >
+          <div class="border-sm">
+            <div class="border-b-sm text-center bg-lime text-caption">
+              {{ lisence.jp }}
+            </div>
+            <p class="text-right text-caption">{{ lisence.num }}</p>
+          </div>
+        </v-col>
+      </v-row>
+
       <section class="pa-2">
         <addPartnerForm
           v-show="partnerDetail?.name"
@@ -579,6 +603,32 @@ const edittingString = (type: boolean) => {
     </v-window-item>
     <v-window-item value="1">
       <section class="pa-2">
+        <v-row>
+          <v-col cols="12">
+            <div v-for="val in lisenceView" :key="val.id">
+              <CardViewPFS
+                v-if="val.code == 'PFS'"
+                :title="val.jp"
+                :testcount="inputData.testcount"
+                :model="inputTestPart.PFS.threeflag"
+                :weightModel="inputTestPart.PFS.weightFlag"
+                :element="elements"
+                @onThree="
+                  (e) => (inputTestPart.PFS.threeflag = e ? false : true)
+                "
+                @onWeightFlag="
+                  (e) => (inputTestPart.PFS.weightFlag = e ? false : true)
+                "
+                @onWeight="(e) => (inputTestPart.PFS.weight = e)"
+                @onStatus="(e) => (inputTestPart.PFS.status = e)"
+              ></CardViewPFS>
+            </div>
+          </v-col>
+        </v-row>
+      </section>
+    </v-window-item>
+    <v-window-item value="2">
+      <section class="pa-2">
         <addPDFForm
           title="PDF出力制限"
           color="bg-lime"
@@ -610,49 +660,6 @@ const edittingString = (type: boolean) => {
         >
         </CheckboxView>
       </section>
-    </v-window-item>
-    <v-window-item value="2">
-      <section class="pa-2">
-        <v-row>
-          <v-col cols="12">
-            <div v-for="val in lisenceView" :key="val.id">
-              <CardViewPFS
-                v-if="val.code == 'PFS'"
-                :title="val.jp"
-                :testcount="inputData.testcount"
-                :model="inputTestPart.PFS.threeflag"
-                :weightModel="inputTestPart.PFS.weightFlag"
-                :element="elements"
-                @onThree="
-                  (e) => (inputTestPart.PFS.threeflag = e ? false : true)
-                "
-                @onWeightFlag="
-                  (e) => (inputTestPart.PFS.weightFlag = e ? false : true)
-                "
-                @onWeight="(e) => (inputTestPart.PFS.weight = e)"
-                @onStatus="(e) => (inputTestPart.PFS.status = e)"
-              ></CardViewPFS>
-            </div>
-          </v-col>
-        </v-row>
-      </section>
-    </v-window-item>
-    <v-window-item value="3">
-      <v-row class="pa-0">
-        <v-col
-          cols="2"
-          v-for="lisence in lisenceViewCalc"
-          :key="lisence.id"
-          class="text-cener"
-        >
-          <div class="border-sm ma-2 w-100">
-            <div class="border-b-sm text-center pa-2 bg-lime">
-              {{ lisence.jp }}
-            </div>
-            <p class="text-right pa-2">{{ lisence.num }}</p>
-          </div>
-        </v-col>
-      </v-row>
     </v-window-item>
   </v-window>
 </template>
