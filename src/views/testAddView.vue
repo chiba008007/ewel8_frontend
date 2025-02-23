@@ -266,13 +266,16 @@ const onClick = () => {
     pdfstartday: inputData.value.pdfstartday,
     pdfendday: inputData.value.pdfendday,
     pdfcountflag: inputData.value.pdfcountflag,
-    pdflimitcount: inputData.value.testcount,
+    pdflimitcount: inputData.value.pdfcount,
     pdf: inputPDf.value,
-    parts: inputTestPart.value,
+    parts: [inputTestPart.value],
     status: 1,
   };
+  console.log(tmp);
+
   try {
     TestApiService.setTest(tmp).then((res) => {
+      console.log(res);
       alertFlag.value = true;
     });
   } catch (e) {
@@ -346,6 +349,7 @@ const pagemove = () => {
       text="検査一覧"
       color="red"
       class="mt-3 mb-3 mr-2"
+      variant="outlined"
       @onClick="pagemove()"
     />
     <ButtonView
@@ -380,7 +384,7 @@ const pagemove = () => {
   <v-window v-model="tab">
     <v-window-item value="0">
       <p class="ml-2 text-caption">販売可能ライセンス</p>
-      <v-row no-gutters class="ml-2">
+      <v-row dense class="ml-2">
         <v-col
           cols="1"
           v-for="lisence in lisenceViewCalc"
@@ -429,7 +433,7 @@ const pagemove = () => {
           :hideDetails="`auto`"
           :value="inputData.testcount"
           :requriredIcon="true"
-          :rules="numberValue(inputData.testcount, '受検者数')"
+          :rules="numberValue(inputData.testcount, '受検者数', 10000)"
           @onBlur="(e:any) => ((inputData.testcount = e), onBlurButton())"
         ></addPartnerForm>
         <addSwitchForm

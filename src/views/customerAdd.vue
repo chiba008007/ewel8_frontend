@@ -24,6 +24,7 @@ import { imagePath, customer } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
 import customerEdit from "@/plugins/customerEdit";
 
+import { displayStatus } from "@/plugins/const";
 const route = useRoute();
 const user = useStoreUser();
 const registButton = ref<boolean>(true);
@@ -66,6 +67,7 @@ const inputData = ref({
 });
 const prefs = ref();
 const myimage_path = ref();
+const router = useRouter();
 
 const onBlurButton = async () => {
   registButton.value = true;
@@ -165,6 +167,13 @@ const addRegist = () => {
       alert(e);
     });
 };
+
+const displayString = (type: boolean) => {
+  return type ? displayStatus[1] : displayStatus[0];
+};
+const pagemove = () => {
+  router.push({ name: "customerList", params: { id: tmpid } });
+};
 </script>
 <template>
   <InfoAreaView />
@@ -175,6 +184,13 @@ const addRegist = () => {
 
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
+      <ComponentButton
+        text="顧客企業一覧"
+        color="red"
+        class="mt-3 mb-3 mr-2"
+        variant="outlined"
+        @onClick="pagemove()"
+      />
       <ComponentButton
         text="登録"
         color="primary"
@@ -284,7 +300,7 @@ const addRegist = () => {
 
       <addSwitchForm
         title="受検者傾向確認ボタン表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayTrendFlag)"
         density="compact"
         type="displayTrendFlag"
         :tooltipflag="true"
@@ -299,7 +315,7 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="CSVアップロードボタン表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayCsvFlag)"
         density="compact"
         type="displayCsvFlag"
         :tooltipflag="true"
@@ -312,7 +328,7 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="PDFボタン表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayPdfFlag)"
         density="compact"
         type="displayPdfFlag"
         :model="inputData.displayPdfFlag"
@@ -325,7 +341,7 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="PDF重みマスタ表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayWeightFlag)"
         density="compact"
         type="displayWeightFlag"
         :model="inputData.displayWeightFlag"
@@ -340,7 +356,7 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="エクセル重みマスタ表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayExcelFlag)"
         density="compact"
         type="displayExcelFlag"
         :model="inputData.displayExcelFlag"
@@ -355,7 +371,7 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="顧客ファイルアップロード表示"
-        :label="`表示する`"
+        :label="displayString(inputData.displayCustomFlag)"
         density="compact"
         type="displayCustomFlag"
         :model="inputData.displayCustomFlag"
@@ -370,7 +386,7 @@ const addRegist = () => {
       ></addSwitchForm>
       <addSwitchForm
         title="SSL設定"
-        :label="`設定する`"
+        :label="displayString(inputData.displaySslFlag)"
         density="compact"
         type="displaySslFlag"
         :model="inputData.displaySslFlag"
@@ -406,7 +422,7 @@ const addRegist = () => {
       ></addPrivacyForm>
       <addSwitchForm
         title="顧客の表示/非表示"
-        :label="`表示する`"
+        :label="displayString(inputData.customerDisplayFlag)"
         density="compact"
         type="customerDisplayFlag"
         :tooltipflag="true"

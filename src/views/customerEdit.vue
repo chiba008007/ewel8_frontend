@@ -214,11 +214,11 @@ const displayString = (type: boolean) => {
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
       <ComponentButton
-        text="一覧に戻る"
+        text="顧客企業一覧"
         color="red"
         class="my-3"
+        variant="outlined"
         @onClick="pageBack()"
-        :disabled="registButton"
       />
       <ComponentButton
         text="編集"
