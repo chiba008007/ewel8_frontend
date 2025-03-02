@@ -3,34 +3,31 @@ import { ref } from "vue";
 import ComponentButton from "../components/ButtonView.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStoreUser } from "../store/user";
-
+import { textString } from "@/plugins/const";
 const router = useRouter();
 const user = useStoreUser();
 const userdata = user.userdata as any;
 const id = userdata.id;
 
 const route = useRoute();
-const regex = /(\d+)(?!.*\d)/;
-const isPortal = ref(route.path.match(regex));
-const paramId = ref();
-paramId.value = isPortal.value ? (isPortal.value[0] as unknown) : 0;
+const tmpid = route.params.id;
 const pageClickMove = (pagename: string) => {
   router.push(router.resolve({ name: pagename }).href);
 };
-const pageClickMoveParam = (pagename: string, id: number) => {
-  router.push(router.resolve({ name: pagename, params: { id: id } }).href);
+const pageClickMoveParam = (pagename: string) => {
+  router.push(router.resolve({ name: pagename, params: { id: tmpid } }).href);
 };
 </script>
 <template>
   <v-sheet width="76%">
     <div class="d-flex flex-row justify-center mt-5">
       <ComponentButton
-        text="企業情報変更"
+        :text="textString.CompanyEdit"
         variant="outlined"
         density="compact"
         color="primary"
         class="w-25"
-        @onClick="pageClickMoveParam('partnerEdit', paramId)"
+        @onClick="pageClickMoveParam('partnerEdit')"
       ></ComponentButton>
       <ComponentButton
         text="新規顧客登録"

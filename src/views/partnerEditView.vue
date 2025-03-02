@@ -14,6 +14,7 @@ import ComponentButton from "../components/ButtonView.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ComponentAlert from "../components/AlertView.vue";
 import { requiredValue, checkPassword } from "../plugins/validate";
+import { textString } from "@/plugins/const";
 
 const route = useRoute();
 const regex = /(\d+)(?!.*\d)/;
@@ -158,7 +159,7 @@ const addRegist = () => {
         </v-col>
       </v-row>
       <v-tabs class="ml-2" v-model="tab">
-        <v-tab value="1">企業情報変更</v-tab>
+        <v-tab value="1">{{ textString.CompanyEdit }}</v-tab>
         <v-tab value="2">行動価値用要素名</v-tab>
       </v-tabs>
       <ComponentAlert

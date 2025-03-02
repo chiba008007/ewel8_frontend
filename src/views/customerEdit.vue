@@ -2,6 +2,7 @@
 import { ref, defineEmits } from "vue";
 import { useStoreUser } from "../store/user";
 import CustomerMenu from "../components/CustomerMenu.vue";
+import TextMenu from "../components/TestMenu.vue";
 import InfoAreaView from "../components/InfoAreaView.vue";
 import { useRouter, useRoute } from "vue-router";
 import addPartnerForm from "../components/addPartnerForm.vue";
@@ -30,7 +31,10 @@ const user = useStoreUser();
 const registButton = ref<boolean>(false);
 const tmpid = route.params.id;
 const editid = route.params.editid;
-const pankuzu = ref(customerEdit.pankuzu(user.userdata as { type: "" }));
+const typeString = route.params.typeString;
+const pankuzu = ref(
+  customerEdit.pankuzu(user.userdata as { type: "" }, typeString)
+);
 
 const inputData = ref({
   name: "",
@@ -69,7 +73,11 @@ const prefs = ref();
 const myimage_path = ref();
 
 const pageBack = () => {
-  router.push({ name: "customerList", params: { id: tmpid } });
+  if (typeString == "test") {
+    router.push({ name: "testLists", params: { id: editid } });
+  } else {
+    router.push({ name: "customerList", params: { id: tmpid } });
+  }
 };
 const onBlurButton = async () => {
   registButton.value = true;
@@ -172,49 +180,59 @@ let editTmp = {
   partnerId: tmpid,
   editId: editid,
 };
-UserApiService.getPartnerDetail(editTmp).then((rst) => {
-  inputData.value.name = rst?.data.name;
-  inputData.value.login_id = rst?.data.login_id;
-  inputData.value.postCode = rst?.data.post_code;
-  inputData.value.preftext = rst?.data.pref;
-  inputData.value.addressText = rst?.data.address1;
-  inputData.value.addressText2 = rst?.data.address2;
-  inputData.value.tel = rst?.data.tel;
-  inputData.value.fax = rst?.data.fax;
-  inputData.value.displayTrendFlag = rst?.data.trendFlag;
-  inputData.value.displayCsvFlag = rst?.data.csvFlag;
-  inputData.value.displayPdfFlag = rst?.data.pdfFlag;
-  inputData.value.displayWeightFlag = rst?.data.weightFlag;
-  inputData.value.displayExcelFlag = rst?.data.excelFlag;
-  inputData.value.displayCustomFlag = rst?.data.customFlag;
-  inputData.value.displaySslFlag = rst?.data.sslFlag;
-  myimage_path.value = rst?.data.logoImagePath;
-  inputData.value.logoImagePath = rst?.data.logoImagePath;
-  inputData.value.customerDisplayFlag = rst?.data.displayFlag;
-  inputData.value.privacy.privacyText = rst?.data.privacyText;
-  inputData.value.tanto_name = rst?.data.tanto_name;
-  inputData.value.tanto_address = rst?.data.tanto_address;
-  inputData.value.tanto_busyo = rst?.data.tanto_busyo;
-  inputData.value.tanto_tel1 = rst?.data.tanto_tel1;
-  inputData.value.tanto_tel2 = rst?.data.tanto_tel2;
-  inputData.value.tanto_name2 = rst?.data.tanto_name2;
-  inputData.value.tanto_address2 = rst?.data.tanto_address2;
-});
+UserApiService.getPartnerDetail(editTmp)
+  .then((rst) => {
+    inputData.value.name = rst?.data.name;
+    inputData.value.login_id = rst?.data.login_id;
+    inputData.value.postCode = rst?.data.post_code;
+    inputData.value.preftext = rst?.data.pref;
+    inputData.value.addressText = rst?.data.address1;
+    inputData.value.addressText2 = rst?.data.address2;
+    inputData.value.tel = rst?.data.tel;
+    inputData.value.fax = rst?.data.fax;
+    inputData.value.displayTrendFlag = rst?.data.trendFlag;
+    inputData.value.displayCsvFlag = rst?.data.csvFlag;
+    inputData.value.displayPdfFlag = rst?.data.pdfFlag;
+    inputData.value.displayWeightFlag = rst?.data.weightFlag;
+    inputData.value.displayExcelFlag = rst?.data.excelFlag;
+    inputData.value.displayCustomFlag = rst?.data.customFlag;
+    inputData.value.displaySslFlag = rst?.data.sslFlag;
+    myimage_path.value = rst?.data.logoImagePath;
+    inputData.value.logoImagePath = rst?.data.logoImagePath;
+    inputData.value.customerDisplayFlag = rst?.data.displayFlag;
+    inputData.value.privacy.privacyText = rst?.data.privacyText;
+    inputData.value.tanto_name = rst?.data.tanto_name;
+    inputData.value.tanto_address = rst?.data.tanto_address;
+    inputData.value.tanto_busyo = rst?.data.tanto_busyo;
+    inputData.value.tanto_tel1 = rst?.data.tanto_tel1;
+    inputData.value.tanto_tel2 = rst?.data.tanto_tel2;
+    inputData.value.tanto_name2 = rst?.data.tanto_name2;
+    inputData.value.tanto_address2 = rst?.data.tanto_address2;
+  })
+  .catch((e) => {
+    alert("editUserData ERROR" + e);
+    location.href = "/error";
+  });
+
 const displayString = (type: boolean) => {
   return type ? displayStatus[1] : displayStatus[0];
+};
+const backColor = () => {
+  return typeString == "test" ? "bg-lime" : "bg-primary";
 };
 </script>
 <template>
   <InfoAreaView />
   <v-row justify="center">
-    <CustomerMenu />
+    <TextMenu v-if="typeString == 'test'" />
+    <v-else CustomerMenu />
   </v-row>
   <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
 
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
       <ComponentButton
-        text="顧客企業一覧"
+        :text="typeString === 'test' ? '検査一覧' : '顧客企業一覧'"
         color="red"
         class="my-3"
         variant="outlined"
@@ -239,6 +257,7 @@ const displayString = (type: boolean) => {
     <v-col cols="12" class="pa-2 ma-2 mt-0 pt-0">
       顧客企業情報を入力してください。
       <addPartnerForm
+        :color="backColor()"
         title="顧客企業名"
         text="顧客企業名を入力してください"
         class="w-100"
@@ -250,6 +269,7 @@ const displayString = (type: boolean) => {
         @onBlur="(ev) => ((inputData.name = ev), onBlurButton())"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="ログインID"
         text="ログインIDを入力してください"
         class="w-50"
@@ -262,6 +282,7 @@ const displayString = (type: boolean) => {
         :rules="checkLoginID(inputData.login_id) as any"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="パスワード"
         text="パスワード未入力時は変更されません"
         class="w-50"
@@ -272,6 +293,7 @@ const displayString = (type: boolean) => {
         :rules="checkPasswordEdit(inputData.password)"
       ></addPartnerForm>
       <addPostCodeForm
+        :color="backColor()"
         title="郵便番号"
         class="w-100"
         :hideDetails="true"
@@ -279,6 +301,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e, type) => postBlur(e, type)"
       ></addPostCodeForm>
       <addPrefCodeForm
+        :color="backColor()"
         title="都道府県"
         label="都道府県を選択"
         class="w-50"
@@ -289,6 +312,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.preftext = e)"
       ></addPrefCodeForm>
       <addPartnerForm
+        :color="backColor()"
         title="住所"
         text="住所を入力してください"
         class="w-100"
@@ -297,6 +321,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.addressText = e)"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="建物名"
         text="建物名を入力してください"
         class="w-100"
@@ -306,6 +331,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.addressText2 = e)"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="電話番号"
         text="電話番号を入力してください"
         class="w-100"
@@ -316,6 +342,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.tel = e)"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="FAX番号"
         text="FAX番号を入力してください"
         class="w-100"
@@ -326,6 +353,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.fax = e)"
       ></addPartnerForm>
       <addSwitchForm
+        :color="backColor()"
         title="受検者傾向確認ボタン表示"
         :label="displayString(inputData.displayTrendFlag)"
         density="compact"
@@ -341,6 +369,7 @@ const displayString = (type: boolean) => {
         "
       ></addSwitchForm>
       <addSwitchForm
+        :color="backColor()"
         title="CSVアップロードボタン表示"
         :label="displayString(inputData.displayCsvFlag)"
         density="compact"
@@ -354,6 +383,7 @@ const displayString = (type: boolean) => {
         "
       ></addSwitchForm>
       <addSwitchForm
+        :color="backColor()"
         title="PDFボタン表示"
         :label="displayString(inputData.displayPdfFlag)"
         density="compact"
@@ -367,6 +397,7 @@ const displayString = (type: boolean) => {
         "
       ></addSwitchForm>
       <addSwitchForm
+        :color="backColor()"
         title="PDF重みマスタ表示"
         :label="displayString(inputData.displayWeightFlag)"
         density="compact"
@@ -382,6 +413,7 @@ const displayString = (type: boolean) => {
         "
       ></addSwitchForm>
       <addSwitchForm
+        :color="backColor()"
         title="エクセル重みマスタ表示"
         :label="displayString(inputData.displayExcelFlag)"
         density="compact"
@@ -397,6 +429,7 @@ const displayString = (type: boolean) => {
         "
       ></addSwitchForm>
       <addSwitchForm
+        :color="backColor()"
         title="顧客ファイルアップロード表示"
         :label="displayString(inputData.displayCustomFlag)"
         density="compact"
@@ -412,6 +445,7 @@ const displayString = (type: boolean) => {
         "
       ></addSwitchForm>
       <addSwitchForm
+        :color="backColor()"
         title="SSL設定"
         :label="displayString(inputData.displaySslFlag)"
         density="compact"
@@ -425,6 +459,7 @@ const displayString = (type: boolean) => {
         "
       ></addSwitchForm>
       <addImageForm
+        :color="backColor()"
         ref="preview"
         title="ロゴ画像"
         density="compact"
@@ -435,6 +470,7 @@ const displayString = (type: boolean) => {
       ></addImageForm>
 
       <addPrivacyForm
+        :color="backColor()"
         variant="outlined"
         :hideDetails="`auto`"
         :height="15"
@@ -451,13 +487,14 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.privacy.privacyText = e)"
       ></addPrivacyForm>
       <addSwitchForm
+        :color="backColor()"
         title="顧客の表示/非表示"
         :label="displayString(inputData.customerDisplayFlag)"
         density="compact"
         type="customerDisplayFlag"
         :tooltipflag="true"
         tooltipMessage="顧客を非表示にする場合は、登録検査をすべて非表示にしてください。"
-        :model="inputData.customerDisplayFlag"
+        :model="inputData.customerDisplayFlag ? true : false"
         @onClick="
           (e) =>
             (inputData.customerDisplayFlag = inputData.customerDisplayFlag
@@ -471,6 +508,7 @@ const displayString = (type: boolean) => {
   <v-row no-gutters class="mt-5">
     <v-col cols="12" class="pa-2 ma-2">
       <addPartnerForm
+        :color="backColor()"
         title="担当者氏名"
         text="担当者氏名を入力してください"
         class="w-100"
@@ -481,6 +519,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => ((inputData.tanto_name = e), onBlurButton())"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="担当者アドレス"
         text="担当者アドレスを入力してください"
         class="w-100"
@@ -491,6 +530,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => ((inputData.tanto_address = e), onBlurButton())"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="部署名"
         text="部署名を入力してください"
         class="w-50"
@@ -499,6 +539,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.tanto_busyo = e)"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="連絡先1"
         text="連絡先1を入力してください"
         class="w-50"
@@ -508,6 +549,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.tanto_tel1 = e)"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="連絡先2"
         text="連絡先2を入力してください"
         class="w-50"
@@ -517,6 +559,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.tanto_tel2 = e)"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="担当者氏名2"
         text="担当者氏名2を入力してください"
         class="w-100"
@@ -525,6 +568,7 @@ const displayString = (type: boolean) => {
         @onBlur="(e) => (inputData.tanto_name2 = e)"
       ></addPartnerForm>
       <addPartnerForm
+        :color="backColor()"
         title="担当者アドレス2"
         text="担当者アドレス2を入力してください"
         class="w-100"

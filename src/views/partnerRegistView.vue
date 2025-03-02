@@ -6,10 +6,11 @@ import ComponentPartnerRegist from "../components/PartnerRegistForm.vue";
 import ComponentButton from "../components/ButtonView.vue";
 import ComponentAlert from "../components/AlertView.vue";
 import { useRouter } from "vue-router";
+import { textString } from "@/plugins/const";
 const router = useRouter();
 const pankuzu = [
   { title: "HOME", href: router.resolve({ name: "List" }).href },
-  { title: "企業情報変更" },
+  { title: textString.CompanyEdit },
 ];
 const settingData = ref();
 let data = {
@@ -38,7 +39,7 @@ const onClick = () => {
   </v-row>
   <v-container class="mt-1">
     <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
-    <div class="text-h5">企業情報変更</div>
+    <div class="text-h5">{{ textString.CompanyEdit }}</div>
     <ComponentPartnerRegist
       :login_id="user?.data?.user[0].login_id"
       :person="user?.data?.user[0].person"

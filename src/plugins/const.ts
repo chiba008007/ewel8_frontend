@@ -21,6 +21,7 @@ export const d_Front = frontpath;
 //export const d_Path = "https://paperadmin.uh-oh.jp";
 /** 画像 */
 export const imagePath = d_Path + "/storage/app/myImage/";
+export const d_filePath = d_Path + "/storage/";
 
 /** 性別 */
 export const gender: NumberCodeOrNullListType = {
@@ -46,6 +47,8 @@ export const displayStatus = ["表示しない", "表示する"];
 export const settingStatus = ["設定しない", "設定する"];
 /**編集可否ステータス */
 export const edittingStatus = ["編集しない", "編集する"];
+/**開封ステータス */
+export const openStatus = ["未開封", "開封済み"];
 
 /** スリープ */
 export const sleep = (waitMsec: number) => {
@@ -214,3 +217,5 @@ export const csvHeader = [
   "受検開始時間",
   "受検時間",
 ];
+
+export const textString = { CompanyEdit: "企業情報変更" };

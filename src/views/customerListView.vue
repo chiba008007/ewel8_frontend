@@ -165,6 +165,13 @@ const onMove = (param: string, key: number) => {
                     color="success"
                     size="small"
                     class="ml-1"
+                    @click="
+                      move.pageClickMoveParamCodeList(
+                        'uploadView',
+                        tmpid,
+                        item.id
+                      )
+                    "
                   ></ButtonView>
                 </td>
               </tr>

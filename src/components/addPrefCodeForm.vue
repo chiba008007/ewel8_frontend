@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, withDefaults } from "vue";
 import ComponentSelectField from "../components/SelectFieldView.vue";
 
-const props = defineProps<{
+interface Props {
   title?: string;
   label?: string;
   items?: object[];
@@ -10,7 +10,18 @@ const props = defineProps<{
   class?: string;
   value?: string;
   type?: string;
-}>();
+  color?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  title: "",
+  label: "",
+  class: "",
+  value: "",
+  type: "",
+  color: "bg-primary",
+});
+
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
   (e: "onChange", value: string): void;
@@ -18,9 +29,12 @@ const emit = defineEmits<{
 </script>
 <template>
   <v-row no-gutters>
-    <v-col sm="3" class="border-sm bg-primary blue d-flex align-center pl-2">{{
-      props.title
-    }}</v-col>
+    <v-col
+      sm="3"
+      class="border-sm blue d-flex align-center pl-2"
+      :class="props.color"
+      >{{ props.title }}</v-col
+    >
     <v-col sm="9" class="pa-1 border-sm">
       <ComponentSelectField
         :items="props.items"

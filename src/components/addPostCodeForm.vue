@@ -1,15 +1,27 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, withDefaults } from "vue";
 import ComponentTextField from "../components/TextFieldView.vue";
 
-const props = defineProps<{
+interface Props {
   title?: string;
   class?: string;
   value?: string;
   post1?: string;
   post2?: string;
   hideDetails?: boolean;
-}>();
+  color?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  title: "",
+  class: "",
+  value: "",
+  post1: "",
+  post2: "",
+  hideDetails: false,
+  color: "bg-primary",
+});
+
 const getPost = (type: number) => {
   let tmp = props.value?.split("-")[type];
   return tmp;
@@ -26,9 +38,12 @@ const emit = defineEmits<{
 </script>
 <template>
   <v-row no-gutters>
-    <v-col sm="3" class="border-sm bg-primary blue d-flex align-center pl-2">{{
-      props.title
-    }}</v-col>
+    <v-col
+      sm="3"
+      class="border-sm blue d-flex align-center pl-2"
+      :class="props.color"
+      >{{ props.title }}</v-col
+    >
     <v-col sm="9" class="pa-1 border-sm">
       <v-row>
         <v-col cols="2" class="d-flex">

@@ -25,13 +25,10 @@ const emit = defineEmits<{
 <template>
   <v-checkbox
     class="ml-2"
-    :v-model="props.selected"
     :label="props.label"
     :model-value="props.value"
     :hide-details="props.hideDetail"
     :class="props.class"
-    :checked="props.checked"
-    @onChange="emit('onChange', props.value)"
     @change="emit('onChange', props.value)"
   ></v-checkbox>
 </template>

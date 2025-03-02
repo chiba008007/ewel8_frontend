@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ComponentButton from "../components/ButtonView.vue";
 import { useRouter } from "vue-router";
+import { textString } from "@/plugins/const";
 const router = useRouter();
 
 const pageClickMove = (pagename: string) => {
@@ -11,7 +12,7 @@ const pageClickMove = (pagename: string) => {
   <v-sheet height="120px" width="70%">
     <div class="d-flex flex-row justify-center mt-5">
       <ComponentButton
-        text="企業情報変更"
+        :text="textString.CompanyEdit"
         variant="outlined"
         density="compact"
         color="primary"

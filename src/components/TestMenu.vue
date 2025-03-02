@@ -3,22 +3,38 @@ import { ref } from "vue";
 import ComponentButton from "../components/ButtonView.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStoreUser } from "../store/user";
+import { textString } from "@/plugins/const";
+import UserApiService from "@/services/UserApiService";
 
 const router = useRouter();
 const user = useStoreUser();
 const userdata = user.userdata as any;
 const id = userdata.id;
-
 const route = useRoute();
-const regex = /(\d+)(?!.*\d)/;
-const isPortal = ref(route.path.match(regex));
-const paramId = ref();
-paramId.value = isPortal.value ? (isPortal.value[0] as unknown) : 0;
-const pageClickMove = (pagename: string) => {
-  router.push(router.resolve({ name: pagename }).href);
+const editid = route.params.editid;
+const tmpid = editid ? editid : route.params.id;
+
+let tmp = { id: tmpid, type: "customer" };
+const partnerid = ref();
+const typed = ref() as any;
+UserApiService.getPartnerid(tmp)
+  .then((res: typeof typed) => {
+    partnerid.value = res.data;
+  })
+  .catch((e) => {
+    alert("TestMenu ERROR" + e);
+    // location.href = "/error";
+  });
+const pageClickMoveParam = (pagename: string) => {
+  router.push(router.resolve({ name: pagename, params: { id: tmpid } }).href);
 };
-const pageClickMoveParam = (pagename: string, id: number) => {
-  router.push(router.resolve({ name: pagename, params: { id: id } }).href);
+const pageCustomerEditParam = (pagename: string) => {
+  router.push(
+    router.resolve({
+      name: pagename,
+      params: { id: partnerid.value, editid: tmpid, typeString: "test" },
+    }).href
+  );
 };
 </script>
 <template>
@@ -30,15 +46,15 @@ const pageClickMoveParam = (pagename: string, id: number) => {
         density="compact"
         color="lime"
         class="w-25"
-        @onClick="pageClickMoveParam('testAdd', paramId)"
+        @onClick="pageClickMoveParam('testAdd')"
       ></ComponentButton>
       <ComponentButton
-        text="企業情報変更"
+        :text="textString.CompanyEdit"
         variant="elevated"
         density="compact"
         color="lime"
         class="w-25 ml-1"
-        @onClick="pageClickMoveParam('partnerEdit', paramId)"
+        @onClick="pageCustomerEditParam('customerEdit')"
       ></ComponentButton>
       <ComponentButton
         text="ダウンロード"
@@ -46,7 +62,7 @@ const pageClickMoveParam = (pagename: string, id: number) => {
         density="compact"
         color="lime"
         class="w-25 ml-1"
-        @onClick="pageClickMoveParam('partnerEdit', paramId)"
+        @onClick="pageClickMoveParam('partnerEdit')"
       ></ComponentButton>
       <ComponentButton
         text="重み付けマスタ登録"
@@ -54,7 +70,7 @@ const pageClickMoveParam = (pagename: string, id: number) => {
         density="compact"
         color="lime"
         class="w-25 ml-1"
-        @onClick="pageClickMoveParam('partnerEdit', paramId)"
+        @onClick="pageClickMoveParam('partnerEdit')"
       ></ComponentButton>
     </div>
   </v-sheet>

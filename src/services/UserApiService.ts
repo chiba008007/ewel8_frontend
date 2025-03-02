@@ -1,6 +1,7 @@
 import http from "@/user-common";
 import httpAuth from "@/auth-common";
 import httpUpload from "@/upload-common";
+import httpAuthUpload from "@/auth-upload-common";
 import { ref } from "vue";
 
 import axios, { AxiosInstance } from "axios";
@@ -77,6 +78,9 @@ class UserApiService {
   }
   onUpload(form: FormData): Promise<object> {
     return httpUpload.post("/api/user/upload", form);
+  }
+  onFileUpload(form: FormData): Promise<object> {
+    return httpAuthUpload.post("/api/user/fileupload", form);
   }
   setCustomerAdd(data: object): Promise<object> {
     return httpAuth.post("/api/user/setCustomerAdd", data);

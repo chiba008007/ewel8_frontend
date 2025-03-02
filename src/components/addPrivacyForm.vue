@@ -1,6 +1,5 @@
 <script setup lang="ts">
-//import { defineProps, withDefaults, defineEmits, ref } from "vue";
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, withDefaults } from "vue";
 import { useStoreUser } from "../store/user";
 import TextAreaField from "../components/TextAreaFieldView.vue";
 import type { VTextField } from "vuetify/components";
@@ -10,7 +9,7 @@ type TVDensity = VTextField["$props"]["density"];
 import ComponentSwitch from "../components/SwitchView.vue";
 const user = useStoreUser();
 const privacy = ref(user.privacyText);
-const props = defineProps<{
+interface Props {
   title?: string;
   density?: TVDensity;
   label?: string;
@@ -23,9 +22,12 @@ const props = defineProps<{
   disabled?: boolean;
   privacyModel?: boolean;
   textarea?: string;
-}>();
+  color?: string;
+}
 
-//const model = ref<boolean>(true);
+const props = withDefaults(defineProps<Props>(), {
+  color: "bg-primary",
+});
 
 const emit = defineEmits<{
   (e: "onUpdate", value: boolean, type: string): void;
@@ -35,7 +37,11 @@ const emit = defineEmits<{
 </script>
 <template>
   <v-row no-gutters>
-    <v-col sm="3" class="border-sm bg-primary blue d-flex align-center pl-2">
+    <v-col
+      sm="3"
+      class="border-sm blue d-flex align-center pl-2"
+      :class="props.color"
+    >
       プライバシーポリシー
     </v-col>
     <v-col sm="9" class="pa-1 border-sm">

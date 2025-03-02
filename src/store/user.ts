@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useRouter, useRoute } from "vue-router";
+import { textString } from "@/plugins/const";
 export const useStoreUser = defineStore("user", {
   state: () => ({
     count: 1,
@@ -12,13 +13,15 @@ export const useStoreUser = defineStore("user", {
     userExam: {},
     home: "HOME",
     customerInfoList: "顧客企業一覧",
+    download: "ダウンロード",
+    upload: "添付",
     testList: "検査一覧",
     testExamList: "検査結果一覧",
     examSearch: "受検者検索",
     testAdd: "検査登録",
     customerRegist: "新規顧客登録",
     customerEdit: "新規顧客編集",
-    partnerEdit: "企業情報変更",
+    partnerEdit: textString.CompanyEdit,
     addPartner: "新規パートナー登録",
     editPartner: "パートナー情報変更",
     privacyText:

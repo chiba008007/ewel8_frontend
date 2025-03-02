@@ -11,6 +11,7 @@ import searchExam from "../views/searchExam.vue";
 import customerList from "../views/customerListView.vue";
 import customerAdd from "../views/customerAdd.vue";
 import customerEdit from "../views/customerEdit.vue";
+import uploadView from "../views/uploadView.vue";
 import ErrorView from "../views/errorView.vue";
 import ExamView from "../views/examinate/ExamView.vue";
 import ExamProfileView from "../views/examinate/ProfileView.vue";
@@ -125,9 +126,17 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/customerEdit/edit/:id/:editid",
+    path: "/customerEdit/edit/:id/:editid/:typeString?",
     name: "customerEdit",
     component: customerEdit,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/uploadView/:id/:editid",
+    name: "uploadView",
+    component: uploadView,
     meta: {
       requiresAuth: true,
     },
