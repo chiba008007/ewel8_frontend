@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useStoreUser } from "../store/user";
 import ComponentButton from "../components/ButtonView.vue";
 import ComponentTextField from "../components/TextFieldView.vue";
@@ -13,7 +13,8 @@ import fileUpload from "@/components/fileUpload.vue";
 import { d_filePath, openStatus } from "@/plugins/const";
 import AlertView from "@/components/AlertView.vue";
 
-const alertflag = ref(false);
+const alertDeleteflag = ref(false);
+const alertRegistflag = ref(false);
 const router = useRouter();
 const route = useRoute();
 const pages = pagemove();
@@ -58,7 +59,9 @@ const onClick = () => {
   UserApiService.onFileUpload(formData)
     .then((res: any) => {
       console.log(res.data);
-      alert("ok");
+      //alert("ok");
+      alertRegistflag.value = true;
+      reading();
     })
     .catch((e) => {
       alert("imageupload ERROR" + e);
@@ -77,27 +80,31 @@ const desserts = ref([
     id: 0 as number,
   },
 ]);
-let tmp = {
-  partner_id: editid,
-};
-FileuploadApiService.getList(tmp).then((res) => {
-  desserts.value = [];
-  let i = 0;
-  res?.data.map((val: any) => {
-    desserts.value.push({
-      key: i,
-      registdate: val.date,
-      filename: val.filename,
-      filepath: d_filePath + "/" + val.filepath,
-      size: commaSeparated(val.size),
-      openflag: openStatus[val.openflag],
-      checked: false,
-      id: val.id,
-    });
-    i++;
-  });
+onMounted(() => {
+  reading();
 });
-
+const reading = () => {
+  let tmp = {
+    partner_id: editid,
+  };
+  FileuploadApiService.getList(tmp).then((res) => {
+    desserts.value = [];
+    let i = 0;
+    res?.data.map((val: any) => {
+      desserts.value.push({
+        key: i,
+        registdate: val.date,
+        filename: val.filename,
+        filepath: d_filePath + "/" + val.filepath,
+        size: commaSeparated(val.size),
+        openflag: openStatus[val.openflag],
+        checked: false,
+        id: val.id,
+      });
+      i++;
+    });
+  });
+};
 const tableHeight = ref(100);
 const onResize = () => {
   const wHeight = window.innerHeight;
@@ -124,7 +131,7 @@ const deleteStatus = (id: number, key: number) => {
   };
   FileuploadApiService.deleteStatus(tmp).then((rlt) => {
     desserts.value.splice(key, 1);
-    alertflag.value = true;
+    alertDeleteflag.value = true;
   });
 };
 </script>
@@ -146,7 +153,7 @@ const deleteStatus = (id: number, key: number) => {
       ></fileUpload>
     </v-col>
   </v-row>
-  <v-row no-gutters class="ml-2">
+  <!-- <v-row no-gutters class="ml-2">
     <v-col cols="12">
       <ComponentButton
         text="チェックしたファイルを削除"
@@ -154,10 +161,19 @@ const deleteStatus = (id: number, key: number) => {
         color="red"
       ></ComponentButton>
     </v-col>
-  </v-row>
-  <v-row v-if="alertflag">
+  </v-row> -->
+  <v-row>
     <v-col cols="10" class="ml-2 mr-2">
-      <AlertView text="削除を行いました。" type="success"></AlertView>
+      <AlertView
+        v-if="alertDeleteflag"
+        text="削除を行いました。"
+        type="success"
+      ></AlertView>
+      <AlertView
+        v-if="alertRegistflag"
+        text="登録を行いました。"
+        type="success"
+      ></AlertView>
     </v-col>
   </v-row>
   <v-row v-resize="onResize">
