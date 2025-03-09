@@ -8,6 +8,7 @@ import ExamTitle from "@/components/ExamTitle.vue";
 import TestApiService from "@/services/TestApiService";
 import ExamApiService from "@/services/ExamApiService";
 import { useRouter } from "vue-router";
+import { pdfDownload } from "@/plugins/pdf";
 
 const tab = ref(1);
 const examList = ref();
@@ -47,8 +48,11 @@ const registerAnswer = () => {
 };
 
 const test_id = ref(0);
+const examlistdownloadflag = ref(0);
 const setExamData = (e: object | any) => {
+  console.log(e);
   test_id.value = e.id;
+  examlistdownloadflag.value = e.examlistdownloadflag;
 };
 const openTest = (code: string, testparts_id: number) => {
   let name = "";
@@ -58,6 +62,12 @@ const openTest = (code: string, testparts_id: number) => {
     name: name,
     params: { testparts_id: testparts_id },
     query: { k: k },
+  });
+};
+
+const onDownload = () => {
+  ExamApiService.downloadExam({}).then(function (rlt) {
+    pdfDownload(rlt.data.id, rlt.data.code, rlt.data.decript);
   });
 };
 </script>
@@ -95,9 +105,37 @@ const openTest = (code: string, testparts_id: number) => {
         @onClick="openTest(exam.code, exam.testparts_id)"
       ></ComponentButton>
     </div>
+
+    <v-card
+      subtitle="検査結果ダウンロード"
+      variant="tonal"
+      v-if="examlistdownloadflag && testLength == 0"
+    >
+      <v-card-text>
+        下記のボタンを押し、検査結果をダウンロードしてください。<br />
+        ※ダウンロードができない場合は主管部門にお問い合わせてください。
+        <p class="mt-3 text-caption text-red">
+          ■注意<br />
+          ダウンロードしたファイルをご自身のPCに保存し、結果を確認してください。
+          ブラウザで確認した場合、表示が乱れる可能性があります。
+        </p>
+      </v-card-text>
+      <v-card-actions class="mx-3">
+        <ComponentButton
+          text="ダウンロード"
+          class="bg-green w-100"
+          variant="tonal"
+          @onClick="onDownload()"
+        ></ComponentButton>
+      </v-card-actions>
+    </v-card>
+
     <div
       class="text-center w-100 ma-auto"
-      v-if="movietype == 1 || (movietype == 2 && testLength === 0)"
+      v-if="
+        (movietype == 1 && moviedisplayurl) ||
+        (movietype == 2 && testLength === 0 && moviedisplayurl)
+      "
     >
       <iframe
         width="100%"

@@ -540,12 +540,12 @@ const pagemove = () => {
         ></addSwitchForm>
         <addSwitchForm
           title="受検者ダウンロード設定"
-          :label="settingString(inputData.examlistdownloadflag)"
+          :label="displayString(inputData.examlistdownloadflag)"
           density="compact"
           color="bg-lime"
           :model="inputData.examlistdownloadflag"
           :tooltipflag="true"
-          :tooltipMessage="`受検者ダウンロード設定可否を行います。`"
+          :tooltipMessage="`受検メニュー画面での検査結果ダウンロードボタンの表示設定可否を行います。`"
           @onClick="
             () =>
               (inputData.examlistdownloadflag = inputData.examlistdownloadflag

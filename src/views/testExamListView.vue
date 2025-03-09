@@ -11,13 +11,12 @@ import { passArray, d_Path } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
 import { pfsOutput } from "@/plugins/PDF/pfs";
+import { pdfDownload } from "@/plugins/pdf";
 
 const pdfcode = ref();
 const onPDfOutput = (id: number, code: string, birth: string) => {
   pdfcode.value = id;
-  birth = birth.replace(/\//g, "-");
-  const path = d_Path + "/pdf/" + id + "/code/" + code + "/birth/" + birth;
-  location.href = path;
+  pdfDownload(id, code, birth);
 };
 
 const headers = ref([
