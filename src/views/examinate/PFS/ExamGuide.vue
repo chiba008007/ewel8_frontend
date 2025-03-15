@@ -5,6 +5,8 @@ import ExamTitle from "@/components/ExamTitle.vue";
 import ExamParts from "@/components/ExamParts.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import exampfs from "@/plugins/exampfs";
+import { setStartTime } from "@/plugins/examStartTime";
+
 const router = useRouter();
 const k = router.currentRoute.value.query.k;
 const examObj = exampfs();
@@ -19,6 +21,7 @@ const onMenuBack = () => {
   });
 };
 examObj.checkStatus(testparts_id, k);
+setStartTime();
 </script>
 
 <template>

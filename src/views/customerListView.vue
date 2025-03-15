@@ -90,9 +90,9 @@ UserApiService.getCustomerList(ctmp)
       customerList.value.push({
         id: value.id,
         campany: value.name,
-        examCount: 0,
-        syoriCount: 0,
-        zanCount: 0,
+        examCount: value.count,
+        syoriCount: value.syori,
+        zanCount: value.zan,
         method: "",
       });
     });

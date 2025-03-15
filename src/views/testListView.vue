@@ -89,8 +89,8 @@ const onResize = () => {
               }}
             </td>
             <td class="text-right">{{ item.testcount }}</td>
-            <td class="text-xs-right">-</td>
-            <td class="text-xs-right">-</td>
+            <td class="text-right">{{ item.syori }}</td>
+            <td class="text-right">{{ item.zan }}</td>
             <td class="text-center w-25" nowrap>
               <ButtonView
                 text="ID/QRコード"

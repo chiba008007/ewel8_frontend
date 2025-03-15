@@ -35,6 +35,9 @@ class ExamApiService {
   downloadExam(data: object) {
     return httpAuth.post("/api/exam/downloadExam", data);
   }
+  setStarttime(data: object) {
+    return httpAuth.post("/api/exam/setStarttime", data);
+  }
 
   async getTestExamMenu(data: object) {
     try {

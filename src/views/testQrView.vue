@@ -85,7 +85,7 @@ const displayList = () => {
       v-if="displayListFlag"
       :headers="headers"
       :items="examList"
-      fixed-header="true"
+      :fixed-header="true"
       class="mt-2 printLists"
     ></v-data-table-virtual>
   </div>

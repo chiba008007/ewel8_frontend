@@ -29,7 +29,7 @@ try {
       const entries = Object.entries(rlt);
       for (const [key, val] of entries) {
         if (key == "data") {
-          desserts.value.push(val.user);
+          desserts.value.push(val);
         }
       }
       // console.log(desserts);
@@ -76,10 +76,10 @@ const onResize = () => {
       <tr>
         <td class="w-25">{{ item.name }}</td>
         <td class="text-right">{{ item.total }}</td>
-        <td class="text-xs-right">{{ item.length }}</td>
-        <td class="text-xs-right">{{ item.price }}</td>
-        <td class="text-xs-right">{{ item.year }}</td>
-        <td class="text-xs-right">{{ item.zan }}</td>
+        <td class="text-right">{{ item.buy }}</td>
+        <td class="text-right">{{ item.jyuken }}</td>
+        <td class="text-right">{{ item.syori }}</td>
+        <td class="text-right">{{ item.zan }}</td>
         <td class="text-center">
           <ComponentButton
             text="企業一覧"
