@@ -6,26 +6,15 @@ import InfoAreaView from "../components/InfoAreaView.vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ButtonView from "@/components/ButtonView.vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import UserApiService from "@/services/UserApiService";
 import pageClickMove from "../plugins/pagemove";
+import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
 
 const move = pageClickMove();
-const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
 const tmpid = route.params.id;
-// const userdata = user.userdata;
-// console.log(user.userdata);
-const pankuzu = ref();
-if ((user.userdata as any).type === "partner") {
-  pankuzu.value = [{ title: user.home }];
-} else {
-  pankuzu.value = [
-    { title: user.home, href: router.resolve({ name: "List" }).href },
-    { title: user.customerInfoList },
-  ];
-}
 
 const customerheaders = ref([
   { title: "企業名", align: "start", key: "campany" },
@@ -112,7 +101,7 @@ const onMove = (param: string, key: number) => {
   <v-row justify="center">
     <CustomerMenu />
   </v-row>
-  <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
+  <pankuzuCustomer></pankuzuCustomer>
   <v-row>
     <v-col class="ma-1">
       <v-tabs v-model="tab">

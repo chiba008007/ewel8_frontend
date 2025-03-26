@@ -15,6 +15,7 @@ import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ComponentAlert from "../components/AlertView.vue";
 import { requiredValue, checkPassword } from "../plugins/validate";
 import { textString } from "@/plugins/const";
+import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
 
 const route = useRoute();
 const regex = /(\d+)(?!.*\d)/;
@@ -51,28 +52,6 @@ const tab = ref(0);
 PrefApiService.getPrefData().then((res) => {
   prefs.value = res;
 });
-
-const pankuzu = ref([]) as any | object;
-
-if ((user.userdata as any).type === "partner") {
-  pankuzu.value = [
-    {
-      title: user.home,
-      href: router.resolve({ name: "customerList", params: { id: paramId } })
-        .href,
-    },
-  ];
-} else {
-  pankuzu.value = [
-    { title: user.home, href: router.resolve({ name: "List" }).href },
-    {
-      title: user.customerInfoList,
-      href: router.resolve({ name: "customerList", params: { id: paramId } })
-        .href,
-    },
-  ];
-}
-pankuzu.value.push({ title: user.partnerEdit });
 
 const tmp = {
   partnerId: paramId,
@@ -146,7 +125,10 @@ const addRegist = () => {
   </v-row>
   <v-row>
     <v-col class="ma-0">
-      <v-breadcrumbs :items="pankuzu" class="ml-2 pa-0"></v-breadcrumbs>
+      <pankuzuCustomer
+        :pageName="user.partnerEdit"
+        name="customerList"
+      ></pankuzuCustomer>
       <v-row no-gutters>
         <v-col cols="12" class="ml-2">
           <ComponentButton

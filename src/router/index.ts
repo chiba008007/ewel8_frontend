@@ -21,6 +21,8 @@ import ExamBrowserUpdateHelpView from "../views/examinate/BrowsserUpdateHelpView
 import ExamListView from "../views/examinate/ExamListView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import testListView from "../views/testListView.vue";
+import weightMaster from "../views/weightMaster.vue";
+import weightMasterSet from "../views/weightMasterSet.vue";
 import testAddView from "../views/testAddView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
@@ -146,6 +148,23 @@ const routes: Array<RouteRecordRaw> = [
     path: "/testLists/:id",
     name: "testLists",
     component: testListView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  // 重み付けマスタ
+  {
+    path: "/weightMaster/:id",
+    name: "weightMaster",
+    component: weightMaster,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/weightMaster/set/:id",
+    name: "weightMasterSet",
+    component: weightMasterSet,
     meta: {
       requiresAuth: true,
     },

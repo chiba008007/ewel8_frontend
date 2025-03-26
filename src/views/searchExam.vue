@@ -3,18 +3,13 @@ import { ref } from "vue";
 import ComponentButton from "../components/ButtonView.vue";
 import ComponentTextField from "../components/TextFieldView.vue";
 import AdminMenu from "../components/AdminMenu.vue";
-import UserApiService from "@/services/UserApiService";
-import { useRouter } from "vue-router";
 import { useStoreUser } from "@/store/user";
-import ExamApiService from "@/services/ExamApiService";
 import TestApiService from "@/services/TestApiService";
+import pankuzuAdmin from "@/components/pankuzuAdmin.vue";
+
 const user = useStoreUser();
-const router = useRouter();
+
 const loading = ref(true);
-const pankuzu = [
-  { title: user.home, href: router.resolve({ name: "List" }).href },
-  { title: user.examSearch },
-];
 
 const headers = [
   { title: "検査名", sortable: false, key: "testname" },
@@ -83,7 +78,7 @@ const onResize = () => {
   <v-row justify="center" v-resize="onResize">
     <AdminMenu />
   </v-row>
-  <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
+  <pankuzuAdmin :pageName="user.examSearch"></pankuzuAdmin>
   <v-card subtitle="検索フォーム" width="100%" class="ma-0 px-3" elevation="0">
     <v-row no-gutters>
       <v-col cols="2" class="pa-0 ma-0">

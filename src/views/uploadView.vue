@@ -2,7 +2,6 @@
 import { ref, onMounted } from "vue";
 import { useStoreUser } from "../store/user";
 import ComponentButton from "../components/ButtonView.vue";
-import ComponentTextField from "../components/TextFieldView.vue";
 import CheckboxView from "@/components/CheckboxView.vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import UserApiService from "@/services/UserApiService";
@@ -12,6 +11,7 @@ import pagemove from "@/plugins/pagemove";
 import fileUpload from "@/components/fileUpload.vue";
 import { d_filePath, openStatus } from "@/plugins/const";
 import AlertView from "@/components/AlertView.vue";
+import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
 
 const alertDeleteflag = ref(false);
 const alertRegistflag = ref(false);
@@ -28,21 +28,6 @@ const headers = [
 const user = useStoreUser();
 const tmpid = route.params.id;
 const editid = route.params.editid;
-
-const pankuzu = ref();
-if ((user.userdata as any).type === "partner") {
-  pankuzu.value = [{ title: user.home }];
-} else {
-  pankuzu.value = [
-    { title: user.home, href: router.resolve({ name: "List" }).href },
-    {
-      title: user.customerInfoList,
-      href: router.resolve({ name: "customerList", params: { id: tmpid } })
-        .href,
-    },
-    { title: user.upload },
-  ];
-}
 
 const file = ref<File | null>(null);
 const formData = new FormData();
@@ -139,7 +124,10 @@ const deleteStatus = (id: number, key: number) => {
   <v-row justify="center">
     <CustomerMenu />
   </v-row>
-  <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
+  <pankuzuCustomer
+    :pageName="user.upload"
+    name="customerList"
+  ></pankuzuCustomer>
   <v-row class="ml-2">
     <v-col>
       <p class="text-h6">ファイルアップロード</p>
@@ -149,7 +137,7 @@ const deleteStatus = (id: number, key: number) => {
     <v-col cols="12">
       <fileUpload
         @onChange="(e) => onChange(e)"
-        @onClick="(e) => onClick(e)"
+        @onClick="() => onClick()"
       ></fileUpload>
     </v-col>
   </v-row>
@@ -170,7 +158,7 @@ const deleteStatus = (id: number, key: number) => {
         type="success"
       ></AlertView>
       <AlertView
-        v-if="alertRegistflag"
+        v-else-if="alertRegistflag"
         text="登録を行いました。"
         type="success"
       ></AlertView>

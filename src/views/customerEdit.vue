@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import { useStoreUser } from "../store/user";
-import CustomerMenu from "../components/CustomerMenu.vue";
 import TextMenu from "../components/TestMenu.vue";
 import InfoAreaView from "../components/InfoAreaView.vue";
 import { useRouter, useRoute } from "vue-router";
@@ -23,7 +22,8 @@ import {
 import UserApiService from "@/services/UserApiService";
 import { imagePath, customer, displayStatus } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
-import customerEdit from "@/plugins/customerEdit";
+
+import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -32,9 +32,6 @@ const registButton = ref<boolean>(false);
 const tmpid = route.params.id;
 const editid = route.params.editid;
 const typeString = route.params.typeString;
-const pankuzu = ref(
-  customerEdit.pankuzu(user.userdata as { type: "" }, typeString)
-);
 
 const inputData = ref({
   name: "",
@@ -227,8 +224,10 @@ const backColor = () => {
     <TextMenu v-if="typeString == 'test'" />
     <v-else CustomerMenu />
   </v-row>
-  <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
-
+  <pankuzuCustomer
+    :pageName="user.customerEdit"
+    name="customerList"
+  ></pankuzuCustomer>
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
       <ComponentButton

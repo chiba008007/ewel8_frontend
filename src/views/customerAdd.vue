@@ -22,15 +22,13 @@ import {
 import UserApiService from "@/services/UserApiService";
 import { imagePath, customer } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
-import customerEdit from "@/plugins/customerEdit";
+import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
 
 import { displayStatus } from "@/plugins/const";
 const route = useRoute();
 const user = useStoreUser();
 const registButton = ref<boolean>(true);
-
 const tmpid = route.params.id;
-const pankuzu = ref(customerEdit.pankuzu(user.userdata as { type: "" }));
 
 const inputData = ref({
   name: "",
@@ -180,8 +178,11 @@ const pagemove = () => {
   <v-row justify="center">
     <CustomerMenu />
   </v-row>
-  <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
 
+  <pankuzuCustomer
+    :pageName="user.customerRegist"
+    name="customerList"
+  ></pankuzuCustomer>
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
       <ComponentButton

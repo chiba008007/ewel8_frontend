@@ -94,7 +94,7 @@ class UserApiService {
   getCustomerList(data: object): Promise<object> {
     return httpAuth.post("/api/user/getCustomerList", data);
   }
-  getPartnerid(data: object): Promise<object> {
+  getPartnerid(data: object): Promise<{ data: number }> {
     return httpAuth.post("/api/user/getPartnerid", data);
   }
   getUserLisence(data: object): Promise<object> {

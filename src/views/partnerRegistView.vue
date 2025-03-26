@@ -5,6 +5,7 @@ import UserApiService from "@/services/UserApiService";
 import ComponentPartnerRegist from "../components/PartnerRegistForm.vue";
 import ComponentButton from "../components/ButtonView.vue";
 import ComponentAlert from "../components/AlertView.vue";
+import pankuzuAdmin from "@/components/pankuzuAdmin.vue";
 import { useRouter } from "vue-router";
 import { textString } from "@/plugins/const";
 const router = useRouter();
@@ -37,8 +38,8 @@ const onClick = () => {
   <v-row align="center" justify="center">
     <AdminMenu />
   </v-row>
-  <v-container class="mt-1">
-    <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
+  <v-container class="pt-0 ma-0 w-100" max-width="100%">
+    <pankuzuAdmin :pageName="textString.CompanyEdit"></pankuzuAdmin>
     <div class="text-h5">{{ textString.CompanyEdit }}</div>
     <ComponentPartnerRegist
       :login_id="user?.data?.user[0].login_id"

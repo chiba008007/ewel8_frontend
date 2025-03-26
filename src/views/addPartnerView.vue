@@ -22,14 +22,12 @@ import {
   checkEmailRequired,
 } from "../plugins/validate";
 import { displayStatus } from "@/plugins/const";
+import pankuzuAdmin from "@/components/pankuzuAdmin.vue";
 const user = useStoreUser();
 const router = useRouter();
 const route = useRoute();
 const tmpid = route.params.id;
-const pankuzu = [
-  { title: user.home, href: router.resolve({ name: "List" }).href },
-  { title: tmpid ? user.editPartner : user.addPartner },
-];
+
 const tab = ref();
 const prefs = ref();
 const elements = ref();
@@ -356,7 +354,10 @@ const displayString = (type: boolean) => {
   <v-row justify="center" v-if="!tmpid">
     <AdminMenu />
   </v-row>
-  <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
+  <pankuzuAdmin
+    :pageName="tmpid ? user.editPartner : user.addPartner"
+  ></pankuzuAdmin>
+
   <p class="text-lowercase ml-2 text-caption">
     赤丸内の数が残り必須入力数になります。
   </p>

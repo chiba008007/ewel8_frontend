@@ -70,7 +70,7 @@ const pageCustomerEditParam = (pagename: string) => {
         density="compact"
         color="lime"
         class="w-25 ml-1"
-        @onClick="pageClickMoveParam('partnerEdit')"
+        @onClick="pageClickMoveParam('weightMaster')"
       ></ComponentButton>
     </div>
   </v-sheet>
