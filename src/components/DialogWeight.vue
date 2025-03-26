@@ -12,14 +12,14 @@ interface InputData {
 }
 
 interface Props {
-  text: string;
+  text?: string;
   title?: string;
-  message: string;
+  message?: string;
   okButtonText?: string;
   cancelButtonText?: string;
-  dialogFlag: boolean;
-  inputData: InputData;
-  elements: object;
+  dialogFlag?: boolean;
+  inputData?: InputData;
+  elements?: object;
 }
 
 const props = withDefaults(defineProps<Props>(), {

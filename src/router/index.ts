@@ -162,6 +162,14 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/weightMaster/:id/:pattern/:weightid",
+    name: "weightMasterEdit",
+    component: weightMasterSet,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/weightMaster/set/:id",
     name: "weightMasterSet",
     component: weightMasterSet,

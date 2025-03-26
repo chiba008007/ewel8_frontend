@@ -33,6 +33,7 @@ const inputData = ref({
   element14: "0",
   name: "",
 });
+
 const disabled = ref(true);
 const alertFlag = ref(false);
 type inputDataType = {
@@ -40,6 +41,31 @@ type inputDataType = {
 };
 const router = useRouter();
 const params = router.currentRoute.value.params;
+
+// 編集用
+if (params.pattern === "edit") {
+  let tmp = {
+    weightid: params.weightid,
+    customer_id: params.id,
+  };
+  WeightApiService.getWeightMasterDetail(tmp)
+    .then((rst) => {
+      inputData.value.name = rst.data.name;
+      for (let i = 1; i <= 12; i++) {
+        let wt = "wt" + i;
+        let elm = "element" + i;
+        (inputData.value as unknown as inputDataType)[elm] = rst.data[wt];
+      }
+      inputData.value.element13 = rst.data["ave"];
+      inputData.value.element14 = rst.data["hensa"];
+      disabled.value = false;
+    })
+    .catch((e) => {
+      console.log(e);
+      alert("error");
+    });
+}
+
 const tmp = {
   user_id: params.id,
 };
@@ -84,6 +110,7 @@ const onRegist = () => {
   dialoged.value = true;
   alertFlag.value = false;
 };
+// データ登録
 const onOkClick = () => {
   let data = {
     id: params.id,
@@ -113,6 +140,38 @@ const onOkClick = () => {
       alert("Weight Set ERROR" + e);
     });
 };
+// データ更新
+const onOkEditClick = () => {
+  let data = {
+    weightid: params.weightid,
+    id: params.id,
+    name: inputData.value.name,
+    wt1: inputData.value.element1,
+    wt2: inputData.value.element2,
+    wt3: inputData.value.element3,
+    wt4: inputData.value.element4,
+    wt5: inputData.value.element5,
+    wt6: inputData.value.element6,
+    wt7: inputData.value.element7,
+    wt8: inputData.value.element8,
+    wt9: inputData.value.element9,
+    wt10: inputData.value.element10,
+    wt11: inputData.value.element11,
+    wt12: inputData.value.element12,
+    ave: inputData.value.element13,
+    hensa: inputData.value.element14,
+  };
+  alertFlag.value = false;
+
+  WeightApiService.editWeightMaster(data)
+    .then(() => {
+      alertFlag.value = true;
+      dialoged.value = false;
+    })
+    .catch((e) => {
+      alert("edit error");
+    });
+};
 const onKeyup = (elem: elemType, point: number) => {
   let str = "element" + elem.num;
   (inputData.value as unknown as inputDataType)[str] = point;
@@ -132,11 +191,12 @@ const onFormat = () => {
 </script>
 <template>
   <DialogWeight
+    message="入力内容に問題がない場合は「はい」、問題がある場合は「いいえ」を画面下のボタンで選択してください。"
     :elements="elements"
     :inputData="inputData"
     :dialogFlag="dialoged"
     @onCancel="onCancel()"
-    @onOkClick="onOkClick()"
+    @onOkClick="params.pattern == 'edit' ? onOkEditClick() : onOkClick()"
   ></DialogWeight>
   <PartnerAdmin coded="customer" />
   <v-row justify="center" class="mt-6">
@@ -167,6 +227,7 @@ const onFormat = () => {
       <v-col class="w-50">
         <div class="d-flex w-50">
           <TextFieldView
+            :value="inputData.name"
             class="w-50"
             placeholder="登録するマスター名を入力してください"
             @onKeyup="(e:string) => [inputData.name=e,onButtonRegist(e)]"
@@ -191,7 +252,7 @@ const onFormat = () => {
         <TextFieldView
           placeholder="0.0"
           type="number"
-          :value="inputData['element' + parseInt(idx + 1)]"
+          :value="(inputData as unknown as inputDataType)['element' + parseInt(idx + 1)]"
           @onKeyup="(e:number) => onKeyup(elem, e)"
         ></TextFieldView>
       </v-col>
