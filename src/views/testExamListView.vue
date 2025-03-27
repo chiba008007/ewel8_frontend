@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import TestApiService from "@/services/TestApiService";
 import UserApiService from "@/services/UserApiService";
-import pankuzuTestList from "../components/pankuzuTestList.vue";
+import pankuzuTest from "../components/pankuzuTest.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import csvDownload from "@/components/csvDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
@@ -103,8 +103,11 @@ const dialog = ref(false);
 </script>
 <template>
   <PartnerAdmin coded="customer" />
-  <pankuzuTestList></pankuzuTestList>
-  <div class="text-center pa-4">
+  <pankuzuTest
+    :adminhref="{ pageName: 'testList', href: 'testLists' }"
+    :adminhref2="{ pageName: 'testExamList' }"
+  ></pankuzuTest>
+  <div class="text-center pa-4" v-if="dialogFlag">
     <v-dialog v-model="dialogFlag" width="auto">
       <v-card max-width="400" class="pa-4">
         <p>{{ pfsDialogText.text1 }}</p>

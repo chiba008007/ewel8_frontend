@@ -28,11 +28,15 @@ const onClick = () => {
   };
   UserApiService.getPost(data)
     .then((response: any) => {
-      console.log(response);
       user.setUserDataToken(response.data.token);
       user.setUserData(response.data.user);
       if (response.data.user.type === "partner") {
-        router.push("/customerList/" + response.data.user.id);
+        router.push(
+          router.resolve({
+            name: "customerList",
+            params: { id: response.data.user.id },
+          }).href
+        );
       } else {
         // 管理者用ログイン画面
         router.push("/list");

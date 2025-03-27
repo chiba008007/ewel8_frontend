@@ -4,9 +4,10 @@ import ComponentButton from "../components/ButtonView.vue";
 import ComponentTextField from "../components/TextFieldView.vue";
 import AdminMenu from "../components/AdminMenu.vue";
 import UserApiService from "@/services/UserApiService";
-import { useRouter } from "vue-router";
 import pagemove from "@/plugins/pagemove";
-const router = useRouter();
+import { pageAdmin } from "@/plugins/pageEnable";
+
+pageAdmin();
 const loading = ref(true);
 const pages = pagemove();
 const headers = [

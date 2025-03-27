@@ -81,7 +81,18 @@ onMounted(() => {
   <v-row justify="center" class="mt-6">
     <TestMenu />
   </v-row>
-  <pankuzuTest pageName="weightMaster"></pankuzuTest>
+  <pankuzuTest
+    :partnerhref="{
+      pageName: 'testList',
+      href: 'testLists',
+    }"
+    :partnerhref2="{
+      pageName: 'weightMaster',
+      href: 'weightMaster',
+    }"
+    :adminhref="{ pageName: 'testList', href: 'testLists' }"
+    :adminhref2="{ pageName: 'weightMaster' }"
+  ></pankuzuTest>
   <ButtonView
     text="新規登録"
     class="ml-3"

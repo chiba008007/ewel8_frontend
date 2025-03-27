@@ -39,7 +39,6 @@ class UserApiService {
       return res;
     } catch (e) {
       console.log(e);
-      location.reload();
     }
   }
   async getPartnerDetail(data: object) {

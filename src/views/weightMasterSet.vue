@@ -203,7 +203,22 @@ const onFormat = () => {
     <TestMenu />
   </v-row>
   <pankuzuTest
-    :href="{ pageName: 'weightMaster', pageName2: 'weightMasterSet' }"
+    pageName="weightMaster"
+    :partnerhref="{
+      pageName: 'testList',
+      href: 'testLists',
+    }"
+    :partnerhref2="{
+      pageName: 'weightMaster',
+      href: 'weightMaster',
+    }"
+    :partnerhref3="{
+      pageName: 'weightMasterSet',
+      href: 'weightMasterSet',
+    }"
+    :adminhref="{ pageName: 'testList', href: 'testLists' }"
+    :adminhref2="{ pageName: 'weightMaster', href: 'weightMaster' }"
+    :adminhref3="{ pageName: 'weightMasterSet', href: 'weightMasterSet' }"
   ></pankuzuTest>
   <div class="mx-3">
     <p class="text-caption">

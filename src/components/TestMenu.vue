@@ -32,7 +32,7 @@ const pageCustomerEditParam = (pagename: string) => {
   router.push(
     router.resolve({
       name: pagename,
-      params: { id: partnerid.value, editid: tmpid, typeString: "test" },
+      params: { id: tmpid, editid: partnerid.value, typeString: "test" },
     }).href
   );
 };

@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import AdminMenu from "../components/AdminMenu.vue";
 import UserApiService from "@/services/UserApiService";
 import ComponentPartnerRegist from "../components/PartnerRegistForm.vue";
 import ComponentButton from "../components/ButtonView.vue";
 import ComponentAlert from "../components/AlertView.vue";
 import pankuzuAdmin from "@/components/pankuzuAdmin.vue";
-import { useRouter } from "vue-router";
+import { pageAdmin } from "@/plugins/pageEnable";
 import { textString } from "@/plugins/const";
-const router = useRouter();
-const pankuzu = [
-  { title: "HOME", href: router.resolve({ name: "List" }).href },
-  { title: textString.CompanyEdit },
-];
+
+pageAdmin();
 const settingData = ref();
 let data = {
   type: "admin",
@@ -30,7 +27,7 @@ const onBlur = (val: string, type: string, key: number) => {
 const alertFlag = ref<boolean>(false);
 const onClick = () => {
   UserApiService.editLoginAdmin(settingData.value.data.user).then((res) => {
-    alertFlag.value = res.data === 1 ?? true;
+    alertFlag.value = res.data === 1 || true;
   });
 };
 </script>

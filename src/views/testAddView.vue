@@ -28,6 +28,7 @@ import { numberValue, requiredValue, checkDate } from "../plugins/validate";
 import CardViewPFS from "@/components/CardViewPFS.vue";
 import ElementApiService from "@/services/ElementApiService";
 import AlertView from "@/components/AlertView.vue";
+import pankuzuTest from "@/components/pankuzuTest.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -39,43 +40,7 @@ const errorTab1 = ref(2);
 // console.log(user.userdata);
 
 const partner_id = ref();
-const pankuzu = ref();
-if ((user.userdata as any).type === "partner") {
-  pankuzu.value = [{ title: user.customerInfoList }];
-} else {
-  let pid = UserApiService.getPartnerid({
-    id: tmpid.value,
-    type: "customer",
-  });
-  pid.then((e: any) => {
-    partner_id.value = parseInt(e.data);
 
-    pankuzu.value = [
-      { title: user.home, href: router.resolve({ name: "List" }).href },
-      {
-        title: user.customerInfoList,
-        href: router.resolve({
-          name: "customerList",
-          params: {
-            id: partner_id.value,
-          },
-        }).href,
-      },
-      {
-        title: user.testList,
-        href: router.resolve({
-          name: "testLists",
-          params: {
-            id: tmpid.value,
-          },
-        }).href,
-      },
-      {
-        title: user.testAdd,
-      },
-    ];
-  });
-}
 const tab = ref(0);
 const inputData = ref({
   testname: "",
@@ -106,15 +71,26 @@ const inputData = ref({
 const lisenceView = ref();
 UserApiService.getUserLisence({
   user_id: tmpid.value,
-}).then((res: any) => {
-  lisenceView.value = res.data;
-});
+})
+  .then((res: any) => {
+    lisenceView.value = res.data;
+  })
+  .catch((e) => {
+    alert("error");
+  });
+
 const lisenceViewCalc = ref();
+
 UserApiService.getUserLisenceCalc({
   user_id: tmpid.value,
-}).then((res: any) => {
-  lisenceViewCalc.value = res.data;
-});
+})
+  .then((res: any) => {
+    lisenceViewCalc.value = res.data;
+  })
+  .catch((e) => {
+    alert("error");
+  });
+
 const pdfLists = ref(pdfArray);
 const inputPDf = ref([{ key: 0, text: "", value: false }]);
 inputPDf.value = [];
@@ -323,7 +299,12 @@ const pagemove = () => {
   <v-row justify="center" class="mt-5">
     <TestMenu />
   </v-row>
-  <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
+  <pankuzuTest
+    :partnerhref="{ pageName: 'testList', href: 'testLists' }"
+    :partnerhref2="{ pageName: 'testAdd' }"
+    :adminhref="{ pageName: 'testList', href: 'testLists' }"
+    :adminhref2="{ pageName: 'testAdd' }"
+  ></pankuzuTest>
   <p class="text-lowercase ml-2 text-caption">
     検査内容を入力してください。 <br />
     赤丸内の数が残り必須入力数になります。<br />

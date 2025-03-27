@@ -1,36 +1,32 @@
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
-import { useStoreUser } from "../store/user";
+import { ref } from "vue";
 
 import InfoAreaView from "../components/InfoAreaView.vue";
 import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ButtonView from "@/components/ButtonView.vue";
-import { useRouter, useRoute } from "vue-router";
-import UserApiService from "@/services/UserApiService";
+import { useRoute } from "vue-router";
 import TestApiService from "@/services/TestApiService";
 import pageClickMove from "@/plugins/pagemove";
-import pankuzuTestList from "../components/pankuzuTestList.vue";
+import pankuzuTest from "@/components/pankuzuTest.vue";
 import dayjs from "dayjs";
+import { useStoreUser } from "@/store/user";
+import { D_ADMIN, D_PARTNER } from "@/plugins/const";
 import "dayjs/locale/ja";
 dayjs.locale("ja");
 const move = pageClickMove();
-const router = useRouter();
 const route = useRoute();
-const user = useStoreUser();
-
 const tmpid = ref(route.path.replace(/[^0-9]/g, ""));
 
-// const userdata = user.userdata;
-// console.log(user.userdata);
+const user = useStoreUser();
 
 const testheaders = ref([
-  { title: "企業名", align: "start", key: "campany" },
-  { title: "実施期間", align: "start", key: "examCount" },
-  { title: "受検者数", align: "start", key: "examCount" },
-  { title: "処理数", align: "start", key: "syoriCount" },
-  { title: "残数", align: "start", key: "zanCount" },
-  { title: "機能", align: "start", key: "method" },
+  { title: "企業名", align: undefined, key: "campany" },
+  { title: "実施期間", align: undefined, key: "examCount" },
+  { title: "受検者数", align: undefined, key: "examCount" },
+  { title: "処理数", align: undefined, key: "syoriCount" },
+  { title: "残数", align: undefined, key: "zanCount" },
+  { title: "機能", align: undefined, key: "method" },
 ]);
 
 const tmp = {
@@ -61,7 +57,10 @@ const onResize = () => {
     <TestMenu />
   </v-row>
 
-  <pankuzuTestList></pankuzuTestList>
+  <pankuzuTest
+    :partnerhref="{ pageName: 'testList', href: 'testLists' }"
+    :adminhref="{ pageName: 'testList', href: 'testLists' }"
+  ></pankuzuTest>
   <v-row v-resize="onResize">
     <v-col class="ma-1">
       <v-data-table
@@ -75,7 +74,11 @@ const onResize = () => {
         <template v-slot:item="{ item }">
           <tr>
             <td class="w-25">
+              <span v-if="user.userdata.type === D_PARTNER">{{
+                item.testname
+              }}</span>
               <a
+                v-else
                 class="text-link"
                 @click="
                   move.pageTestListModeParam('testExamList', item.id, tmpid)
@@ -93,6 +96,7 @@ const onResize = () => {
             <td class="text-right">{{ item.zan }}</td>
             <td class="text-center w-25" nowrap>
               <ButtonView
+                v-if="user.userdata.type != D_PARTNER"
                 text="ID/QRコード"
                 class="text-caption mb-2"
                 color="success"
@@ -107,12 +111,14 @@ const onResize = () => {
                 size="small"
               ></ButtonView>
               <ButtonView
+                v-if="user.userdata.type != D_PARTNER"
                 text="削除"
                 class="text-caption mb-2 ml-2"
                 color="red"
                 size="small"
               ></ButtonView>
               <ButtonView
+                v-if="user.userdata.type === D_ADMIN"
                 text="複製"
                 class="text-caption mb-2 ml-2"
                 color="success"

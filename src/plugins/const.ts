@@ -16,6 +16,9 @@ if (reg.test(uri.toString())) {
   frontpath = "https://ewel.uh-oh.jp";
 }
 
+export const D_ADMIN = "admin";
+export const D_PARTNER = "partner";
+export const D_CUSTOMER = "customer";
 export const d_Path = tmp;
 export const d_Front = frontpath;
 //export const d_Path = "https://paperadmin.uh-oh.jp";

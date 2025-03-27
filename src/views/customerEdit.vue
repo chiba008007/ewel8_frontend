@@ -23,7 +23,7 @@ import UserApiService from "@/services/UserApiService";
 import { imagePath, customer, displayStatus } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
 
-import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import pankuzuTest from "@/components/pankuzuTest.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -71,9 +71,9 @@ const myimage_path = ref();
 
 const pageBack = () => {
   if (typeString == "test") {
-    router.push({ name: "testLists", params: { id: editid } });
+    router.push({ name: "testLists", params: { id: tmpid } });
   } else {
-    router.push({ name: "customerList", params: { id: tmpid } });
+    router.push({ name: "customerList", params: { id: editid } });
   }
 };
 const onBlurButton = async () => {
@@ -131,8 +131,8 @@ const successAlertFlag = ref(false);
 
 const editData = () => {
   let tmp = {
-    id: editid,
-    partner_id: tmpid,
+    id: tmpid,
+    partner_id: editid,
     name: inputData.value.name,
     // email: inputData.value.login_id,
     password: inputData.value.password,
@@ -174,8 +174,8 @@ const editData = () => {
 
 let editTmp = {
   type: "customer",
-  partnerId: tmpid,
-  editId: editid,
+  partnerId: editid,
+  editId: tmpid,
 };
 UserApiService.getPartnerDetail(editTmp)
   .then((rst) => {
@@ -224,10 +224,20 @@ const backColor = () => {
     <TextMenu v-if="typeString == 'test'" />
     <v-else CustomerMenu />
   </v-row>
-  <pankuzuCustomer
-    :pageName="user.customerEdit"
-    name="customerList"
-  ></pankuzuCustomer>
+  <pankuzuTest
+    :pageName="user.testList"
+    :partnerhref="{
+      pageName: 'testList',
+      href: 'testLists',
+    }"
+    :partnerhref2="{
+      pageName: 'customerEdit',
+      href: 'customerEdit',
+    }"
+    :adminhref="{ pageName: 'testList', href: 'testLists' }"
+    :adminhref2="{ pageName: 'customerEdit' }"
+  ></pankuzuTest>
+
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
       <ComponentButton

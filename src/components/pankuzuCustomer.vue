@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, defineProps, withDefaults } from "vue";
 import { useRouter } from "vue-router";
-import { textString } from "@/plugins/const";
 import { useStoreUser } from "../store/user";
 
 interface Props {
@@ -18,7 +17,10 @@ const router = useRouter();
 const user = useStoreUser();
 const pankuzu = ref();
 if ((user.userdata as any).type === "partner") {
-  pankuzu.value = [{ title: user.home }];
+  pankuzu.value = [
+    { title: user.home, href: router.resolve({ name: "customerList" }).href },
+  ];
+  if (props.pageName) pankuzu.value.push({ title: props.pageName, href: "" });
 } else {
   pankuzu.value = [
     { title: user.home, href: router.resolve({ name: "List" }).href },
