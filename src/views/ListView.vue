@@ -45,6 +45,10 @@ const onResize = () => {
   const wHeight = window.innerHeight;
   tableHeight.value = wHeight - 300;
 };
+const inputSearch = ref({ text: "" });
+const onSearch = (e: string) => {
+  inputSearch.value.text = e;
+};
 </script>
 <template>
   <v-row justify="center" v-resize="onResize">
@@ -59,6 +63,7 @@ const onResize = () => {
           density="compact"
           variant="outlined"
           class="w-100"
+          @onBlur="(e: string) => onSearch(e)"
         />
       </v-col>
       <v-col cols="3">
@@ -71,6 +76,7 @@ const onResize = () => {
     :items="desserts[0]"
     class="listable ma-2"
     :height="tableHeight"
+    :search="``"
     fixed-header
   >
     <template v-slot:item="{ item }">

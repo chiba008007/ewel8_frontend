@@ -17,19 +17,19 @@ const user = useStoreUser();
 const tmpid = route.params.id;
 
 const customerheaders = ref([
-  { title: "企業名", align: "start", key: "campany" },
-  { title: "受検者数", align: "start", key: "examCount" },
-  { title: "処理数", align: "start", key: "syoriCount" },
-  { title: "残数", align: "start", key: "zanCount" },
-  { title: "機能", align: "start", key: "method" },
+  { title: "企業名", key: "campany" },
+  { title: "受検者数", key: "examCount" },
+  { title: "処理数", key: "syoriCount" },
+  { title: "残数", key: "zanCount" },
+  { title: "機能", key: "method" },
 ]);
 const headers = ref([
-  { title: "検査種別", align: "start", key: "examType" },
-  { title: "購入ライセンス", align: "start", key: "buyLisence" },
-  { title: "販売可能ライセンス", align: "start", key: "saleLisence" },
-  { title: "受検者数", align: "start", key: "examCount" },
-  { title: "処理数", align: "start", key: "syoriCount" },
-  { title: "残数", align: "start", key: "zanCount" },
+  { title: "検査種別", key: "examType" },
+  { title: "購入ライセンス", key: "buyLisence" },
+  { title: "販売可能ライセンス", key: "saleLisence" },
+  { title: "受検者数", key: "examCount" },
+  { title: "処理数", key: "syoriCount" },
+  { title: "残数", key: "zanCount" },
 ]);
 const customerList = ref([
   {
@@ -60,10 +60,10 @@ UserApiService.getLisencesList(tmp)
       data.value.push({
         examType: val.code,
         buyLisence: val.num,
-        saleLisence: 83457,
-        examCount: 5400,
-        syoriCount: 5400,
-        zanCount: 5400,
+        saleLisence: val.num - val.exam_count,
+        examCount: val.exam_count,
+        syoriCount: val.syori,
+        zanCount: val.zan,
       });
     });
   })
@@ -128,7 +128,7 @@ const onMove = (param: string, key: number) => {
                     text="検査一覧"
                     color="success"
                     size="small"
-                    @click="onMove('testLists', item.id)"
+                    @click="onMove('testLists', parseInt(item.id))"
                   ></ButtonView>
                   <ButtonView
                     text="更新"

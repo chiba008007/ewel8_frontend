@@ -26,6 +26,7 @@ import UserApiService from "@/services/UserApiService";
 import TestApiService from "@/services/TestApiService";
 import { numberValue, requiredValue, checkDate } from "../plugins/validate";
 import CardViewPFS from "@/components/CardViewPFS.vue";
+import CardViewBAJ3 from "@/components/CardViewBAJ3.vue";
 import ElementApiService from "@/services/ElementApiService";
 import AlertView from "@/components/AlertView.vue";
 import pankuzuTest from "@/components/pankuzuTest.vue";
@@ -80,7 +81,6 @@ UserApiService.getUserLisence({
   });
 
 const lisenceViewCalc = ref();
-
 UserApiService.getUserLisenceCalc({
   user_id: tmpid.value,
 })
@@ -274,12 +274,12 @@ const inputTestPart = ref({
     status: false,
     weight: {},
   },
-  // BAJ3: {
-  //   threeflag: false,
-  //   weightFlag: false,
-  //   status: false,
-  //   weight: {},
-  // },
+  BAJ3: {
+    threeflag: false,
+    weightFlag: false,
+    status: false,
+    weight: {},
+  },
 });
 const displayString = (type: boolean) => {
   return type ? displayStatus[1] : displayStatus[0];
@@ -592,6 +592,7 @@ const pagemove = () => {
           <v-col cols="12">
             <div v-for="val in lisenceView" :key="val.id">
               <CardViewPFS
+                class="mt-3"
                 v-if="val.code == 'PFS'"
                 :title="val.jp"
                 :testcount="inputData.testcount"
@@ -607,6 +608,23 @@ const pagemove = () => {
                 @onWeight="(e) => (inputTestPart.PFS.weight = e)"
                 @onStatus="(e) => (inputTestPart.PFS.status = e)"
               ></CardViewPFS>
+              <CardViewBAJ3
+                class="mt-3"
+                v-if="val.code == 'BA-J3'"
+                :title="val.jp"
+                :testcount="inputData.testcount"
+                :model="inputTestPart.BAJ3.threeflag"
+                :weightModel="inputTestPart.BAJ3.weightFlag"
+                :element="elements"
+                @onThree="
+                  (e) => (inputTestPart.BAJ3.threeflag = e ? false : true)
+                "
+                @onWeightFlag="
+                  (e) => (inputTestPart.BAJ3.weightFlag = e ? false : true)
+                "
+                @onWeight="(e) => (inputTestPart.BAJ3.weight = e)"
+                @onStatus="(e) => (inputTestPart.BAJ3.status = e)"
+              ></CardViewBAJ3>
             </div>
           </v-col>
         </v-row>

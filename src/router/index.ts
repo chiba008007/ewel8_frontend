@@ -233,6 +233,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "examList",
     component: ExamListView,
   },
+  // PFS検査
   {
     path: "/exam/pfs/:testparts_id/guide",
     name: "examPfsGuide",

@@ -7,6 +7,7 @@ import pankuzuTest from "../components/pankuzuTest.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import csvDownload from "@/components/csvDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
+import ExamBAJ3View from "@/components/ExamBAJ3View.vue";
 import { passArray, d_Path } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
@@ -41,9 +42,9 @@ const testCount = ref(0);
 const tableWidth = ref("100%");
 TestApiService.getTestTableTh(tmp).then(function (rlt) {
   testCount.value = rlt.data.length;
-  tableWidth.value = 1600 + 100 * testCount.value + "px";
+  tableWidth.value = 1600 + 200 * testCount.value + "px";
   rlt.data.forEach((x: typeof typed) => {
-    if (x.code === "PFS") {
+    if (x.code === "PFS" || x.code === "BAJ3") {
       headers.value.push({
         title: x.code,
         sortable: false,
@@ -64,12 +65,13 @@ TestApiService.getTestTableTh(tmp).then(function (rlt) {
 
 TestApiService.getExam(tmp).then(function (rlt) {
   detail.value = rlt;
-  title.value = detail.value.data.detail.testname;
+  // title.value = detail.value.data.detail.testname;
   examList.value = detail.value.data.exams;
   examList.value.map((value: any, k: number) => {
     examList.value[k]["passText"] = (passArray as any)[value.passflag];
   });
 });
+
 const tableHeight = ref(100);
 const dialogFlag = ref(false);
 const pfsDialogText = ref({
@@ -92,6 +94,23 @@ const pfsDialog = (e: number) => {
     pfsDialogText.value.text5 = rlt.data[4];
   });
   dialogFlag.value = true;
+};
+const baj3Dialog = (e: number) => {
+  alert("BAJ3");
+  /*
+  let tmp = {
+    exam_id: e,
+    testparts_id: params.testid,
+  };
+  TestApiService.getPFSTestDetail(tmp).then((rlt) => {
+    pfsDialogText.value.text1 = rlt.data[0];
+    pfsDialogText.value.text2 = rlt.data[1];
+    pfsDialogText.value.text3 = rlt.data[2];
+    pfsDialogText.value.text4 = rlt.data[3];
+    pfsDialogText.value.text5 = rlt.data[4];
+  });
+  dialogFlag.value = true;
+  */
 };
 
 const onResize = () => {
@@ -153,16 +172,15 @@ const dialog = ref(false);
               </template>
             </tr>
             <tr>
-              <template v-for="column in columns as any" :key="column.key">
-                <th class="text-center" v-if="column.key == 'PFS'">
-                  ステータス
-                </th>
-                <th class="text-center" v-if="column.key == 'PFS'">
-                  行動価値適合度
-                </th>
-                <th class="text-center" v-if="column.key == 'PFS'">
-                  ストレス強制レベル
-                </th>
+              <template v-if="columns.some((column) => column.key === 'PFS')">
+                <th class="text-center">ステータス</th>
+                <th class="text-center">行動価値適合度</th>
+                <th class="text-center">ストレス強制レベル</th>
+              </template>
+              <template v-if="columns.some((column) => column.key === 'BAJ3')">
+                <th class="text-center">ステータス</th>
+                <th class="text-center">行動価値適合度</th>
+                <th class="text-center">ストレス強制レベル</th>
               </template>
             </tr>
           </template>
@@ -177,12 +195,17 @@ const dialog = ref(false);
                 {{ (item as any).passText }}
               </td>
               <ExamPfsView
-                :endtime="(item as any).endtime"
-                :id="(item as any).id"
-                :level="(item as any).level"
-                :lv="(item as any).lv"
+                v-if="headers.some((item) => item.title === 'PFS')"
+                :endtime="((item as any)['pfs']).endtime"
+                :id="((item as any)['pfs'] ).id"
+                :level="((item as any)['pfs'] ).level"
+                :lv="((item as any)['pfs'] ).lv"
                 @onClick="(e:any) => pfsDialog(e)"
               ></ExamPfsView>
+              <ExamBAJ3View
+                v-if="headers.some((item) => item.title === 'BAJ3')"
+                @onClick="(e:any) => baj3Dialog(e)"
+              ></ExamBAJ3View>
               <td class="text-xs-right text-center">
                 {{ (item as any).memo1 }}
               </td>
