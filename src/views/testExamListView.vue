@@ -200,7 +200,7 @@ const dialog = ref(false);
                 :id="((item as any)['pfs'] ).id"
                 :level="((item as any)['pfs'] ).level"
                 :lv="((item as any)['pfs'] ).lv"
-                @onClick="(e:any) => pfsDialog(e)"
+                @onClick="pfsDialog((item as any)['id'])"
               ></ExamPfsView>
               <ExamBAJ3View
                 v-if="headers.some((item) => item.title === 'BAJ3')"

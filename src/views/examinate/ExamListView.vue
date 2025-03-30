@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ComponentButton from "@/components/ButtonView.vue";
-import ComponentTextField from "@/components/TextFieldView.vue";
-import ComponentAlert from "@/components/AlertView.vue";
-import ComponentRadio from "@/components/RadioView.vue";
 import ExamTitle from "@/components/ExamTitle.vue";
-import TestApiService from "@/services/TestApiService";
 import ExamApiService from "@/services/ExamApiService";
 import { useRouter } from "vue-router";
 import { pdfDownload } from "@/plugins/pdf";
