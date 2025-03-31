@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import { useStoreUser } from "../store/user";
 
 import InfoAreaView from "../components/InfoAreaView.vue";
@@ -62,8 +62,8 @@ UserApiService.getLisencesList(tmp)
         buyLisence: val.num,
         saleLisence: val.num - val.exam_count,
         examCount: val.exam_count,
-        syoriCount: val.syori,
-        zanCount: val.zan,
+        syoriCount: val.started_exam_count,
+        zanCount: val.exam_count - val.started_exam_count,
       });
     });
   })
