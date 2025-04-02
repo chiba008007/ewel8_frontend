@@ -31,19 +31,24 @@ const onClick = () => {
       user.setUserDataToken(response.data.token);
       user.setUserData(response.data.user);
       if (response.data.user.type === "partner") {
-        router.push(
-          router.resolve({
-            name: "customerList",
-            params: { id: response.data.user.id },
-          }).href
-        );
+        router
+          .push(
+            router.resolve({
+              name: "customerList",
+              params: { id: response.data.user.id },
+            }).href
+          )
+          .then(() => {
+            window.location.reload();
+          });
       } else {
         // 管理者用ログイン画面
-        router.push("/list");
+        router.push("/list").then(() => {
+          window.location.reload();
+        });
       }
     })
     .catch((e) => {
-      console.log(e);
       alert("LOGIN ERROR");
     });
 };

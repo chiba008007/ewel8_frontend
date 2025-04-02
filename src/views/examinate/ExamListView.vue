@@ -25,6 +25,8 @@ let params = {
   params: k,
 };
 const testLength = ref(0);
+const testLengthFlag = ref(false);
+
 const movietype = ref(1);
 const moviedisplayurl = ref();
 ExamApiService.getTestExamMenu(params).then(function (rlt) {
@@ -36,6 +38,7 @@ ExamApiService.getTestExamMenu(params).then(function (rlt) {
     if (val.examstatus == 1) done += 1;
   });
   testLength.value = rlt?.data.length - done;
+  testLengthFlag.value = true;
 });
 
 const registerAnswer = () => {
@@ -79,12 +82,12 @@ const onDownload = () => {
 
   <v-container>
     <div class="text-h6 mb-4">検査選択メニュー</div>
-    <div class="mb-4 text-left">
+    <div class="mb-4 text-left" v-if="testLengthFlag">
       <div v-if="testLength != 0">
         受検して頂く検査は{{ testLength }}つです。<br />
         下記の検査名をクリックして検査をはじめて下さい。
       </div>
-      <div v-else>
+      <div v-if="testLength === 0">
         すべての検査が完了しました。<br />
         おつかれさまでした。
       </div>
