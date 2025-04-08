@@ -29,13 +29,29 @@ export default function () {
   const pageTestListModeParam = (
     pgName: string,
     testid: number | string,
-    id: number | string
+    id: number | string | string[]
   ) => {
-    //alert(1234);
     router.push({ name: pgName, params: { testid: testid, id: id } });
   };
-  const pageQRBlank = (url: string, itemid: string, tmpid: string) => {
+  const pageQRBlank = (
+    url: string,
+    itemid: string,
+    tmpid: string | string[]
+  ) => {
     window.open("/" + url + "/" + tmpid + "/test/" + itemid, "_blank");
+  };
+  const pageTestEdit = (
+    pgName: string,
+    params: { id: string | string[]; editid: number }
+  ) => {
+    router
+      .push({
+        name: pgName,
+        params: { id: params.id, edit_id: params.editid },
+      })
+      .then(() => {
+        window.location.reload();
+      });
   };
   return {
     pageClickMoveParam,
@@ -45,5 +61,6 @@ export default function () {
     pageQRBlank,
     pageClickMoveLinkParam,
     pageClickMoveParamCodeList,
+    pageTestEdit,
   };
 }

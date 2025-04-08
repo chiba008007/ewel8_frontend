@@ -26,7 +26,11 @@ UserApiService.getPartnerid(tmp)
     // location.href = "/error";
   });
 const pageClickMoveParam = (pagename: string) => {
-  router.push(router.resolve({ name: pagename, params: { id: tmpid } }).href);
+  router
+    .push(router.resolve({ name: pagename, params: { id: tmpid } }).href)
+    .then(() => {
+      window.location.reload();
+    });
 };
 const pageCustomerEditParam = (pagename: string) => {
   router.push(

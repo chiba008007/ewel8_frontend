@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useStoreUser } from "../store/user";
 import { getTodayDateTime, getTodayDate } from "@/plugins/date";
 import {
@@ -22,27 +22,36 @@ import addMovieForm from "../components/addMovieForm.vue";
 import addPDFForm from "../components/addPDFForm.vue";
 import TextFieldView from "@/components/TextFieldView.vue";
 import { useRouter, useRoute } from "vue-router";
-import UserApiService from "@/services/UserApiService";
 import TestApiService from "@/services/TestApiService";
-import { numberValue, requiredValue, checkDate } from "../plugins/validate";
+import { numberValue, requiredValue } from "../plugins/validate";
 import CardViewPFS from "@/components/CardViewPFS.vue";
 import CardViewBAJ3 from "@/components/CardViewBAJ3.vue";
 import ElementApiService from "@/services/ElementApiService";
 import AlertView from "@/components/AlertView.vue";
 import pankuzuTest from "@/components/pankuzuTest.vue";
+import pageLicense from "@/plugins/pageLicense";
+import dateChecked from "@/plugins/dateChecked";
+import testPartsAdd from "@/plugins/testPartsAdd";
+import testAdd from "@/plugins/testAdd";
+import { inputDataPartsType, inputDataType, testpdfType } from "@/types";
 
 const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
-const tmpid = ref(route.params.id);
+
+const tmpid = route.params.id;
+const editid = route.params?.edit_id ? route.params?.edit_id : 0;
+const pl = pageLicense();
+const dc = dateChecked();
+
 const today = new Date();
 const errorTab1 = ref(2);
+const errorTab2 = ref(1);
 // const userdata = user.userdata;
 // console.log(user.userdata);
-
-const partner_id = ref();
-
+const isLoading = ref(true);
 const tab = ref(0);
+
 const inputData = ref({
   testname: "",
   testcount: 0,
@@ -60,155 +69,184 @@ const inputData = ref({
   recomendflag: true,
   loginflag: false,
   logintext: "",
-  movieType: 1,
+  movietype: 1,
   moviedisplayurl: "",
   pdfuseflag: false,
   pdfstartday: getTodayDate(),
   pdfendday: getTodayDate(),
   pdfcountflag: false,
-  pdfcount: 0,
+  pdflimitcount: 0,
+  create_start_year: 0,
+  create_start_month: 0,
+  create_start_day: 0,
+  create_start_time: 0,
+  create_start_minute: 0,
+  testparts: { PDF: {}, BAJ3: {} },
 });
 
-const lisenceView = ref();
-UserApiService.getUserLisence({
-  user_id: tmpid.value,
-})
-  .then((res: any) => {
-    lisenceView.value = res.data;
-  })
-  .catch((e) => {
-    alert("error");
-  });
+const initialPartStatus: inputDataPartsType = {
+  threeflag: false,
+  weightFlag: false,
+  status: false,
+  timelimit: null,
+  weight1: null,
+  weight2: null,
+  weight3: null,
+  weight4: null,
+  weight5: null,
+  weight6: null,
+  weight7: null,
+  weight8: null,
+  weight9: null,
+  weight10: null,
+  weight11: null,
+  weight12: null,
+  weight13: null,
+  weight14: null,
+  weight: null,
+};
 
-const lisenceViewCalc = ref();
-UserApiService.getUserLisenceCalc({
-  user_id: tmpid.value,
-})
-  .then((res: any) => {
-    lisenceViewCalc.value = res.data;
-  })
-  .catch((e) => {
-    alert("error");
-  });
+const inputTestPart = ref<{
+  PFS: inputDataPartsType;
+  BAJ3: inputDataPartsType;
+}>({
+  PFS: { ...initialPartStatus },
+  BAJ3: { ...initialPartStatus },
+});
+
+const lisenceView = ref(pl.getUserLisence(tmpid));
+const lisenceViewCalc = ref(pl.getUserLisenceCalc(tmpid));
 
 const pdfLists = ref(pdfArray);
 const inputPDf = ref([{ key: 0, text: "", value: false }]);
 inputPDf.value = [];
 pdfLists.value.forEach(function (val) {
-  inputPDf.value.push({
+  inputPDf.value[val.key] = {
     key: val.key,
     text: val.text,
     value: false,
-  });
+  };
 });
 const registButton = ref<boolean>(true);
+
+// 編集用データ取得
+if (editid) {
+  let tmp = {
+    id: editid,
+    user_id: tmpid,
+  };
+  errorTab1.value = 0;
+  errorTab2.value = 0;
+  registButton.value = false;
+  try {
+    TestApiService.getTestEditData(tmp).then((res) => {
+      (inputData.value as inputDataType) = testAdd().testEdit(
+        inputData.value,
+        res
+      );
+      console.log(res.data.testpdf);
+      res.data.testpdf.forEach(function (val: testpdfType) {
+        inputPDf.value[val.pdf_id] = {
+          key: val.pdf_id,
+          text: "",
+          value: true,
+        };
+      });
+      if (res.data.testparts.PFS != undefined) {
+        (inputTestPart.value.PFS as inputDataPartsType) =
+          testPartsAdd().testPartsEdit(inputTestPart.value.PFS, res, "PFS");
+      }
+    });
+  } catch (e) {
+    alert("editdata error");
+  } finally {
+    isLoading.value = false;
+  }
+} else {
+  isLoading.value = false;
+}
+
+watch(tab, (newTab) => {
+  if (newTab === 0) {
+    onBlurButton();
+  }
+  if (newTab == 1) {
+    registButton.value = true;
+    onBlurButton1();
+  }
+});
+const onBlurButton1 = () => {
+  // 1つでも利用するstatusの時ボタンを押下可能
+  for (const elem of Object.values(inputTestPart.value)) {
+    if (elem.status) {
+      errorTab2.value = 0;
+      registButton.value = false;
+      break;
+    }
+  }
+};
 const onBlurButton = () => {
   registButton.value = true;
-  errorTab1.value = 2;
+  // errorTab1.value = 2;
   if (inputData.value.testname) {
-    errorTab1.value = errorTab1.value - 1;
+    errorTab1.value = errorTab1.value > 0 ? errorTab1.value - 1 : 0;
   }
   if (inputData.value.testcount > 0) {
-    errorTab1.value = errorTab1.value - 1;
+    errorTab1.value = errorTab1.value > 0 ? errorTab1.value - 1 : 0;
   }
   if (inputData.value.testname && inputData.value.testcount > 0) {
     registButton.value = false;
   }
 };
 
+// パートナー企業の取得
+const partner_id = ref();
 const partnerDetail = ref();
-let tmp = {
-  editId: tmpid.value,
-  type: "partner",
-};
-
-try {
-  UserApiService.getPartnerDetail(tmp).then((res) => {
-    partnerDetail.value = res?.data;
-    partner_id.value = res?.data.id;
-  });
-} catch (e) {
-  console.log(e);
-}
-
-// 顧客企業名の取得
+pl.getPartnerDetail(tmpid.toString(), "partner").then((res) => {
+  partnerDetail.value = res.partnerDetail;
+  partner_id.value = res.partner_id;
+});
 const customerDetail = ref();
-tmp = {
-  editId: tmpid.value,
-  type: "customer",
-};
-try {
-  UserApiService.getPartnerDetail(tmp).then((res) => {
-    const entries = res?.data;
-    customerDetail.value = entries;
-  });
-} catch (e) {
-  alert("detail error");
-  console.log(e);
-}
+// 顧客企業情報の取得
+pl.getPartnerDetail(tmpid.toString(), "customer").then((res) => {
+  customerDetail.value = res?.partnerDetail;
+});
 
 const dateErrorMessage = ref("");
-const onDateTime = (e: string) => {
-  let tmpDate = e.split(" ")[0].split("-");
-  let tmpTime = e.split(" ")[1].split(":");
-  let y = tmpDate[0];
-  let m = tmpDate[1];
-  let d = tmpDate[2];
-  let h = tmpTime[0];
-  let mn = tmpTime[1];
+const onDateTime = async (e: string) => {
   dateErrorMessage.value = "";
-  let ymd = y + "-" + m + "-" + d + " " + h + ":" + mn;
-  if (!checkDate(y, m, d)) {
-    dateErrorMessage.value = "正しい日付を入力してください。";
-  } else if (inputData.value.enddaytime < ymd) {
-    dateErrorMessage.value = "終了日付に誤りがあります。";
-  }
-
-  inputData.value.startdaytime = ymd;
+  let res = await dc.onDateTime(e, inputData.value.enddaytime);
+  inputData.value.startdaytime = e;
+  if (res.dateErrorMessage) dateErrorMessage.value = res.dateErrorMessage;
 };
-const onDateEndTime = (e: string) => {
-  let tmpDate = e.split(" ")[0].split("-");
-  let tmpTime = e.split(" ")[1].split(":");
-  let y = tmpDate[0];
-  let m = tmpDate[1];
-  let d = tmpDate[2];
-  let h = tmpTime[0];
-  let mn = tmpTime[1];
+const onDateEndTime = async (e: string) => {
   dateErrorMessage.value = "";
-  let ymd = y + "-" + m + "-" + d + " " + h + ":" + mn;
-  if (!checkDate(y, m, d)) {
-    dateErrorMessage.value = "正しい日付を入力してください。";
-  } else if (inputData.value.startdaytime > ymd) {
-    dateErrorMessage.value = "開始日付に誤りがあります。";
-  }
-
-  inputData.value.enddaytime = ymd;
+  let res = await dc.onDateEndTime(e, inputData.value.startdaytime);
+  inputData.value.enddaytime = e;
+  if (res.dateErrorMessage) dateErrorMessage.value = res.dateErrorMessage;
 };
+
 const pdfDateTime = (e: string, type: string) => {
   if (type === "start") {
     inputData.value.pdfstartday = e;
   }
-  if (type === "e") {
+  if (type === "end") {
     inputData.value.pdfendday = e;
   }
 };
 
 const onSearch = (e: string) => {
-  let tmp = [] as any;
   pdfLists.value = pdfArray;
-  try {
-    if (e) {
-      let word = e;
-      let reg = new RegExp(word);
-      pdfLists.value.forEach(function (val, k) {
-        if (reg.test(val.text)) {
-          tmp.push(pdfLists.value[k]);
-        }
-      });
-      pdfLists.value = tmp;
-    }
-  } catch (exc) {
-    console.log(exc);
+  if (e) {
+    let word = e;
+    let reg = new RegExp(word);
+    let tmp = [] as any;
+    pdfLists.value.forEach(function (val, k) {
+      if (reg.test(val.text)) {
+        tmp.push(pdfLists.value[k]);
+      }
+    });
+    pdfLists.value = tmp;
   }
 };
 
@@ -216,10 +254,11 @@ const alertFlag = ref(false);
 
 const onClick = () => {
   alertFlag.value = false;
+  console.log(inputTestPart.value);
   let tmp = {
     partner_id: partner_id.value,
-    customer_id: tmpid.value,
-    user_id: tmpid.value,
+    customer_id: tmpid,
+    user_id: tmpid,
     testname: inputData.value.testname,
     testcount: inputData.value.testcount,
     nameuseflag: inputData.value.nameuseflag,
@@ -236,28 +275,70 @@ const onClick = () => {
     recomendflag: inputData.value.recomendflag,
     loginflag: inputData.value.loginflag,
     logintext: inputData.value.logintext,
-    movietype: inputData.value.movieType,
+    movietype: inputData.value.movietype,
     moviedisplayurl: inputData.value.moviedisplayurl,
     pdfuseflag: inputData.value.pdfuseflag,
     pdfstartday: inputData.value.pdfstartday,
     pdfendday: inputData.value.pdfendday,
     pdfcountflag: inputData.value.pdfcountflag,
-    pdflimitcount: inputData.value.pdfcount,
+    pdflimitcount: inputData.value.pdflimitcount,
     pdf: inputPDf.value,
     parts: [inputTestPart.value],
     status: 1,
   };
-  console.log(tmp);
 
   try {
     TestApiService.setTest(tmp).then((res) => {
-      console.log(res);
       alertFlag.value = true;
     });
   } catch (e) {
     alert("regist error");
   }
 };
+
+const onEditClick = () => {
+  alertFlag.value = false;
+  let tmp = {
+    partner_id: partner_id.value,
+    customer_id: tmpid,
+    user_id: tmpid,
+    edit_id: editid,
+    testname: inputData.value.testname,
+    testcount: inputData.value.testcount,
+    nameuseflag: inputData.value.nameuseflag,
+    genderuseflag: inputData.value.genderuseflag,
+    mailremaincount: inputData.value.mailremaincount,
+    startdaytime: inputData.value.startdaytime,
+    enddaytime: inputData.value.enddaytime,
+    resultflag: inputData.value.resultflag,
+    envcheckflag: inputData.value.envcheckflag,
+    enqflag: inputData.value.enqflag,
+    lisencedownloadflag: inputData.value.lisencedownloadflag,
+    examlistdownloadflag: inputData.value.examlistdownloadflag,
+    totaldownloadflag: inputData.value.totaldownloadflag,
+    recomendflag: inputData.value.recomendflag,
+    loginflag: inputData.value.loginflag,
+    logintext: inputData.value.logintext,
+    movietype: inputData.value.movietype,
+    moviedisplayurl: inputData.value.moviedisplayurl,
+    pdfuseflag: inputData.value.pdfuseflag,
+    pdfstartday: inputData.value.pdfstartday,
+    pdfendday: inputData.value.pdfendday,
+    pdfcountflag: inputData.value.pdfcountflag,
+    pdflimitcount: inputData.value.pdflimitcount,
+    pdf: inputPDf.value,
+    parts: [inputTestPart.value],
+  };
+  try {
+    TestApiService.editTest(tmp).then((res) => {
+      //console.log(res);
+      alertFlag.value = true;
+    });
+  } catch (e) {
+    alert("edit error");
+  }
+};
+
 const pdfCheck = (e: any, k: number) => {
   inputPDf.value[k].value = e ? false : true;
 };
@@ -267,20 +348,6 @@ ElementApiService.getElementData().then((res) => {
   elements.value = res;
 });
 
-const inputTestPart = ref({
-  PFS: {
-    threeflag: false,
-    weightFlag: false,
-    status: false,
-    weight: {},
-  },
-  BAJ3: {
-    threeflag: false,
-    weightFlag: false,
-    status: false,
-    weight: {},
-  },
-});
 const displayString = (type: boolean) => {
   return type ? displayStatus[1] : displayStatus[0];
 };
@@ -291,7 +358,7 @@ const edittingString = (type: boolean) => {
   return type ? edittingStatus[1] : edittingStatus[0];
 };
 const pagemove = () => {
-  router.push({ name: "testLists", params: { id: tmpid.value } });
+  router.push({ name: "testLists", params: { id: tmpid } });
 };
 </script>
 <template>
@@ -316,7 +383,9 @@ const pagemove = () => {
         検査新規登録
       </v-badge>
     </v-tab>
-    <v-tab value="1">検査種別</v-tab>
+    <v-tab value="1">
+      <v-badge color="error" :content="errorTab2" floating> 検査種別 </v-badge>
+    </v-tab>
     <v-tab value="2">出力PDF選択</v-tab>
   </v-tabs>
   <div class="ma-2">
@@ -353,6 +422,14 @@ const pagemove = () => {
       "
     />
     <ButtonView
+      v-else-if="editid"
+      text="検査更新実行"
+      color="green"
+      class="mt-3 mb-3 ml-1"
+      :disabled="registButton"
+      @onClick="onEditClick()"
+    />
+    <ButtonView
       v-else
       text="検査登録実行"
       color="green"
@@ -362,308 +439,327 @@ const pagemove = () => {
     />
     <h3>{{ user.testAdd }}</h3>
   </div>
-  <v-window v-model="tab">
-    <v-window-item value="0">
-      <p class="ml-2 text-caption">販売可能ライセンス</p>
-      <v-row dense class="ml-2">
-        <v-col
-          cols="1"
-          v-for="lisence in lisenceViewCalc"
-          :key="lisence.id"
-          class="text-cener"
-        >
-          <div class="border-sm">
-            <div class="border-b-sm text-center bg-lime text-caption">
-              {{ lisence.jp }}
-            </div>
-            <p class="text-right text-caption">{{ lisence.num }}</p>
-          </div>
-        </v-col>
-      </v-row>
-
-      <section class="pa-2">
-        <addPartnerForm
-          v-show="partnerDetail?.name"
-          title="パートナー企業名"
-          :displayTextValue="partnerDetail?.name"
-          color="bg-lime"
-        ></addPartnerForm>
-        <addPartnerForm
-          v-show="customerDetail?.name"
-          title="顧客企業名"
-          :displayTextValue="customerDetail?.name"
-          color="bg-lime"
-        ></addPartnerForm>
-        <addPartnerForm
-          color="bg-lime"
-          title="検査名"
-          text="検査名を入力してください"
-          class="w-100"
-          :hideDetails="`auto`"
-          :value="inputData.testname"
-          :requriredIcon="true"
-          :rules="requiredValue(inputData.testname, '検査名')"
-          @onBlur="(e:any) => ((inputData.testname = e), onBlurButton())"
-        ></addPartnerForm>
-        <addPartnerForm
-          color="bg-lime"
-          title="受検者数"
-          text="受検者数を入力してください"
-          explaintext="半角数字で入力してください。以下で選択される検査受検者数に反映されます。"
-          class="w-50"
-          :hideDetails="`auto`"
-          :value="inputData.testcount"
-          :requriredIcon="true"
-          :rules="numberValue(inputData.testcount, '受検者数', 10000)"
-          @onBlur="(e:any) => ((inputData.testcount = e), onBlurButton())"
-        ></addPartnerForm>
-        <addSwitchForm
-          title="氏名の入力"
-          :label="displayString(inputData.nameuseflag)"
-          density="compact"
-          color="bg-lime"
-          :model="inputData.nameuseflag"
-          :tooltipflag="true"
-          tooltipMessage="氏名の表示可否を選択します。"
-          @onClick="
-            () => (inputData.nameuseflag = inputData.nameuseflag ? false : true)
-          "
-        ></addSwitchForm>
-        <addSwitchForm
-          title="性別の入力"
-          :label="displayString(inputData.genderuseflag)"
-          density="compact"
-          color="bg-lime"
-          :model="inputData.genderuseflag"
-          :tooltipflag="true"
-          tooltipMessage="性別の表示可否を選択します。"
-          @onClick="
-            () =>
-              (inputData.genderuseflag = inputData.genderuseflag ? false : true)
-          "
-        ></addSwitchForm>
-        <addPartnerForm
-          color="bg-lime"
-          title="メール配信受検者残数"
-          text="メール配信受検者残数を入力してください"
-          explaintext="未指定の場合は0または、空欄にしてください。"
-          class="w-50"
-          :tooltipflag="true"
-          tooltipMessage="残数（未受検者）が指定の人数以下になった際に担当者にメールが配信されます。"
-          :hideDetails="`auto`"
-          :value="inputData.mailremaincount"
-          :rules="
-            numberValue(inputData.mailremaincount, 'メール配信受検者残数')
-          "
-          @onBlur="(e:any) => ((inputData.mailremaincount = e), onBlurButton())"
-        ></addPartnerForm>
-        <addDateForm
-          title="検査実施期間"
-          color="bg-lime"
-          :defaultyear="today.getFullYear()"
-          :defaultmonth="today.getMonth() + 1"
-          :defaultday="today.getDate()"
-          :rules="dateErrorMessage"
-          @onDateTime="(e:string) => onDateTime(e)"
-          @onDateEndTime="(e:string) => onDateEndTime(e)"
-        ></addDateForm>
-        <addSwitchForm
-          title="検査結果画面"
-          :label="displayString(inputData.resultflag)"
-          density="compact"
-          color="bg-lime"
-          :model="inputData.resultflag"
-          :tooltipflag="true"
-          :tooltipMessage="`検査結果の表示可否を選択します。`"
-          @onClick="
-            () => (inputData.resultflag = inputData.resultflag ? false : true)
-          "
-        ></addSwitchForm>
-        <addSwitchForm
-          title="事前環境チェックの有無"
-          :label="displayString(inputData.envcheckflag)"
-          density="compact"
-          color="bg-lime"
-          :model="inputData.envcheckflag"
-          :tooltipflag="true"
-          tooltipMessage="検査利用のためブラウザのバージョンチェックを行います。"
-          @onClick="
-            () =>
-              (inputData.envcheckflag = inputData.envcheckflag ? false : true)
-          "
-        ></addSwitchForm>
-        <addSwitchForm
-          title="強みアンケート利用"
-          :label="displayString(inputData.enqflag)"
-          density="compact"
-          color="bg-lime"
-          :model="inputData.enqflag"
-          :tooltipflag="true"
-          tooltipMessage="アンケートの利用可否選択を行います。"
-          @onClick="
-            () => (inputData.enqflag = inputData.enqflag ? false : true)
-          "
-        ></addSwitchForm>
-        <addSwitchForm
-          title="受検証明書ダウンロード設定"
-          :label="displayString(inputData.lisencedownloadflag)"
-          density="compact"
-          color="bg-lime"
-          :model="inputData.lisencedownloadflag"
-          :tooltipflag="true"
-          tooltipMessage="受検証明書ダウンロード可否選択を行います。"
-          @onClick="
-            () =>
-              (inputData.lisencedownloadflag = inputData.lisencedownloadflag
-                ? false
-                : true)
-          "
-        ></addSwitchForm>
-        <addSwitchForm
-          title="受検者ダウンロード設定"
-          :label="displayString(inputData.examlistdownloadflag)"
-          density="compact"
-          color="bg-lime"
-          :model="inputData.examlistdownloadflag"
-          :tooltipflag="true"
-          :tooltipMessage="`受検メニュー画面での検査結果ダウンロードボタンの表示設定可否を行います。`"
-          @onClick="
-            () =>
-              (inputData.examlistdownloadflag = inputData.examlistdownloadflag
-                ? false
-                : true)
-          "
-        ></addSwitchForm>
-        <addSwitchForm
-          title="一括ダウンロード設定"
-          :label="settingString(inputData.totaldownloadflag)"
-          density="compact"
-          color="bg-lime"
-          :model="inputData.totaldownloadflag"
-          :tooltipflag="true"
-          tooltipMessage="受検者全員の検査結果を一括でダウンロードします。"
-          @onClick="
-            () =>
-              (inputData.totaldownloadflag = inputData.totaldownloadflag
-                ? false
-                : true)
-          "
-        ></addSwitchForm>
-        <addSwitchForm
-          title="推奨ブラウザ説明文"
-          :label="displayString(inputData.recomendflag)"
-          density="compact"
-          color="bg-lime"
-          :model="inputData.recomendflag"
-          :tooltipflag="true"
-          tooltipMessage="推奨ブラウザ説明文、表示可否を行います。"
-          @onClick="
-            () =>
-              (inputData.recomendflag = inputData.recomendflag ? false : true)
-          "
-        ></addSwitchForm>
-        <addLoginForm
-          title="ログイン説明文"
-          :label="edittingString(inputData.loginflag)"
-          color="bg-lime"
-          variant="outlined"
-          :loginModel="inputData.loginflag"
-          :hideDetails="`auto`"
-          :disabled="inputData.loginflag ? false : true"
-          :height="15"
-          @onClick="
-            (e) => (inputData.loginflag = inputData.loginflag ? false : true)
-          "
-          @onBlur="(e) => (inputData.logintext = e)"
-        ></addLoginForm>
-        <addMovieForm
-          title="動画サムネイルの表示"
-          color="bg-lime"
-          :items="movieArray"
-          :value="inputData.movieType"
-          @onChange="(e:number) => (inputData.movieType = e)"
-          @onURL="(e:string)=>inputData.moviedisplayurl=e"
-        ></addMovieForm>
-      </section>
-    </v-window-item>
-    <v-window-item value="1">
-      <section class="pa-2">
-        <v-row>
-          <v-col cols="12">
-            <div v-for="val in lisenceView" :key="val.id">
-              <CardViewPFS
-                class="mt-3"
-                v-if="val.code == 'PFS'"
-                :title="val.jp"
-                :testcount="inputData.testcount"
-                :model="inputTestPart.PFS.threeflag"
-                :weightModel="inputTestPart.PFS.weightFlag"
-                :element="elements"
-                @onThree="
-                  (e) => (inputTestPart.PFS.threeflag = e ? false : true)
-                "
-                @onWeightFlag="
-                  (e) => (inputTestPart.PFS.weightFlag = e ? false : true)
-                "
-                @onWeight="(e) => (inputTestPart.PFS.weight = e)"
-                @onStatus="(e) => (inputTestPart.PFS.status = e)"
-              ></CardViewPFS>
-              <CardViewBAJ3
-                class="mt-3"
-                v-if="val.code == 'BA-J3'"
-                :title="val.jp"
-                :testcount="inputData.testcount"
-                :model="inputTestPart.BAJ3.threeflag"
-                :weightModel="inputTestPart.BAJ3.weightFlag"
-                :element="elements"
-                @onThree="
-                  (e) => (inputTestPart.BAJ3.threeflag = e ? false : true)
-                "
-                @onWeightFlag="
-                  (e) => (inputTestPart.BAJ3.weightFlag = e ? false : true)
-                "
-                @onWeight="(e) => (inputTestPart.BAJ3.weight = e)"
-                @onStatus="(e) => (inputTestPart.BAJ3.status = e)"
-              ></CardViewBAJ3>
+  <div v-if="isLoading">Loading...</div>
+  <div v-else>
+    <v-window v-model="tab">
+      <v-window-item value="0">
+        <p class="ml-2 text-caption">販売可能ライセンス</p>
+        <v-row dense class="ml-2">
+          <v-col
+            cols="1"
+            v-for="lisence in lisenceViewCalc"
+            :key="lisence.id"
+            class="text-cener"
+          >
+            <div class="border-sm">
+              <div class="border-b-sm text-center bg-lime text-caption">
+                {{ lisence.jp }}
+              </div>
+              <p class="text-right text-caption">{{ lisence.num }}</p>
             </div>
           </v-col>
         </v-row>
-      </section>
-    </v-window-item>
-    <v-window-item value="2">
-      <section class="pa-2">
-        <addPDFForm
-          title="PDF出力制限"
-          color="bg-lime"
-          :defaultyear="today.getFullYear()"
-          :defaultmonth="today.getMonth() + 1"
-          :defaultday="today.getDate()"
-          :items="movieArray"
-          :value="inputData.pdfuseflag"
-          :valuePDF="inputData.pdfcountflag"
-          @onClick="(e:boolean) => (inputData.pdfuseflag = e)"
-          @onDateTime="(e:string) => pdfDateTime(e,'start')"
-          @onDateEndTime="(e:string) => pdfDateTime(e,'end')"
-          @PDFCountFlag="(e:boolean)=>(inputData.pdfcountflag = e)"
-          @onPdfCount="(e:number) => (inputData.pdfcount = e)"
-        ></addPDFForm>
-        <TextFieldView
-          class="w-50"
-          placeholder="選択したいPDF名を入力してください。"
-          @onKeyup="(e) => onSearch(e)"
-        ></TextFieldView>
-        <CheckboxView
-          v-for="(pdf, k) in inputPDf"
-          :key="pdf.key"
-          :label="pdf.text"
-          :value="pdf.value"
-          hide-details="false"
-          class="ma-0 pa-0"
-          @onChange="(e) => pdfCheck(e, k)"
-        >
-        </CheckboxView>
-      </section>
-    </v-window-item>
-  </v-window>
+
+        <section class="pa-2">
+          <addPartnerForm
+            v-show="partnerDetail?.name"
+            title="パートナー企業名"
+            :displayTextValue="partnerDetail?.name"
+            color="bg-lime"
+          ></addPartnerForm>
+          <addPartnerForm
+            v-show="customerDetail?.name"
+            title="顧客企業名"
+            :displayTextValue="customerDetail?.name"
+            color="bg-lime"
+          ></addPartnerForm>
+          <addPartnerForm
+            color="bg-lime"
+            title="検査名"
+            text="検査名を入力してください"
+            class="w-100"
+            :hideDetails="`auto`"
+            :value="inputData.testname"
+            :requriredIcon="true"
+            :rules="requiredValue(inputData.testname, '検査名')"
+            @onBlur="(e:any) => ((inputData.testname = e), onBlurButton())"
+          ></addPartnerForm>
+          <addPartnerForm
+            color="bg-lime"
+            title="受検者数"
+            text="受検者数を入力してください"
+            explaintext="半角数字で入力してください。以下で選択される検査受検者数に反映されます。"
+            class="w-50"
+            :hideDetails="`auto`"
+            :value="inputData.testcount"
+            :requriredIcon="true"
+            :rules="numberValue(inputData.testcount, '受検者数', 10000)"
+            @onBlur="(e:any) => ((inputData.testcount = e), onBlurButton())"
+          ></addPartnerForm>
+          <addSwitchForm
+            title="氏名の入力"
+            :label="displayString(inputData.nameuseflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.nameuseflag"
+            :tooltipflag="true"
+            tooltipMessage="氏名の表示可否を選択します。"
+            @onClick="
+              () =>
+                (inputData.nameuseflag = inputData.nameuseflag ? false : true)
+            "
+          ></addSwitchForm>
+          <addSwitchForm
+            title="性別の入力"
+            :label="displayString(inputData.genderuseflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.genderuseflag"
+            :tooltipflag="true"
+            tooltipMessage="性別の表示可否を選択します。"
+            @onClick="
+              () =>
+                (inputData.genderuseflag = inputData.genderuseflag
+                  ? false
+                  : true)
+            "
+          ></addSwitchForm>
+          <addPartnerForm
+            color="bg-lime"
+            title="メール配信受検者残数"
+            text="メール配信受検者残数を入力してください"
+            explaintext="未指定の場合は0または、空欄にしてください。"
+            class="w-50"
+            :tooltipflag="true"
+            tooltipMessage="残数（未受検者）が指定の人数以下になった際に担当者にメールが配信されます。"
+            :hideDetails="`auto`"
+            :value="inputData.mailremaincount"
+            :rules="
+              numberValue(inputData.mailremaincount, 'メール配信受検者残数')
+            "
+            @onBlur="(e:any) => ((inputData.mailremaincount = e), onBlurButton())"
+          ></addPartnerForm>
+          <addDateForm
+            title="検査実施期間"
+            color="bg-lime"
+            :defaultyear="today.getFullYear()"
+            :startdaytime="inputData.startdaytime"
+            :enddaytime="inputData.enddaytime"
+            :rules="dateErrorMessage"
+            @onDateTime="(e:string) => onDateTime(e)"
+            @onDateEndTime="(e:string) => onDateEndTime(e)"
+          ></addDateForm>
+          <addSwitchForm
+            title="検査結果画面"
+            :label="displayString(inputData.resultflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.resultflag"
+            :tooltipflag="true"
+            :tooltipMessage="`検査結果の表示可否を選択します。`"
+            @onClick="
+              () => (inputData.resultflag = inputData.resultflag ? false : true)
+            "
+          ></addSwitchForm>
+          <addSwitchForm
+            title="事前環境チェックの有無"
+            :label="displayString(inputData.envcheckflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.envcheckflag"
+            :tooltipflag="true"
+            tooltipMessage="検査利用のためブラウザのバージョンチェックを行います。"
+            @onClick="
+              () =>
+                (inputData.envcheckflag = inputData.envcheckflag ? false : true)
+            "
+          ></addSwitchForm>
+          <addSwitchForm
+            title="強みアンケート利用"
+            :label="displayString(inputData.enqflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.enqflag"
+            :tooltipflag="true"
+            tooltipMessage="アンケートの利用可否選択を行います。"
+            @onClick="
+              () => (inputData.enqflag = inputData.enqflag ? false : true)
+            "
+          ></addSwitchForm>
+          <addSwitchForm
+            title="受検証明書ダウンロード設定"
+            :label="displayString(inputData.lisencedownloadflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.lisencedownloadflag"
+            :tooltipflag="true"
+            tooltipMessage="受検証明書ダウンロード可否選択を行います。"
+            @onClick="
+              () =>
+                (inputData.lisencedownloadflag = inputData.lisencedownloadflag
+                  ? false
+                  : true)
+            "
+          ></addSwitchForm>
+          <addSwitchForm
+            title="受検者ダウンロード設定"
+            :label="displayString(inputData.examlistdownloadflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.examlistdownloadflag"
+            :tooltipflag="true"
+            :tooltipMessage="`受検メニュー画面での検査結果ダウンロードボタンの表示設定可否を行います。`"
+            @onClick="
+              () =>
+                (inputData.examlistdownloadflag = inputData.examlistdownloadflag
+                  ? false
+                  : true)
+            "
+          ></addSwitchForm>
+          <addSwitchForm
+            title="一括ダウンロード設定"
+            :label="settingString(inputData.totaldownloadflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.totaldownloadflag"
+            :tooltipflag="true"
+            tooltipMessage="受検者全員の検査結果を一括でダウンロードします。"
+            @onClick="
+              () =>
+                (inputData.totaldownloadflag = inputData.totaldownloadflag
+                  ? false
+                  : true)
+            "
+          ></addSwitchForm>
+          <addSwitchForm
+            title="推奨ブラウザ説明文"
+            :label="displayString(inputData.recomendflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.recomendflag"
+            :tooltipflag="true"
+            tooltipMessage="推奨ブラウザ説明文、表示可否を行います。"
+            @onClick="
+              () =>
+                (inputData.recomendflag = inputData.recomendflag ? false : true)
+            "
+          ></addSwitchForm>
+          <addLoginForm
+            title="ログイン説明文"
+            :label="edittingString(inputData.loginflag)"
+            color="bg-lime"
+            variant="outlined"
+            :loginModel="inputData.loginflag"
+            :value="inputData.logintext"
+            :hideDetails="`auto`"
+            :disabled="inputData.loginflag ? false : true"
+            :height="15"
+            @onClick="
+              (e) => (inputData.loginflag = inputData.loginflag ? false : true)
+            "
+            @onBlur="(e) => (inputData.logintext = e)"
+          ></addLoginForm>
+          <addMovieForm
+            title="動画サムネイルの表示"
+            color="bg-lime"
+            :items="movieArray"
+            :value="inputData.movietype"
+            :url="inputData.moviedisplayurl"
+            @onChange="(e:number) => (inputData.movietype = e)"
+            @onURL="(e:string)=>inputData.moviedisplayurl=e"
+          ></addMovieForm>
+        </section>
+      </v-window-item>
+      <v-window-item value="1">
+        <section class="pa-2">
+          <v-row>
+            <v-col cols="12">
+              <div v-for="val in lisenceView" :key="val.id">
+                <CardViewPFS
+                  :editid="editid"
+                  v-show="(inputData.testparts as any)[val.code]?.id && editid || editid === 0 ? true:false"
+                  class="mt-3"
+                  v-if="val.code == 'PFS'"
+                  :title="val.jp"
+                  :testcount="inputData.testcount"
+                  :model="inputTestPart.PFS.threeflag"
+                  :weightModel="inputTestPart.PFS.weightFlag"
+                  :dataDetail="inputTestPart.PFS"
+                  :element="elements"
+                  @onThree="
+                    (e) => (inputTestPart.PFS.threeflag = e ? false : true)
+                  "
+                  @onWeightFlag="
+                    (e) => (inputTestPart.PFS.weightFlag = e ? false : true)
+                  "
+                  @onWeight="(e) => (inputTestPart.PFS.weight = e)"
+                  @onStatus="
+                    (e) => ((inputTestPart.PFS.status = e), onBlurButton1())
+                  "
+                ></CardViewPFS>
+                <CardViewBAJ3
+                  v-show="(inputData.testparts as any)[val.code]?.id && editid || editid === 0 ? true:false"
+                  class="mt-3"
+                  v-if="val.code == 'BA-J3'"
+                  :title="val.jp"
+                  :testcount="inputData.testcount"
+                  :model="inputTestPart.BAJ3.threeflag"
+                  :weightModel="inputTestPart.BAJ3.weightFlag"
+                  :dataDetail="inputTestPart.BAJ3"
+                  :element="elements"
+                  @onThree="
+                    (e) => (inputTestPart.BAJ3.threeflag = e ? false : true)
+                  "
+                  @onWeightFlag="
+                    (e) => (inputTestPart.BAJ3.weightFlag = e ? false : true)
+                  "
+                  @onWeight="(e) => (inputTestPart.BAJ3.weight = e)"
+                  @onStatus="
+                    (e) => ((inputTestPart.BAJ3.status = e), onBlurButton1())
+                  "
+                ></CardViewBAJ3>
+              </div>
+            </v-col>
+          </v-row>
+        </section>
+      </v-window-item>
+      <v-window-item value="2">
+        <section class="pa-2">
+          <addPDFForm
+            title="PDF出力制限"
+            color="bg-lime"
+            :defaultyear="today.getFullYear()"
+            :defaultmonth="today.getMonth() + 1"
+            :defaultday="today.getDate()"
+            :inputData="inputData"
+            :editid="editid"
+            :items="movieArray"
+            :value="inputData.pdfuseflag"
+            :valuePDF="inputData.pdfcountflag ? true : false"
+            @onClick="(e:boolean) => (inputData.pdfuseflag = e)"
+            @onDateTime="(e:string) => pdfDateTime(e,'start')"
+            @onDateEndTime="(e:string) => pdfDateTime(e,'end')"
+            @PDFCountFlag="(e:boolean)=>(inputData.pdfcountflag = e)"
+            @onPdfCount="(e:number) => (inputData.pdflimitcount = e)"
+          ></addPDFForm>
+          <TextFieldView
+            class="w-50"
+            placeholder="選択したいPDF名を入力してください。"
+            @onKeyup="(e) => onSearch(e)"
+          ></TextFieldView>
+          <CheckboxView
+            v-for="pdf in pdfLists"
+            :key="pdf.key"
+            :label="pdf.text"
+            :value="inputPDf[pdf.key].value ? true : false"
+            hide-details="false"
+            class="ma-0 pa-0"
+            @onChange="(e) => pdfCheck(e, pdf.key)"
+          >
+          </CheckboxView>
+        </section>
+      </v-window-item>
+    </v-window>
+  </div>
 </template>
 <style lang="scss"></style>

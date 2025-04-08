@@ -9,6 +9,7 @@ const props = defineProps<{
   color?: string;
   items?: object | any;
   value?: number | string;
+  url?: string;
 }>();
 
 const emit = defineEmits<{
@@ -40,6 +41,7 @@ const emit = defineEmits<{
             {{ item.text }}
             <TextFieldView
               messages="動画のURL"
+              :value="url"
               class="w500"
               @onBlur="(e) => emit('onURL', e)"
             ></TextFieldView>

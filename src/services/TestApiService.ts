@@ -7,6 +7,9 @@ class TestApiService {
   setTest(editData: object) {
     return httpAuth.post("/api/test/setTest", editData);
   }
+  editTest(editData: object) {
+    return httpAuth.post("/api/test/editTest", editData);
+  }
   getTestList(editData: object) {
     return httpAuth.post("/api/test/getTestList", editData);
   }
@@ -21,6 +24,9 @@ class TestApiService {
   }
   getExam(data: object) {
     return httpAuth.post("/api/test/getTestDetail", data);
+  }
+  getTestEditData(data: object) {
+    return httpAuth.post("/api/test/getTestEditData", data);
   }
   getCsvList(data: object) {
     return httpAuth.post("/api/test/getCsvList", data);

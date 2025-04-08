@@ -9,7 +9,7 @@ interface Props {
   type?: string;
   items?: object[] | string[] | string | number[];
   name?: string;
-  text?: string | number;
+  text?: string | number | any;
   placeholder?: string;
   variant?: TVariant;
   density?: TVDensity;
@@ -44,7 +44,7 @@ const emit = defineEmits<{
   <v-select
     :label="props.label"
     :items="props.items"
-    item-value="name"
+    item-value="id"
     item-title="name"
     :hide-details="props.hideDetails"
     :variant="props.variant"

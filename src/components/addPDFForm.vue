@@ -7,6 +7,8 @@ import SelectFieldView from "@/components/SelectFieldView.vue";
 import { monthArray, dayArray } from "@/plugins/const";
 import { zeroPadding, numberValue, zeroZapress } from "@/plugins/validate";
 import { settingStatus } from "@/plugins/const";
+import dayjs from "dayjs";
+import { inputDataType } from "@/types";
 const settingString = (type: boolean) => {
   return type ? settingStatus[1] : settingStatus[0];
 };
@@ -21,6 +23,8 @@ const props = defineProps<{
   defaultyear?: number;
   defaultmonth?: number | string;
   defaultday?: number | string;
+  editid?: number | string[] | string;
+  inputData?: inputDataType;
 }>();
 
 const emit = defineEmits<{
@@ -33,35 +37,60 @@ const emit = defineEmits<{
   (e: "onPdfCount", value: number): void;
 }>();
 
+const datePDFStart = ref(dayjs((props.inputData as inputDataType).pdfstartday));
+const datePDFEnd = ref(dayjs((props.inputData as inputDataType).pdfendday));
+
 const today = new Date();
 const startdate = ref({
-  startyear: today.getFullYear().toString(),
-  startmonth: zeroPadding(today.getMonth() + 1),
-  startday: zeroPadding(today.getDate()),
+  startyear: props.editid
+    ? datePDFStart.value.year()
+    : today.getFullYear().toString(),
+  startmonth: props.editid
+    ? datePDFStart.value.month()
+    : zeroPadding(today.getMonth() + 1),
+  startday: props.editid
+    ? datePDFStart.value.date()
+    : zeroPadding(today.getDate()),
 });
 const enddate = ref({
-  endyear: today.getFullYear().toString(),
-  endmonth: zeroPadding(today.getMonth() + 1),
-  endday: zeroPadding(today.getDate()),
+  endyear: props.editid
+    ? datePDFEnd.value.year()
+    : today.getFullYear().toString(),
+  endmonth: props.editid
+    ? datePDFEnd.value.month()
+    : zeroPadding(today.getMonth() + 1),
+  endday: props.editid ? datePDFEnd.value.date() : zeroPadding(today.getDate()),
 });
 const requestDateTime = () => {
   let year = startdate.value.startyear
     ? startdate.value.startyear
     : today.getFullYear();
   const datetimes =
-    year + "-" + startdate.value.startmonth + "-" + startdate.value.startday;
+    year +
+    "-" +
+    (Number(startdate.value.startmonth) + 1) +
+    "-" +
+    startdate.value.startday;
+  datePDFStart.value = datePDFStart.value
+    .month(Number(startdate.value.startmonth))
+    .date(Number(startdate.value.startday));
   emit("onDateTime", datetimes);
 };
 const requestDateTimeEND = () => {
   const datetimes =
     enddate.value.endyear +
     "-" +
-    enddate.value.endmonth +
+    (Number(enddate.value.endmonth) + 1) +
     "-" +
     enddate.value.endday;
+
+  datePDFEnd.value = datePDFEnd.value
+    .month(Number(enddate.value.endmonth))
+    .date(Number(enddate.value.endday));
   emit("onDateEndTime", datetimes);
 };
-const pdfCount = ref(0);
+
+const pdfCount = ref(props.inputData?.pdflimitcount);
 </script>
 <template>
   <v-row no-gutters>
@@ -91,33 +120,26 @@ const pdfCount = ref(0);
             <div class="d-flex">
               <TextFieldView
                 class="w-25"
-                :value="props.defaultyear"
+                :value="editid ? datePDFStart.year() : props.defaultyear"
                 :maxlength="4"
                 @onKeyup="(e) => ((startdate.startyear = e), requestDateTime())"
               />
               <span class="mt-3 text-caption">年</span>
               <SelectFieldView
                 :items="monthArray"
-                :text="
-                  startdate.startmonth
-                    ? zeroZapress(startdate.startmonth)
-                    : props.defaultmonth
-                "
+                :text="editid ? datePDFStart.month() + 1 : props.defaultmonth"
                 class="w-25"
                 @onChange="
                   (e) => (
-                    (startdate.startmonth = zeroPadding(e)), requestDateTime()
+                    (startdate.startmonth = Number(parseInt(e) - 1)),
+                    requestDateTime()
                   )
                 "
               /><span class="mt-3 text-caption">月</span>
               <SelectFieldView
                 :items="dayArray"
                 class="w-25"
-                :text="
-                  startdate.startday
-                    ? zeroZapress(startdate.startday)
-                    : props.defaultday
-                "
+                :text="editid ? datePDFStart.date() : props.defaultday"
                 @onChange="
                   (e) => (
                     (startdate.startday = zeroPadding(e)), requestDateTime()
@@ -131,7 +153,7 @@ const pdfCount = ref(0);
             <div class="d-flex">
               <TextFieldView
                 class="w-25"
-                :value="props.defaultyear"
+                :value="editid ? datePDFEnd.year() : props.defaultyear"
                 :maxlength="4"
                 @onKeyup="(e) => ((enddate.endyear = e), requestDateTimeEND())"
               />
@@ -139,25 +161,22 @@ const pdfCount = ref(0);
               <SelectFieldView
                 :items="monthArray"
                 :text="
-                  enddate.endmonth
-                    ? zeroZapress(enddate.endmonth)
-                    : props.defaultmonth
+                  editid
+                    ? datePDFEnd.month() + 1
+                    : zeroZapress(enddate.endmonth)
                 "
                 class="w-25"
                 @onChange="
                   (e) => (
-                    (enddate.endmonth = zeroPadding(e)), requestDateTimeEND()
+                    (enddate.endmonth = Number(parseInt(e) - 1)),
+                    requestDateTimeEND()
                   )
                 "
               /><span class="mt-3 text-caption">月</span>
               <SelectFieldView
                 :items="dayArray"
                 class="w-25"
-                :text="
-                  enddate.endday
-                    ? zeroZapress(enddate.endday)
-                    : props.defaultday
-                "
+                :text="editid ? datePDFEnd.date() : zeroZapress(enddate.endday)"
                 @onChange="
                   (e) => (
                     (enddate.endday = zeroPadding(e)), requestDateTimeEND()
@@ -184,10 +203,10 @@ const pdfCount = ref(0);
         <TextFieldView
           class="w-50"
           type="number"
-          :value="pdfCount.toString()"
+          :value="pdfCount"
           :maxlength="4"
           :hideDetails="`auto`"
-          :rules="numberValue(pdfCount, 'PDF出力制限')"
+          :rules="numberValue(Number(pdfCount), 'PDF出力制限')"
           @onKeyup="
             (e) => ((pdfCount = parseInt(e)), emit('onPdfCount', pdfCount))
           "

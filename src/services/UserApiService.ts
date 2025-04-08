@@ -43,7 +43,7 @@ class UserApiService {
   }
   async getPartnerDetail(data: object) {
     try {
-      return httpAuth.post("/api/user/getPartnerDetail", data);
+      return await httpAuth.post("/api/user/getPartnerDetail", data);
     } catch (e) {
       alert("error");
       //location.href="/error"

@@ -22,8 +22,8 @@ export const getTodayDateTime = (type: string) => {
     date = zeroPadding(today.getDate());
   }
 
-  const time = ref("00");
-  const time1 = ref("00");
+  const time = ref("0");
+  const time1 = ref("0");
   if (type == "end") {
     time.value = "23";
     time1.value = "59";

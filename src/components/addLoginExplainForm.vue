@@ -47,6 +47,7 @@ const emit = defineEmits<{
       <TextAreaField
         :name="props.name"
         :variant="props.variant"
+        :value="props.value"
         :hideDetails="props.hideDetails"
         :height="props.height"
         :disabled="props.disabled"

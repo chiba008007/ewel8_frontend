@@ -91,19 +91,7 @@ export const checkDate = (year: string, month: string, day: string) => {
   ) {
     return false;
   }
-
-  /*
-  const dateObj = new Date(parseInt(year), parseInt(month), parseInt(day));
-  const dateObjStr =
-      dateObj.getFullYear() +
-      "" +
-      zeroPadding(dateObj.getMonth()) +
-      "" +
-      zeroPadding(dateObj.getDate()),
-    checkDateStr = year + "" + month + "" + day;
-  if (dateObjStr == checkDateStr) return true;
-*/
-  return true;
+  return checkDated(parseInt(year), parseInt(month), parseInt(day));
 };
 export const zeroPadding = (num: number | string) => {
   return num.toString().padStart(2, "0");
@@ -125,4 +113,27 @@ export const checkBirth = (value: string) => {
     return "生年月日の形式に誤りがあります。";
   }
   return "";
+};
+
+export const checkDated = (year: number, month: number, day: number) => {
+  if (!year || !month || !day) return false;
+  if (
+    !String(year).match(/^[0-9]{4}$/) ||
+    !String(month).match(/^[0-9]{1,2}$/) ||
+    !String(day).match(/^[0-9]{1,2}$/)
+  )
+    return false;
+
+  const dateObj = new Date(year, month - 1, day),
+    dateObjStr =
+      dateObj.getFullYear() +
+      "" +
+      (dateObj.getMonth() + 1) +
+      "" +
+      dateObj.getDate(),
+    checkDateStr = year + "" + month + "" + day;
+
+  if (dateObjStr === checkDateStr) return true;
+
+  return false;
 };

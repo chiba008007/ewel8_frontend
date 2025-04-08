@@ -186,6 +186,14 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/testEdit/:id/edit/:edit_id",
+    name: "testEdit",
+    component: testAddView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/testQr/:id/test/:testid",
     name: "testQr",
     component: testQrView,

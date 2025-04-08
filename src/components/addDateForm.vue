@@ -17,6 +17,8 @@ interface Props {
   defaultstartminute?: number | string;
   defaultendtime?: number | string;
   defaultendminute?: number | string;
+  startdaytime?: string;
+  enddaytime?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,12 +43,13 @@ const yesterday = new Date(
   today.getMonth(),
   today.getDate() - 1
 );
+
 const startdate = ref({
   startyear: yesterday.getFullYear().toString(),
   startmonth: zeroPadding(yesterday.getMonth() + 1),
   startday: zeroPadding(yesterday.getDate()),
-  starttime: "00",
-  startminute: "00",
+  starttime: "0",
+  startminute: "0",
 });
 const enddate = ref({
   endyear: today.getFullYear().toString(),
@@ -81,6 +84,38 @@ const requestDateEndTime = () => {
     enddate.value.endminute;
   emit("onDateEndTime", datetimes);
 };
+
+const getDate = (type: string) => {
+  let tmp = props.startdaytime?.split(" ") as string[];
+  let date1 = tmp[0].split("-");
+  let date2 = tmp[1].split(":");
+  startdate.value.startyear = date1[0];
+  startdate.value.startmonth = date1[1];
+  startdate.value.startday = date1[2];
+  startdate.value.starttime = date2[0];
+  startdate.value.startminute = date2[1];
+  if (type == "year") return parseInt(date1[0]);
+  if (type == "month") return parseInt(date1[1]);
+  if (type == "day") return parseInt(date1[2]);
+  if (type == "hour") return parseInt(date2[0]);
+  if (type == "minute") return parseInt(date2[1]);
+};
+
+const getEndDate = (type: string) => {
+  let tmp = props.enddaytime?.split(" ") as string[];
+  let date1 = tmp[0].split("-");
+  let date2 = tmp[1].split(":");
+  enddate.value.endyear = date1[0];
+  enddate.value.endmonth = date1[1];
+  enddate.value.endday = date1[2];
+  enddate.value.endtime = date2[0];
+  enddate.value.endminute = date2[1];
+  if (type == "year") return parseInt(date1[0]);
+  if (type == "month") return parseInt(date1[1]);
+  if (type == "day") return parseInt(date1[2]);
+  if (type == "hour") return parseInt(date2[0]);
+  if (type == "minute") return parseInt(date2[1]);
+};
 </script>
 <template>
   <v-row no-gutters>
@@ -103,18 +138,14 @@ const requestDateEndTime = () => {
           <div class="d-flex">
             <TextFieldView
               class="w-25"
-              :value="props.defaultyear"
+              :value="getDate('year')"
               :maxlength="4"
               @onKeyup="(e) => ((startdate.startyear = e), requestDateTime())"
             />
             <span class="mt-3 text-caption">年</span>
             <SelectFieldView
               :items="monthArray"
-              :text="
-                startdate.startmonth
-                  ? zeroZapress(startdate.startmonth)
-                  : props.defaultmonth
-              "
+              :text="getDate('month')"
               class="w-25"
               @onChange="
                 (e) => (
@@ -125,11 +156,7 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="dayArray"
               class="w-25"
-              :text="
-                startdate.startday
-                  ? zeroZapress(startdate.startday)
-                  : props.defaultday - 1
-              "
+              :text="getDate('day')"
               @onChange="
                 (e) => (
                   (startdate.startday = zeroPadding(e)), requestDateTime()
@@ -139,11 +166,7 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="timeArray"
               class="w-25"
-              :text="
-                startdate.starttime
-                  ? zeroZapress(startdate.starttime)
-                  : props.defaultstarttime
-              "
+              :text="getDate('hour')"
               @onChange="
                 (e) => (
                   (startdate.starttime = zeroPadding(e)), requestDateTime()
@@ -153,11 +176,7 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="minuteArray"
               class="w-25"
-              :text="
-                startdate.startminute
-                  ? zeroZapress(startdate.startminute)
-                  : props.defaultstartminute
-              "
+              :text="getDate('minute')"
               @onChange="
                 (e) => (
                   (startdate.startminute = zeroPadding(e)), requestDateTime()
@@ -174,18 +193,14 @@ const requestDateEndTime = () => {
           <div class="d-flex">
             <TextFieldView
               class="w-25"
-              :value="props.defaultyear"
+              :value="getEndDate('year')"
               :maxlength="4"
               @onKeyup="(e) => ((enddate.endyear = e), requestDateEndTime())"
             />
             <span class="mt-3 text-caption">年</span>
             <SelectFieldView
               :items="monthArray"
-              :text="
-                enddate.endmonth
-                  ? zeroZapress(enddate.endmonth)
-                  : props.defaultmonth
-              "
+              :text="getEndDate('month')"
               class="w-25"
               @onChange="
                 (e) => (
@@ -195,9 +210,7 @@ const requestDateEndTime = () => {
             /><span class="mt-3 text-caption">月</span>
             <SelectFieldView
               :items="dayArray"
-              :text="
-                enddate.endday ? zeroZapress(enddate.endday) : props.defaultday
-              "
+              :text="getEndDate('day')"
               class="w-25"
               @onChange="
                 (e) => ((enddate.endday = zeroPadding(e)), requestDateEndTime())
@@ -206,11 +219,7 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="timeArray"
               class="w-25"
-              :text="
-                enddate.endtime
-                  ? zeroZapress(enddate.endtime)
-                  : props.defaultendtime
-              "
+              :text="getEndDate('hour')"
               @onChange="
                 (e) => (
                   (enddate.endtime = zeroPadding(e)), requestDateEndTime()
@@ -220,11 +229,7 @@ const requestDateEndTime = () => {
             <SelectFieldView
               :items="minuteArray"
               class="w-25"
-              :text="
-                enddate.endminute
-                  ? zeroZapress(enddate.endminute)
-                  : props.defaultendminute
-              "
+              :text="getEndDate('minute')"
               @onChange="
                 (e) => (
                   (enddate.endminute = zeroPadding(e)), requestDateEndTime()

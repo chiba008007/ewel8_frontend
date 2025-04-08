@@ -16,8 +16,6 @@ import "dayjs/locale/ja";
 dayjs.locale("ja");
 const move = pageClickMove();
 const route = useRoute();
-const tmpid = ref(route.path.replace(/[^0-9]/g, ""));
-
 const user = useStoreUser();
 
 const testheaders = ref([
@@ -30,9 +28,23 @@ const testheaders = ref([
 ]);
 
 const tmp = {
-  user_id: tmpid.value,
+  user_id: route.params.id,
 };
 const testList = ref();
+
+type userType = {
+  type: string;
+};
+type userAny = {
+  id: number;
+  testname: string;
+  startdaytime: string;
+  enddaytime: string;
+  testcount: number;
+  zan: number;
+  syori: number;
+};
+const type = (user.userdata as userType).type;
 TestApiService.getTestList(tmp)
   .then(function (res) {
     testList.value = res.data;
@@ -74,51 +86,69 @@ const onResize = () => {
         <template v-slot:item="{ item }">
           <tr>
             <td class="w-25">
-              <span v-if="user.userdata.type === D_PARTNER">{{
-                item.testname
+              <span v-if="type === D_PARTNER">{{
+                (item as userAny).testname
               }}</span>
               <a
                 v-else
                 class="text-link"
                 @click="
-                  move.pageTestListModeParam('testExamList', item.id, tmpid)
+                  move.pageTestListModeParam(
+                    'testExamList',
+                    (item as userAny).id,
+                    tmp.user_id
+                  )
                 "
-                >{{ item.testname }}</a
+                >{{ (item as userAny).testname }}</a
               >
             </td>
             <td class="text-xs-right" nowrap>
-              {{ dayjs(item.startdaytime).format("YYYY/M/DD HH:mm") }}～{{
-                dayjs(item.enddaytime).format("YYYY/M/DD HH:mm")
+              {{
+                dayjs((item as userAny).startdaytime).format("YYYY/M/DD HH:mm")
+              }}～{{
+                dayjs((item as userAny).enddaytime).format("YYYY/M/DD HH:mm")
               }}
             </td>
-            <td class="text-right">{{ item.testcount }}</td>
-            <td class="text-right">{{ item.syori }}</td>
-            <td class="text-right">{{ item.zan }}</td>
+            <td class="text-right">{{ (item as userAny).testcount }}</td>
+            <td class="text-right">{{ (item as userAny).syori }}</td>
+            <td class="text-right">{{ (item as userAny).zan }}</td>
             <td class="text-center w-25" nowrap>
               <ButtonView
-                v-if="user.userdata.type != D_PARTNER"
+                v-if="type != D_PARTNER"
                 text="ID/QRコード"
                 class="text-caption mb-2"
                 color="success"
                 size="small"
                 target="_blank"
-                @click="move.pageQRBlank('testQr', item.id, tmpid)"
+                @click="
+                  move.pageQRBlank(
+                    'testQr',
+                    (item as userAny).id.toString(),
+                    tmp.user_id
+                  )
+                "
               ></ButtonView>
               <ButtonView
                 text="追加更新"
                 class="text-caption mb-2 ml-2"
                 color="success"
                 size="small"
+                @click="
+                  move.pageTestEdit('testEdit', {
+                    id: tmp.user_id,
+                    editid: (item as userAny).id,
+                  })
+                "
               ></ButtonView>
               <ButtonView
-                v-if="user.userdata.type != D_PARTNER"
+                v-if="type != D_PARTNER"
                 text="削除"
                 class="text-caption mb-2 ml-2"
                 color="red"
                 size="small"
               ></ButtonView>
               <ButtonView
-                v-if="user.userdata.type === D_ADMIN"
+                v-if="type === D_ADMIN"
                 text="複製"
                 class="text-caption mb-2 ml-2"
                 color="success"
