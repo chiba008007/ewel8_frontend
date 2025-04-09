@@ -128,7 +128,7 @@ pdfLists.value.forEach(function (val) {
   };
 });
 const registButton = ref<boolean>(true);
-
+const done = ref(0);
 // 編集用データ取得
 if (editid) {
   let tmp = {
@@ -140,11 +140,11 @@ if (editid) {
   registButton.value = false;
   try {
     TestApiService.getTestEditData(tmp).then((res) => {
+      done.value = res.data.done;
       (inputData.value as inputDataType) = testAdd().testEdit(
         inputData.value,
         res
       );
-      console.log(res.data.testpdf);
       res.data.testpdf.forEach(function (val: testpdfType) {
         inputPDf.value[val.pdf_id] = {
           key: val.pdf_id,
@@ -196,6 +196,11 @@ const onBlurButton = () => {
   }
   if (inputData.value.testname && inputData.value.testcount > 0) {
     registButton.value = false;
+  }
+  if (editid) {
+    if (Number(done.value) > Number(inputData.value.testcount)) {
+      registButton.value = true;
+    }
   }
 };
 
@@ -254,7 +259,6 @@ const alertFlag = ref(false);
 
 const onClick = () => {
   alertFlag.value = false;
-  console.log(inputTestPart.value);
   let tmp = {
     partner_id: partner_id.value,
     customer_id: tmpid,
@@ -493,7 +497,9 @@ const pagemove = () => {
             :hideDetails="`auto`"
             :value="inputData.testcount"
             :requriredIcon="true"
-            :rules="numberValue(inputData.testcount, '受検者数', 10000)"
+            :rules="
+              numberValue(inputData.testcount, '受検者数', 10000, editid, done)
+            "
             @onBlur="(e:any) => ((inputData.testcount = e), onBlurButton())"
           ></addPartnerForm>
           <addSwitchForm

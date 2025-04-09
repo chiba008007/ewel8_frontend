@@ -6,12 +6,23 @@ export const requiredValue = (value: string, item: string) => {
   }
   return "";
 };
-export const numberValue = (value: number, item: string, max = 0) => {
+export const numberValue = (
+  value: number,
+  item: string,
+  max = 0,
+  editid = 0,
+  done = 0
+) => {
   if (isNaN(value) || value.toString().length == 0) {
     return item + "は数値を入力してください。";
   }
   if (max > 0 && value > max) {
     return "最大登録数(" + max + ")を超えています。";
+  }
+  if (editid) {
+    if (done > value) {
+      return "受検者数が少なすぎます。";
+    }
   }
   return "";
 };

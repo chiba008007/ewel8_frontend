@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import AdminMenu from "../components/AdminMenu.vue";
+import ProgressView from "../components/ProgressView.vue";
 import AlertView from "@/components/AlertView.vue";
 import ComponentButton from "../components/ButtonView.vue";
 import addPartnerForm from "../components/addPartnerForm.vue";
@@ -276,9 +277,10 @@ const onBlur = async (e: string | boolean, type: string) => {
 };
 
 const requestFlag = ref(true);
-
 const registAlert = ref(false);
+const loadingFlag = ref(false);
 const addRegist = () => {
+  loadingFlag.value = true;
   let post = post1.value + "-" + post2.value;
   settingData.value = {
     type: "partner",
@@ -324,10 +326,10 @@ const addRegist = () => {
       };
 
       UserApiService.setLicense(settingLicense.value).then((res) => {
-        console.log("success");
         registButton.value = true;
         registAlert.value = true;
       });
+      loadingFlag.value = false;
     });
   } else {
     UserApiService.setPartner(settingData.value).then((res) => {
@@ -343,6 +345,7 @@ const addRegist = () => {
         registAlert.value = true;
       });
     });
+    loadingFlag.value = false;
   }
 };
 
@@ -351,6 +354,7 @@ const displayString = (type: boolean) => {
 };
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <v-row justify="center" v-if="!tmpid">
     <AdminMenu />
   </v-row>
