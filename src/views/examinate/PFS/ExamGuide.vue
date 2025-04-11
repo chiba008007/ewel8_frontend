@@ -22,12 +22,18 @@ const onMenuBack = () => {
 };
 examObj.checkStatus(testparts_id, k);
 setStartTime();
+
+const enabledFlag = ref(true);
+const enabledTest = (e: boolean) => {
+  enabledFlag.value = e;
+};
 </script>
 
 <template>
-  <ExamTitle />
-  <ExamParts />
-  <v-container class="" fluid>
+  <ExamTitle @enabledTest="(e) => enabledTest(e)" />
+
+  <v-container class="" fluid v-if="enabledFlag">
+    <ExamParts />
     <ol class="ml-3 w-100">
       <li>
         各設問に対し、現在のご自身が取るであろう傾向を選択肢の中から選択してください。

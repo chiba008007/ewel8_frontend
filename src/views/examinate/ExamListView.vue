@@ -69,10 +69,18 @@ const onDownload = () => {
     pdfDownload(rlt.data.id, rlt.data.code, rlt.data.decript);
   });
 };
+const enabledFlag = ref(true);
+const enabledTest = (e: boolean) => {
+  enabledFlag.value = e;
+};
 </script>
 
 <template>
-  <ExamTitle :loginflag="false" @onTest="(e) => setExamData(e)" />
+  <ExamTitle
+    :loginflag="false"
+    @onTest="(e) => setExamData(e)"
+    @enabledTest="(e) => enabledTest(e)"
+  />
   <!--
   <v-tabs v-model="tab" align-tabs="center" color="primary">
     <v-tab :value="1">検査一覧</v-tab>
@@ -80,7 +88,7 @@ const onDownload = () => {
   </v-tabs>
 -->
 
-  <v-container>
+  <v-container v-if="enabledFlag">
     <div class="text-h6 mb-4">検査選択メニュー</div>
     <div class="mb-4 text-left" v-if="testLengthFlag">
       <div v-if="testLength != 0">

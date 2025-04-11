@@ -40,12 +40,16 @@ const setLoop = () => {
     if (!selectPoint[i]) disabledFlag.value = true;
   }
 };
+const enabledFlag = ref(true);
+const enabledTest = (e: boolean) => {
+  enabledFlag.value = e;
+};
 </script>
 
 <template>
-  <ExamTitle />
-  <ExamParts />
-  <v-container fluid class="mt-0">
+  <ExamTitle @enabledTest="(e) => enabledTest(e)" />
+  <v-container fluid class="mt-0" v-if="enabledFlag">
+    <ExamParts />
     <ExamPage :page="page" />
     <ExamQuestion
       :params="k"

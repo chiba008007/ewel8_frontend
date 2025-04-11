@@ -80,17 +80,21 @@ const buttonCheck = () => {
     buttonFlag.value = false;
   }
 };
+const enabledFlag = ref(true);
+const enabledTest = (e: boolean) => {
+  enabledFlag.value = e;
+};
 </script>
 
 <template>
   <ExamTitle
     @onLoginId="(e) => (login_id = e)"
     @onTest="(e) => setExamData(e)"
+    @enabledTest="(e) => enabledTest(e)"
   />
-  <v-container>
+  <v-container v-if="enabledFlag">
     <div class="text-h6">個人情報属性</div>
-
-    <v-container>
+    <div class="mt-5">
       <ExamProfileForm title="ログインID">
         {{ login_id }}
       </ExamProfileForm>
@@ -165,9 +169,9 @@ const buttonCheck = () => {
       <ExamProfileForm title="生年月日" v-if="password">
         {{ convertDateFormat(password) }}
       </ExamProfileForm>
-    </v-container>
+    </div>
 
-    <v-card variant="tonal" class="mt-4">
+    <v-card variant="tonal" class="mt-8">
       <v-card-text>
         弊社では、個人情報を適切な方法で管理し、下記の利用目的以外で受検者の同意なく、第三者に対し開示することはありません。<br />
         <br />

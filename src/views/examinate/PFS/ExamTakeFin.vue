@@ -40,12 +40,19 @@ const onMenuBack = () => {
     query: { k: k },
   });
 };
+const enabledFlag = ref(true);
+const enabledTest = (e: boolean) => {
+  enabledFlag.value = e;
+};
 </script>
 
 <template>
-  <ExamTitle @onResultFlag="(e) => onResultFlag(e)" />
-  <ExamParts />
-  <v-container fluid class="mt-0">
+  <ExamTitle
+    @onResultFlag="(e) => onResultFlag(e)"
+    @enabledTest="(e) => enabledTest(e)"
+  />
+  <v-container fluid class="mt-0" v-if="enabledFlag">
+    <ExamParts />
     <CardView
       v-if="resultFlag != 1"
       style="white-space: pre-wrap"

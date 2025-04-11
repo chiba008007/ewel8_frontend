@@ -6,6 +6,7 @@ import ExamApiService from "@/services/ExamApiService";
 import { useRouter } from "vue-router";
 import { useStoreUser } from "@/store/user";
 import userLogout from "@/services/UserLogout";
+import AlertView from "./AlertView.vue";
 
 const usr = useStoreUser();
 if (usr.isLogin) {
@@ -16,6 +17,7 @@ const emit = defineEmits<{
   (e: "onTest", value: object): void;
   (e: "onLoginId", value: string): void;
   (e: "onResultFlag", value: number): void;
+  (e: "enabledTest", value: boolean): boolean;
 }>();
 
 const router = useRouter();
@@ -24,6 +26,7 @@ const data = ref();
 const company_name = ref("");
 const testname = ref("");
 let tmp = { params: k };
+const errormessage = ref("");
 ExamApiService.getExam(tmp)
   .then(function (rlt) {
     console.log(rlt.data);
@@ -34,9 +37,11 @@ ExamApiService.getExam(tmp)
     company_name.value = data.value.company_name;
     testname.value = data.value.testname;
     emit("onResultFlag", rlt.data.resultflag);
+    emit("enabledTest", true);
   })
   .catch(() => {
-    location.href = "/exam/error";
+    emit("enabledTest", false);
+    errormessage.value = "検査実施期間外、または利用できない状態です。";
   });
 </script>
 
@@ -64,6 +69,11 @@ ExamApiService.getExam(tmp)
       >
         {{ testname }}
       </v-alert>
+      <AlertView
+        v-show="errormessage"
+        type="error"
+        :text="errormessage"
+      ></AlertView>
     </div>
   </v-container>
 </template>

@@ -58,20 +58,27 @@ const onClick = () => {
         user.setUserDataExamToken(response.data.token);
         user.setUserExamData(response.data.user);
         errorflag.value = false;
-        //router.push({ name: "examProfile", query: { k: k } });
-        location.href = "/exam/profile?k=" + k;
+        router.push({ name: "examProfile", query: { k: k } });
       })
       .catch(function (e) {
         errorflag.value = true;
       });
   }
 };
+const enabledFlag = ref(true);
+const enabledTest = (e: boolean) => {
+  enabledFlag.value = e;
+};
 </script>
 
 <template>
-  <ExamTitle :loginflag="false" @onTest="(e) => setExamData(e)" />
+  <ExamTitle
+    :loginflag="false"
+    @onTest="(e) => setExamData(e)"
+    @enabledTest="(e) => enabledTest(e)"
+  />
 
-  <v-container>
+  <v-container v-if="enabledFlag">
     <p class="pt-4 pb-6 text-center">
       検査を実施します。<br />
       指示された「ログインID」「生年月日」を入力後ログインを行ってください。
