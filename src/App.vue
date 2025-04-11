@@ -3,6 +3,13 @@ import { computed, ref } from "vue";
 import userLogout from "@/services/UserLogout";
 import { useStoreUser } from "../src/store/user";
 import { useRouter } from "vue-router";
+import { preventRapidReload } from "./reload-guard";
+
+if (!preventRapidReload(2000)) {
+  // 防止した場合はここで終了も可能
+  throw new Error("連続リロード防止のため停止");
+}
+
 var uri = new URL(window.location.href);
 const displayFlag = ref(true);
 if (/testQr/.test(uri.pathname)) displayFlag.value = false;
