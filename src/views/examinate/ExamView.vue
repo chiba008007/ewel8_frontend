@@ -58,7 +58,9 @@ const onClick = () => {
         user.setUserDataExamToken(response.data.token);
         user.setUserExamData(response.data.user);
         errorflag.value = false;
-        router.push({ name: "examProfile", query: { k: k } });
+        router.push({ name: "examProfile", query: { k: k } }).then(() => {
+          window.location.reload();
+        });
       })
       .catch(function (e) {
         errorflag.value = true;

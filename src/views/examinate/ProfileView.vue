@@ -61,7 +61,9 @@ const onClick = () => {
 
   ExamApiService.editExamData(tmp).then(function (res) {
     if (res.data) {
-      router.push({ name: "examList", query: { k: k } });
+      router.push({ name: "examList", query: { k: k } }).then(() => {
+        window.location.reload();
+      });
     } else {
       alert("登録失敗しました。");
     }

@@ -15,10 +15,14 @@ const testparts_id = route.params.testparts_id;
 
 const page = ref(1);
 const onMenuBack = () => {
-  router.push({
-    name: "examList",
-    query: { k: k },
-  });
+  router
+    .push({
+      name: "examList",
+      query: { k: k },
+    })
+    .then(() => {
+      window.location.reload();
+    });
 };
 examObj.checkStatus(testparts_id, k);
 setStartTime();

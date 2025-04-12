@@ -265,11 +265,15 @@ export default function () {
 
       ExamApiService.editPFS(tmp).then(function (rlt) {
         if (rlt.data == "success") {
-          router.replace({
-            name: name.value,
-            params: { testparts_id: testparts_id, page: page },
-            query: { k: params },
-          });
+          router
+            .replace({
+              name: name.value,
+              params: { testparts_id: testparts_id, page: page },
+              query: { k: params },
+            })
+            .then(() => {
+              window.location.reload();
+            });
           return true;
         }
         alert("error");
@@ -278,11 +282,15 @@ export default function () {
     } else {
       ExamApiService.setPFS(tmp).then(function (rlt) {
         if (rlt.data == "success") {
-          router.push({
-            name: "examPfsTake",
-            params: { testparts_id: testparts_id, page: page },
-            query: { k: params },
-          });
+          router
+            .push({
+              name: "examPfsTake",
+              params: { testparts_id: testparts_id, page: page },
+              query: { k: params },
+            })
+            .then(() => {
+              window.location.reload();
+            });
           return true;
         }
         alert("error");

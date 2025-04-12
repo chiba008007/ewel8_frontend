@@ -57,11 +57,15 @@ const openTest = (code: string, testparts_id: number) => {
   let name = "";
   if (code == "PFS") name = "examPfsGuide";
   if (name == "") alert("error");
-  router.push({
-    name: name,
-    params: { testparts_id: testparts_id },
-    query: { k: k },
-  });
+  router
+    .push({
+      name: name,
+      params: { testparts_id: testparts_id },
+      query: { k: k },
+    })
+    .then(() => {
+      window.location.reload();
+    });
 };
 
 const onDownload = () => {
