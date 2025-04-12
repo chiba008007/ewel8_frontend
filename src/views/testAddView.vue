@@ -69,7 +69,7 @@ const inputData = ref({
   recomendflag: true,
   loginflag: false,
   logintext: "",
-  movietype: 1,
+  movietype: 3,
   moviedisplayurl: "",
   pdfuseflag: false,
   pdfstartday: getTodayDate(),
@@ -171,12 +171,18 @@ watch(tab, (newTab) => {
     onBlurButton();
   }
   if (newTab == 1) {
-    registButton.value = true;
     onBlurButton1();
+  }
+  if (newTab == 2) {
+    if (errorTab1.value == 0 && errorTab2.value == 0) {
+      registButton.value = false;
+    }
   }
 });
 const onBlurButton1 = () => {
   // 1つでも利用するstatusの時ボタンを押下可能
+  registButton.value = true;
+  errorTab2.value = 1;
   for (const elem of Object.values(inputTestPart.value)) {
     if (elem.status) {
       errorTab2.value = 0;
@@ -187,7 +193,6 @@ const onBlurButton1 = () => {
 };
 const onBlurButton = () => {
   registButton.value = true;
-  // errorTab1.value = 2;
   if (inputData.value.testname) {
     errorTab1.value = errorTab1.value > 0 ? errorTab1.value - 1 : 0;
   }
@@ -335,7 +340,6 @@ const onEditClick = () => {
   };
   try {
     TestApiService.editTest(tmp).then((res) => {
-      //console.log(res);
       alertFlag.value = true;
     });
   } catch (e) {

@@ -23,6 +23,26 @@ const profile = ref({
   birth_date: "",
 });
 
+const nameuseflag = ref(0);
+const genderuseflag = ref(0);
+ExamApiService.getTestDataExam({
+  params: k,
+})
+  .then(function (res) {
+    console.log(res);
+    nameuseflag.value = res.data.nameuseflag;
+    genderuseflag.value = res.data.genderuseflag;
+    if (nameuseflag.value) {
+      profile.value.name1 = "設定なし";
+      profile.value.name2 = "設定なし";
+      profile.value.kana1 = "設定なし";
+      profile.value.kana2 = "設定なし";
+    }
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
 const login_id = ref();
 const buttonFlag = ref(true);
 const onClick = () => {
@@ -43,7 +63,6 @@ const onClick = () => {
 };
 const params = ref();
 const setExamData = (rlt: any) => {
-  console.log(rlt);
   params.value = rlt.params;
 };
 const onGender = (e: number) => {
@@ -70,6 +89,7 @@ ExamApiService.getExamData()
     }
   })
   .catch((error) => console.log(error));
+
 const buttonCheck = () => {
   if (
     requiredValue(profile.value.name1, "姓").length === 0 &&
@@ -98,7 +118,7 @@ const enabledTest = (e: boolean) => {
       <ExamProfileForm title="ログインID">
         {{ login_id }}
       </ExamProfileForm>
-      <ExamProfileForm title="氏名" :requriredIcon="true">
+      <ExamProfileForm v-if="nameuseflag" title="氏名" :requriredIcon="true">
         <v-row>
           <v-col cols="12" sm="6">
             <ComponentTextField
@@ -128,7 +148,11 @@ const enabledTest = (e: boolean) => {
           </v-col>
         </v-row>
       </ExamProfileForm>
-      <ExamProfileForm title="ふりがな" :requriredIcon="true">
+      <ExamProfileForm
+        v-if="nameuseflag"
+        title="ふりがな"
+        :requriredIcon="true"
+      >
         <v-row>
           <v-col cols="12" sm="6">
             <ComponentTextField
@@ -158,7 +182,7 @@ const enabledTest = (e: boolean) => {
           </v-col>
         </v-row>
       </ExamProfileForm>
-      <ExamProfileForm title="性別">
+      <ExamProfileForm title="性別" v-if="genderuseflag">
         <RadioView
           :default="profile.genders"
           :items="genderArray"

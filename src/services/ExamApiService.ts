@@ -26,6 +26,9 @@ class ExamApiService {
   getExamTestParts(data: object) {
     return httpAuth.post("/api/exam/getExamTestParts", data);
   }
+  getTestDataExam(data: object) {
+    return httpAuth.post("/api/exam/getTestDataExam", data);
+  }
   checkStatus(data: object) {
     return httpAuth.post("/api/exam/checkStatus", data);
   }
@@ -59,7 +62,6 @@ class ExamApiService {
           Authorization: "Bearer " + JSON.parse(token)?.userTokenExam,
         },
       });
-      console.log(res);
       return res;
     } catch (e) {
       return false;
