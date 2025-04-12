@@ -12,7 +12,7 @@ import RadioView from "@/components/RadioView.vue";
 import ExamApiService from "@/services/ExamApiService";
 const router = useRouter();
 const k = router.currentRoute.value.query.k;
-
+const nothing = "設定なし";
 const profile = ref({
   login_id: "",
   name1: "",
@@ -22,21 +22,21 @@ const profile = ref({
   genders: 0,
   birth_date: "",
 });
-
+const buttonFlag = ref(true);
 const nameuseflag = ref(0);
 const genderuseflag = ref(0);
 ExamApiService.getTestDataExam({
   params: k,
 })
   .then(function (res) {
-    console.log(res);
     nameuseflag.value = res.data.nameuseflag;
     genderuseflag.value = res.data.genderuseflag;
-    if (nameuseflag.value) {
-      profile.value.name1 = "設定なし";
-      profile.value.name2 = "設定なし";
-      profile.value.kana1 = "設定なし";
-      profile.value.kana2 = "設定なし";
+    if (nameuseflag.value === 0) {
+      profile.value.name1 = nothing;
+      profile.value.name2 = nothing;
+      profile.value.kana1 = nothing;
+      profile.value.kana2 = nothing;
+      buttonCheck();
     }
   })
   .catch((error) => {
@@ -44,14 +44,21 @@ ExamApiService.getTestDataExam({
   });
 
 const login_id = ref();
-const buttonFlag = ref(true);
+
 const onClick = () => {
+  if (nameuseflag.value === 0) {
+    profile.value.name1 = nothing;
+    profile.value.name2 = nothing;
+    profile.value.kana1 = nothing;
+    profile.value.kana2 = nothing;
+  }
   let tmp = {
     name: profile.value.name1 + "　" + profile.value.name2,
     kana: profile.value.kana1 + "　" + profile.value.kana2,
     gender: profile.value.genders,
     k: params.value,
   };
+
   ExamApiService.editExamData(tmp).then(function (res) {
     if (res.data) {
       router.push({ name: "examList", query: { k: k } });
@@ -59,6 +66,7 @@ const onClick = () => {
       alert("登録失敗しました。");
     }
   });
+
   // router.push({ name: "examCheckConfirm" });
 };
 const params = ref();
