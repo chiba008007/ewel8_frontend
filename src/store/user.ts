@@ -57,6 +57,7 @@ export const useStoreUser = defineStore("user", {
     },
     IsLogout() {
       this.isLogin = false;
+      this.userToken = "";
     },
     IsLogoutExam() {
       this.isExamLogin = false;

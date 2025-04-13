@@ -25,7 +25,14 @@ const system_name = computed(() => {
 const onLogout = () => {
   userLogout.logout();
   usr.IsLogout();
-  location.href = router.resolve({ name: "Login" }).href;
+  // location.href = router.resolve({ name: "Login" }).href;
+  router
+    .push({
+      name: "Login",
+    })
+    .then(() => {
+      window.location.reload();
+    });
 };
 </script>
 <template>

@@ -21,11 +21,20 @@ UserApiService.checkTest()
     console.log(e);
     // alert("status ERROR");
   });
+const onLoginID = (e: Event) => {
+  let target = e.target as HTMLInputElement;
+  userId.value = target?.value;
+};
+const onLoginPassword = (e: Event) => {
+  let target = e.target as HTMLInputElement;
+  password.value = target?.value;
+};
 const onClick = () => {
   let data = {
     login_id: userId.value,
     password: password.value,
   };
+
   UserApiService.getPost(data)
     .then((response: any) => {
       user.setUserDataToken(response.data.token);
@@ -49,6 +58,7 @@ const onClick = () => {
       }
     })
     .catch((e) => {
+      console.log(e);
       alert("LOGIN ERROR");
     });
 };
@@ -67,7 +77,7 @@ const onClick = () => {
                 density="compact"
                 clearable
                 placeholder="USER IDを入力してください"
-                @keyup="userId = $event.target.value"
+                @blur="(e:Event) => onLoginID(e)"
               >
               </v-text-field>
               <label>PASSWORD</label>
@@ -77,7 +87,7 @@ const onClick = () => {
                 clearable
                 placeholder="パスワードを入力してください"
                 type="password"
-                @keyup="password = $event.target.value"
+                @blur="(e:Event) => onLoginPassword(e)"
               >
               </v-text-field>
               <v-btn
