@@ -12,6 +12,7 @@ import RadioView from "@/components/RadioView.vue";
 import ExamApiService from "@/services/ExamApiService";
 const router = useRouter();
 const k = router.currentRoute.value.query.k;
+const envcheckflag = ref();
 const nothing = "設定なし";
 const profile = ref({
   login_id: "",
@@ -61,19 +62,21 @@ const onClick = () => {
 
   ExamApiService.editExamData(tmp).then(function (res) {
     if (res.data) {
-      router.push({ name: "examList", query: { k: k } }).then(() => {
+      // ブラウザチェック画面若しくは検査メニュー画面に遷移
+      let pushName = envcheckflag.value ? "examCheckConfirm" : "examList";
+      router.push({ name: pushName, query: { k: k } }).then(() => {
         window.location.reload();
       });
     } else {
       alert("登録失敗しました。");
     }
   });
-
-  // router.push({ name: "examCheckConfirm" });
 };
 const params = ref();
+
 const setExamData = (rlt: any) => {
   params.value = rlt.params;
+  envcheckflag.value = rlt.envcheckflag;
 };
 const onGender = (e: number) => {
   profile.value.genders = e;
@@ -110,7 +113,7 @@ const buttonCheck = () => {
     buttonFlag.value = false;
   }
 };
-const enabledFlag = ref(true);
+const enabledFlag = ref(false);
 const enabledTest = (e: boolean) => {
   enabledFlag.value = e;
 };

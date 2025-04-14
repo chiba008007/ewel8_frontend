@@ -1,12 +1,36 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import ComponentButton from "@/components/ButtonView.vue";
 import ExamTitle from "@/components/ExamTitle.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const envcheckflag = ref();
+const login_id = ref();
+const k = router.currentRoute.value.query.k;
+const pagemove = () => {
+  router.push({ name: "examCheck", query: { k: k } }).then(() => {
+    window.location.reload();
+  });
+};
+
+const params = ref();
+
+const setExamData = (rlt: any) => {
+  params.value = rlt.params;
+  envcheckflag.value = rlt.envcheckflag;
+};
+
+const enabledFlag = ref(false);
+const enabledTest = (e: boolean) => {
+  enabledFlag.value = e;
+};
 </script>
 
 <template>
   <ExamTitle
-    :logo-src="require('@/assets/logo.png')"
-    :customer-name="`test企業`"
+    @onLoginId="(e) => (login_id = e)"
+    @onTest="(e) => setExamData(e)"
+    @enabledTest="(e) => enabledTest(e)"
   />
 
   <v-container>
@@ -20,7 +44,7 @@ import ExamTitle from "@/components/ExamTitle.vue";
     <ComponentButton
       text="動作環境チェック"
       color="primary"
-      @onClick="$router.push({ name: 'examCheck' })"
+      @onClick="pagemove()"
     />
   </v-container>
 </template>

@@ -3,20 +3,22 @@ import { ref } from "vue";
 import ComponentButton from "@/components/ButtonView.vue";
 import ComponentDialogButton from "@/components/DialogButton.vue";
 import ExamTitle from "@/components/ExamTitle.vue";
+import platform from "platform";
+import router from "@/router";
+const k = router.currentRoute.value.query.k;
 
-type Result = {
-  [key in "os" | "browser" | "js"]: {
-    title: string;
-    isSuccess: boolean;
-    comment: string;
-  };
-};
-const result = ref<Result>({
+const envcheckflag = ref();
+const login_id = ref();
+const params = ref();
+
+const result = ref({
   os: {
     title: "OS",
+    comment: platform.os,
   },
   browser: {
     title: "ブラウザ",
+    comment: platform.description,
   },
   js: {
     title: "javascript",
@@ -25,20 +27,30 @@ const result = ref<Result>({
   },
 });
 
-// TODO: 判定処理
-result.value.os.isSuccess = true;
-result.value.os.comment = "Windows 10";
-result.value.browser.isSuccess = false;
-result.value.browser.comment = "Chrome129.0.0.0";
+const setExamData = (rlt: any) => {
+  params.value = rlt.params;
+  envcheckflag.value = rlt.envcheckflag;
+};
+
+const enabledFlag = ref(false);
+const enabledTest = (e: boolean) => {
+  enabledFlag.value = e;
+};
+const onClickNext = () => {
+  router.push({ name: "examList", query: { k: k } }).then(() => {
+    window.location.reload();
+  });
+};
 </script>
 
 <template>
   <ExamTitle
-    :logo-src="require('@/assets/logo.png')"
-    :customer-name="`test企業`"
+    @onLoginId="(e) => (login_id = e)"
+    @onTest="(e) => setExamData(e)"
+    @enabledTest="(e) => enabledTest(e)"
   />
 
-  <v-container>
+  <v-container v-if="enabledFlag">
     <div class="text-h6 font-weight-bold mb-4">動作環境チェック結果</div>
     <p class="mb-4">
       ご利用のパソコン及びブラウザを自動でチェックしています。
@@ -66,10 +78,12 @@ result.value.browser.comment = "Chrome129.0.0.0";
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in result" :key="item">
+        <tr v-for="item in result" :key="item.title">
           <th class="text-no-wrap font-weight-bold">{{ item.title }}</th>
-          <td v-if="item.isSuccess" class="text-red">〇</td>
-          <td v-else class="text-blue">×</td>
+          <td>
+            <span class="text-red" v-if="item">〇</span>
+            <span class="text-blue" v-else>×</span>
+          </td>
           <td class="text-no-wrap">{{ item.comment }}</td>
           <td class="text-no-wrap">
             <router-link :to="{ name: 'examBrowserUpdateHelp' }" target="_blank"
@@ -85,14 +99,6 @@ result.value.browser.comment = "Chrome129.0.0.0";
       message="ログイン画面に戻ります。よろしいですか？"
       @onOkClick="$router.push({ name: 'exam' })"
     />
-    <ComponentButton
-      text="次へ"
-      color="primary"
-      :disabled="
-        !result.os.isSuccess ||
-        !result.browser.isSuccess ||
-        !result.js.isSuccess
-      "
-    />
+    <ComponentButton text="次へ" color="primary" @onClick="onClickNext()" />
   </v-container>
 </template>

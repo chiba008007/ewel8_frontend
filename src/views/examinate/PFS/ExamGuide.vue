@@ -27,7 +27,7 @@ const onMenuBack = () => {
 examObj.checkStatus(testparts_id, k);
 setStartTime();
 
-const enabledFlag = ref(true);
+const enabledFlag = ref(false);
 const enabledTest = (e: boolean) => {
   enabledFlag.value = e;
 };
@@ -36,9 +36,9 @@ const enabledTest = (e: boolean) => {
 <template>
   <ExamTitle @enabledTest="(e) => enabledTest(e)" />
 
-  <v-container class="" fluid v-if="enabledFlag">
-    <ExamParts />
-    <ol class="ml-3 w-100">
+  <v-container class="pa-0 ma-0 px-4" fluid v-if="enabledFlag">
+    <ExamParts class="mt-0" />
+    <ol class="ml-6 w-100">
       <li>
         各設問に対し、現在のご自身が取るであろう傾向を選択肢の中から選択してください。
       </li>

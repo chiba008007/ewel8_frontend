@@ -221,7 +221,7 @@ const dialog = ref(false);
                   color="primary"
                 ></ButtonView>
                 <ButtonView
-                  :disabled="(item as any).endtime ? false : true"
+                  :disabled="(item as any).ended_at ? false : true"
                   text="PDF"
                   variant="tonal"
                   density="compact"

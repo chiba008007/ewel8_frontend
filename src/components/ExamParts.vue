@@ -25,7 +25,7 @@ ExamApiService.getExamTestParts(tmp)
 </script>
 
 <template>
-  <v-container fluid class="mb-0 pb-0">
+  <v-container fluid class="mb-0 pb-0 mt-0 pa-0">
     <p class="text-h5 mb-0">{{ testcode }}</p>
   </v-container>
 </template>

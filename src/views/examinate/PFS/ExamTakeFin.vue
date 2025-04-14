@@ -40,7 +40,7 @@ const onMenuBack = () => {
     query: { k: k },
   });
 };
-const enabledFlag = ref(true);
+const enabledFlag = ref(false);
 const enabledTest = (e: boolean) => {
   enabledFlag.value = e;
 };

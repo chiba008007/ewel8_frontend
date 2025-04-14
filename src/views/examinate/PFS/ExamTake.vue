@@ -33,7 +33,7 @@ const setLoop = () => {
     if (!selectPoint[i]) disabledFlag.value = true;
   }
 };
-const enabledFlag = ref(true);
+const enabledFlag = ref(false);
 const enabledTest = (e: boolean) => {
   enabledFlag.value = e;
 };
