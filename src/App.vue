@@ -5,7 +5,7 @@ import { useStoreUser } from "../src/store/user";
 import { useRouter } from "vue-router";
 import { preventRapidReload } from "./reload-guard";
 
-if (!preventRapidReload(1000)) {
+if (!preventRapidReload(800)) {
   // 防止した場合はここで終了も可能
   throw new Error("連続リロード防止のため停止");
 }

@@ -27,7 +27,7 @@ let params = {
 const testLength = ref(0);
 const testLengthFlag = ref(false);
 
-const movietype = ref(1);
+const movietype = ref(0);
 const moviedisplayurl = ref();
 ExamApiService.getTestExamMenu(params).then(function (rlt) {
   examList.value = rlt?.data;
@@ -49,6 +49,7 @@ const registerAnswer = () => {
 const test_id = ref(0);
 const examlistdownloadflag = ref(0);
 const enqflag = ref(0);
+
 const setExamData = (e: object | any) => {
   console.log(e);
   test_id.value = e.id;

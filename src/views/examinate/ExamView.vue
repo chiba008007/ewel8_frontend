@@ -25,8 +25,9 @@ const errorflag = ref(false);
 const test_id = ref(0);
 
 const setExamData = (e: object | any) => {
+  console.log(e);
   test_id.value = e.id;
-  // recomendflag.value = e.loginflag;
+  recomendflag.value = e.recomendflag;
   logintext.value = e.logintext;
 };
 
@@ -81,7 +82,8 @@ const enabledTest = (e: boolean) => {
   />
 
   <v-container v-if="enabledFlag">
-    <p class="pt-4 pb-6 text-center">
+    <p class="pt-4 pb-6 text-center" v-if="logintext">{{ logintext }}</p>
+    <p class="pt-4 pb-6 text-center" v-else>
       検査を実施します。<br />
       指示された「ログインID」「生年月日」を入力後ログインを行ってください。
     </p>
@@ -161,13 +163,6 @@ const enabledTest = (e: boolean) => {
           Javascriptの設定を無効にされている場合、正しく機能しない、もしくは正しく表示されないことがあります。<br />
           また、一部cookieを利用したコンテンツがございます。Javascript同様設定を有効にしてください。
         </v-card-text>
-      </v-card>
-    </div>
-    <div v-else>
-      <v-card variant="tonal" class="mt-4" v-if="logintext">
-        <v-card-text style="white-space: pre-wrap; word-wrap: break-word">{{
-          logintext
-        }}</v-card-text>
       </v-card>
     </div>
   </v-container>
