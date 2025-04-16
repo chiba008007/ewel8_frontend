@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, Ref } from "vue";
 import AdminMenu from "../components/AdminMenu.vue";
 import ProgressView from "../components/ProgressView.vue";
 import AlertView from "@/components/AlertView.vue";
@@ -152,49 +152,14 @@ if (tmpid) {
       licensesKey.value.push(key);
       licensesBody.value.push(val.toString());
     }
+
     licenseVal.value = objWithData.data.licenses;
-    elements.value[0].note = objWithData?.data?.element1
-      ? objWithData?.data?.element1
-      : "";
-    elements.value[1].note = objWithData?.data?.element2
-      ? objWithData?.data?.element2
-      : "";
-    elements.value[2].note = objWithData?.data?.element3
-      ? objWithData?.data?.element3
-      : "";
-    elements.value[3].note = objWithData?.data?.element4
-      ? objWithData?.data?.element4
-      : "";
-    elements.value[4].note = objWithData?.data?.element5
-      ? objWithData?.data?.element5
-      : "";
-    elements.value[5].note = objWithData?.data?.element6
-      ? objWithData?.data?.element6
-      : "";
-    elements.value[6].note = objWithData?.data?.element7
-      ? objWithData?.data?.element7
-      : "";
-    elements.value[7].note = objWithData?.data?.element8
-      ? objWithData?.data?.element8
-      : "";
-    elements.value[8].note = objWithData?.data?.element9
-      ? objWithData?.data?.element9
-      : "";
-    elements.value[9].note = objWithData?.data?.element10
-      ? objWithData?.data?.element10
-      : "";
-    elements.value[10].note = objWithData?.data?.element11
-      ? objWithData?.data?.element11
-      : "";
-    elements.value[11].note = objWithData?.data?.element12
-      ? objWithData?.data?.element12
-      : "";
-    elements.value[12].note = objWithData?.data?.element13
-      ? objWithData?.data?.element13
-      : "";
-    elements.value[13].note = objWithData?.data?.element14
-      ? objWithData?.data?.element14
-      : "";
+
+    for (let i = 0; i < 14; i++) {
+      if (!elements.value[i]) elements.value[i] = {};
+      const key = `element${i + 1}`;
+      elements.value[i].note = (objWithData.data as any)[key] || "";
+    }
 
     errorTab1.value = 0;
     errorTab2.value = 0;
@@ -202,35 +167,35 @@ if (tmpid) {
   });
 }
 const onBlur = async (e: string | boolean, type: string) => {
-  if (type === "name") name.value = e;
-  if (type === "login_id") login_id.value = e;
-  if (type === "password") password.value = e;
-  if (type === "pref") preftext.value = e;
-  if (type === "address") addressText.value = e;
-  if (type === "address2") addressText2.value = e;
-  if (type === "tel") tel.value = e;
-  if (type === "fax") fax.value = e;
-  if (type === "system_name") system_name.value = e;
-  if (type === "person") person.value = e;
-  if (type === "person_address") person_address.value = e;
-  if (type === "person2") person2.value = e;
-  if (type === "person_address2") person_address2.value = e;
-  if (type === "person_tel") person_tel.value = e;
-  if (type === "element1") elements.value[0].note = e;
-  if (type === "element2") elements.value[1].note = e;
-  if (type === "element3") elements.value[2].note = e;
-  if (type === "element4") elements.value[3].note = e;
-  if (type === "element5") elements.value[4].note = e;
-  if (type === "element6") elements.value[5].note = e;
-  if (type === "element7") elements.value[6].note = e;
-  if (type === "element8") elements.value[7].note = e;
-  if (type === "element9") elements.value[8].note = e;
-  if (type === "element10") elements.value[9].note = e;
-  if (type === "element11") elements.value[10].note = e;
-  if (type === "element12") elements.value[11].note = e;
-  if (type === "element13") elements.value[12].note = e;
-  if (type === "element14") elements.value[13].note = e;
+  const simpleMap: Record<string, Ref<any>> = {
+    name,
+    login_id,
+    password,
+    pref: preftext,
+    address: addressText,
+    address2: addressText2,
+    tel,
+    fax,
+    system_name,
+    person,
+    person_address,
+    person2,
+    person_address2,
+    person_tel,
+  };
+  if (type in simpleMap) {
+    simpleMap[type].value = e;
+    //return;
+  }
 
+  // element1〜element14 に対応
+  const match = type.match(/^element(\d{1,2})$/);
+  if (match) {
+    const index = Number(match[1]) - 1;
+    if (elements.value[index]) {
+      elements.value[index].note = e;
+    }
+  }
   registButton.value = true;
   if (!tmpid) {
     errorTab1.value = 3;
@@ -301,51 +266,28 @@ const addRegist = () => {
     person2: person2.value,
     person_address2: person_address2.value,
     person_tel: person_tel.value,
-    element1: elements.value[0].note,
-    element2: elements.value[1].note,
-    element3: elements.value[2].note,
-    element4: elements.value[3].note,
-    element5: elements.value[4].note,
-    element6: elements.value[5].note,
-    element7: elements.value[6].note,
-    element8: elements.value[7].note,
-    element9: elements.value[8].note,
-    element10: elements.value[9].note,
-    element11: elements.value[10].note,
-    element12: elements.value[11].note,
-    element13: elements.value[12].note,
-    element14: elements.value[13].note,
+    licensesBody: licensesBody.value,
+    licensesKey: licensesKey.value,
   };
+
+  // 1〜14のelementに対応するプロパティを動的に設定
+  for (let i = 1; i <= 14; i++) {
+    settingData.value[`element${i}`] = elements.value[i - 1]?.note || ""; // noteが無い場合は空文字をセット
+  }
+
   if (tmpid) {
     settingData.value.id = tmpid;
-    UserApiService.editPartnerData(settingData.value).then((res) => {
-      settingLicense.value = {
-        res: res,
-        licensesKey: licensesKey.value,
-        licensesBody: licensesBody.value,
-      };
-
-      UserApiService.setLicense(settingLicense.value).then((res) => {
-        registButton.value = true;
-        registAlert.value = true;
-      });
+    UserApiService.editPartnerData(settingData.value).then(() => {
+      registButton.value = true;
+      registAlert.value = true;
       loadingFlag.value = false;
     });
   } else {
-    UserApiService.setPartner(settingData.value).then((res) => {
-      settingLicense.value = {
-        res: res,
-        licensesKey: licensesKey.value,
-        licensesBody: licensesBody.value,
-      };
-
-      UserApiService.setLicense(settingLicense.value).then((res) => {
-        console.log("success");
-        registButton.value = true;
-        registAlert.value = true;
-      });
+    UserApiService.setPartner(settingData.value).then(() => {
+      registButton.value = true;
+      registAlert.value = true;
+      loadingFlag.value = false;
     });
-    loadingFlag.value = false;
   }
 };
 

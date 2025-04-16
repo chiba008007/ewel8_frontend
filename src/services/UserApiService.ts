@@ -107,7 +107,7 @@ class UserApiService {
       return await httpAuth.post("/api/user/getUserData", data);
     } catch (e) {
       console.log(e);
-      location.reload();
+      return null;
     }
   }
 }
