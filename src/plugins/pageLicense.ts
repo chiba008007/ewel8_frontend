@@ -1,6 +1,5 @@
 import { ref } from "vue";
 import UserApiService from "@/services/UserApiService";
-
 export default function () {
   const lisenceView = ref();
   const getUserLisence = (tmpid: string | string[]) => {
@@ -11,7 +10,7 @@ export default function () {
         lisenceView.value = res.data;
       })
       .catch((e) => {
-        alert("getlicense error");
+        console.log(e);
       });
     return lisenceView;
   };
@@ -24,7 +23,7 @@ export default function () {
         lisenceViewCalc.value = res.data;
       })
       .catch((e) => {
-        alert("getlicenseCalc error");
+        console.log(e);
       });
     return lisenceView;
   };
@@ -40,13 +39,12 @@ export default function () {
       type: typeStr,
     };
 
-    try {
-      await UserApiService.getPartnerDetail(tmp).then((res) => {
-        partnerDetail.value = res?.data;
-        partner_id.value = res?.data.id;
+    const result = UserApiService.getPartnerDetail(tmp);
+    if (result !== false) {
+      await result.then((res) => {
+        partnerDetail.value = res.data;
+        partner_id.value = res.data.id;
       });
-    } catch (e) {
-      alert("get Partner Detail Error");
     }
     return {
       partnerDetail: partnerDetail.value,

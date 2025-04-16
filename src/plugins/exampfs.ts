@@ -1,6 +1,7 @@
 import { ref, Ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ExamApiService from "@/services/ExamApiService";
+import { AxiosResponse } from "axios";
 export declare type LocationQueryValue = string | null;
 const route = useRoute();
 const questions = ref({
@@ -239,7 +240,7 @@ export default function () {
       testparts_id: testparts_id,
     };
     return ExamApiService.getPFS(tmp).then(function (rlt) {
-      return rlt?.data;
+      return (rlt as AxiosResponse).data;
     });
   };
 
@@ -276,7 +277,6 @@ export default function () {
             });
           return true;
         }
-        alert("error");
         return false;
       });
     } else {
@@ -293,7 +293,7 @@ export default function () {
             });
           return true;
         }
-        alert("error");
+
         return false;
       });
     }

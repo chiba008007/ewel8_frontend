@@ -15,7 +15,7 @@ const tmp = {
 };
 
 const partnerDetail = ref();
-await UserApiService.getPartnerDetail(tmp).then((res) => {
+UserApiService.getPartnerDetail(tmp).then((res) => {
   if (res) {
     const entries = (res as any).data.user;
     partnerDetail.value = entries;

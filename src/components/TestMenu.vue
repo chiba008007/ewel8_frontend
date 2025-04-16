@@ -22,7 +22,7 @@ UserApiService.getPartnerid(tmp)
     partnerid.value = res.data;
   })
   .catch((e) => {
-    alert("TestMenu ERROR" + e);
+    console.log("TestMenu ERROR" + e);
     // location.href = "/error";
   });
 const pageClickMoveParam = (pagename: string) => {

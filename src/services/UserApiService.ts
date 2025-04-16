@@ -41,19 +41,19 @@ class UserApiService {
       console.log(e);
     }
   }
-  async getPartnerDetail(data: object) {
+  getPartnerDetail(data: object) {
     try {
-      return await httpAuth.post("/api/user/getPartnerDetail", data);
+      return httpAuth.post("/api/user/getPartnerDetail", data);
     } catch (e) {
-      alert("error");
+      return false;
       //location.href="/error"
     }
   }
-  async getPartnerDetailData(data: object) {
+  getPartnerDetailData(data: object) {
     try {
       return httpAuth.post("/api/user/getPartnerDetailData", data);
     } catch (e) {
-      alert("error");
+      return false;
       //location.href="/error"
     }
   }
@@ -93,11 +93,11 @@ class UserApiService {
   getCustomerList(data: object): Promise<object> {
     return httpAuth.post("/api/user/getCustomerList", data);
   }
-  getPartnerid(data: object): Promise<{ data: number }> {
-    return httpAuth.post("/api/user/getPartnerid", data);
+  async getPartnerid(data: object): Promise<{ data: number }> {
+    return await httpAuth.post("/api/user/getPartnerid", data);
   }
-  getUserLisence(data: object): Promise<object> {
-    return httpAuth.post("/api/user/getUserLisence", data);
+  async getUserLisence(data: object): Promise<object> {
+    return await httpAuth.post("/api/user/getUserLisence", data);
   }
   getUserLisenceCalc(data: object): Promise<object> {
     return httpAuth.post("/api/user/getUserLisenceCalc", data);

@@ -10,7 +10,7 @@ class ExamApiService {
     try {
       return await httpAuth.post("/api/exam/getPFS", data);
     } catch (e) {
-      alert("error");
+      return false;
       //location.href = "/exam/error";
     }
   }

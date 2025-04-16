@@ -63,7 +63,7 @@ UserApiService.getLisencesList(tmp)
         saleLisence: val.num - val.exam_count,
         examCount: val.exam_count,
         syoriCount: val.started_exam_count,
-        zanCount: val.exam_count - val.started_exam_count,
+        zanCount: val.exam_count - val.ended_exam_count,
       });
     });
   })

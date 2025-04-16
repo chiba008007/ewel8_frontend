@@ -83,7 +83,7 @@ UserApiService.getUserElement(tmp)
     }
   })
   .catch((e) => {
-    alert("TestMenu ERROR" + e);
+    console.log("TestMenu ERROR" + e);
   });
 
 const csvData = ref();

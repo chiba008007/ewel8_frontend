@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import TestApiService from "@/services/TestApiService";
-import UserApiService from "@/services/UserApiService";
 import pankuzuTest from "../components/pankuzuTest.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import csvDownload from "@/components/csvDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
 import ExamBAJ3View from "@/components/ExamBAJ3View.vue";
-import { passArray, d_Path } from "@/plugins/const";
+import { passArray } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
-import { pfsOutput } from "@/plugins/PDF/pfs";
 import { pdfDownload } from "@/plugins/pdf";
 
 const pdfcode = ref();
@@ -31,7 +29,7 @@ const headers = ref([
 const examList = ref();
 const router = useRouter();
 const detail = ref();
-const title = ref("");
+
 const params = router.currentRoute.value.params;
 let tmp = {
   user_id: params.id,

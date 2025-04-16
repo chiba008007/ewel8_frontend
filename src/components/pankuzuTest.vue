@@ -153,7 +153,8 @@ UserApiService.getPartnerid(tmp)
     }
   })
   .catch((e) => {
-    alert("TestMenu ERROR" + e);
+    console.log("TestMenu ERROR " + e);
+    //window.location.reload();
     // location.href = "/error";
   });
 </script>
