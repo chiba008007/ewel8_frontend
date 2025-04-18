@@ -5,6 +5,7 @@ import TestApiService from "@/services/TestApiService";
 import pankuzuTest from "../components/pankuzuTest.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import csvDownload from "@/components/csvDownload.vue";
+import excelDownload from "@/components/excelDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
 import ExamBAJ3View from "@/components/ExamBAJ3View.vue";
 import { passArray } from "@/plugins/const";
@@ -246,6 +247,7 @@ const dialog = ref(false);
         </v-data-table>
         <div class="pa-2">
           <div class="d-flex">
+            <excelDownload text="エクセルダウンロード"></excelDownload>
             <csvDownload text="CSVダウンロード"></csvDownload>
           </div>
         </div>
