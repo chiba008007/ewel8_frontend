@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { withDefaults, defineProps, defineEmits, ref } from "vue";
+import { withDefaults, defineProps, ref } from "vue";
+import { useRouter } from "vue-router";
 import ComponentButton from "@/components/ButtonView.vue";
 import ExcelApiService from "@/services/ExcelApiService";
 import { d_Path } from "@/plugins/const";
@@ -8,6 +9,8 @@ interface Props {
   title?: string;
   cancelButtonText?: string;
 }
+const router = useRouter();
+const params = router.currentRoute.value.params;
 
 const props = withDefaults(defineProps<Props>(), {
   text: undefined,
@@ -17,8 +20,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const onClick = () => {
   ExcelApiService.getExcel({
-    test_id: 1,
-    customer_id: 9,
+    test_id: params.testid,
+    customer_id: params.id,
     type: 1,
   }).then((res) => {
     location.href = d_Path + "/" + res.data.file_path;
