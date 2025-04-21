@@ -18,14 +18,18 @@ const props = withDefaults(defineProps<Props>(), {
   cancelButtonText: "閉じる",
 });
 
-const onClick = () => {
+const onClick = (type: number) => {
   ExcelApiService.getExcel({
     test_id: params.testid,
     customer_id: params.id,
-    type: 1,
-  }).then((res) => {
-    location.href = d_Path + "/" + res.data.file_path;
-  });
+    type: type,
+  })
+    .then((res) => {
+      location.href = d_Path + "/" + res.data.file_path;
+    })
+    .catch((e) => {
+      console.log(e);
+    });
 };
 const dialog = ref(false);
 </script>
@@ -40,12 +44,13 @@ const dialog = ref(false);
             text="全員分"
             color="green"
             class="w-100"
-            @onClick="onClick()"
+            @onClick="onClick(1)"
           ></ComponentButton>
           <ComponentButton
             text="受検済のみ"
             color="green"
             class="w-100 mt-3"
+            @onClick="onClick(2)"
           ></ComponentButton>
         </v-card-text>
         <v-card-actions>
