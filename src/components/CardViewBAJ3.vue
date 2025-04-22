@@ -4,22 +4,28 @@ import AddSwitchForm from "./addSwitchForm.vue";
 import TextField from "@/components/TextFieldView.vue";
 import ButtonView from "./ButtonView.vue";
 import { settingStatus } from "@/plugins/const";
+import getWeightMasterView from "./getWeightMasterView.vue";
 const settingString = (type: boolean) => {
   return type ? settingStatus[1] : settingStatus[0];
 };
 
 interface Props {
   title?: string;
+  editid?: number | string | string[];
   testcount?: number | string;
   model?: boolean;
   weightModel?: boolean;
   element?: object | any;
+  dataDetail?: object | any;
+  inputWeight?: string[];
+  inputWeightMasterString?: string;
 }
 interface inputObj {
   [key: string]: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   title: "",
+  editid: 0,
   testcount: 0,
 });
 
@@ -54,6 +60,12 @@ const onClick = (status: number) => {
   let bool = status ? true : false;
   emit("onStatus", bool);
 };
+if (props.editid) {
+  onClick(1);
+}
+const setInputWeight = (ev: string) => {
+  alert(ev);
+};
 </script>
 <template>
   <v-card class="w-100" elevation="4" variant="outlined">
@@ -64,13 +76,18 @@ const onClick = (status: number) => {
         :variant="`outlined`"
         :class="bgcolor[0]"
         @onClick="onClick(0)"
+        :readonly="props.editid ? true : false"
       ></ButtonView>
       <ButtonView
         text="利用する"
         :class="bgcolor[1]"
         :variant="`outlined`"
         @onClick="onClick(1)"
+        :readonly="props.editid ? true : false"
       ></ButtonView>
+      <p v-show="props.editid ? true : false" class="text-red">
+        ※ データ更新時は変更不可となります。
+      </p>
     </v-card-actions>
     <v-card-text>
       <v-row no-gutters>
@@ -102,12 +119,20 @@ const onClick = (status: number) => {
           ></AddSwitchForm>
         </v-col>
       </v-row>
+
       <v-row no-gutters>
-        <v-col cols="12">CSVファイルからデータ取得</v-col>
-        <v-col cols="12">重みマスタからデータ取得</v-col>
+        <v-col cols="12">
+          重みマスタからデータ取得<br />
+          <getWeightMasterView
+            :inputWeightMasterString="props.inputWeightMasterString"
+            class="w-50"
+            @onChange="(e) => setInputWeight(e)"
+            :items="props.inputWeight"
+          ></getWeightMasterView>
+        </v-col>
       </v-row>
 
-      <p class="text-caption text-red">
+      <p class="text-caption text-red" v-show="props.editid === 0">
         重み付けを設定する場合は、各々数値を入力してください。入力する場合は、半角数字で入力してください。<br />
         既存の重み付けマスタ、csvファイルから取得することも可能です。<br />
         また、重み取得後、編集も可能です。
@@ -126,7 +151,12 @@ const onClick = (status: number) => {
                   {{ val.note }}
                 </p>
               </div>
+              <div v-if="editid" class="text-right pa-1 box">
+                {{ props.dataDetail[`weight${val.id}`] }}
+              </div>
               <TextField
+                v-else
+                :value="props.dataDetail[`weight${val.id}`]"
                 type="number"
                 step="0.001"
                 class="text-caption"
@@ -139,3 +169,8 @@ const onClick = (status: number) => {
     </v-card-text>
   </v-card>
 </template>
+<style lang="scss">
+.box {
+  border: 1px solid #ccc;
+}
+</style>

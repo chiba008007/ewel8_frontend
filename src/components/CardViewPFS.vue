@@ -4,6 +4,7 @@ import AddSwitchForm from "./addSwitchForm.vue";
 import TextField from "@/components/TextFieldView.vue";
 import ButtonView from "./ButtonView.vue";
 import { settingStatus } from "@/plugins/const";
+import getWeightMasterView from "./getWeightMasterView.vue";
 const settingString = (type: boolean) => {
   return type ? settingStatus[1] : settingStatus[0];
 };
@@ -16,6 +17,8 @@ interface Props {
   weightModel?: boolean;
   element?: object | any;
   dataDetail?: object | any;
+  inputWeight?: string[];
+  inputWeightMasterString?: string;
 }
 interface inputObj {
   [key: string]: string;
@@ -33,6 +36,7 @@ const emit = defineEmits<{
   (e: "onWeightFlag", value: boolean): void;
   (e: "onWeight", value: object): void;
   (e: "onStatus", value: boolean): void;
+  (e: "setInputWeight", value: string): void;
 }>();
 
 const inputData: inputObj = {};
@@ -60,6 +64,9 @@ const onClick = (status: number) => {
 if (props.editid) {
   onClick(1);
 }
+const setInputWeight = (ev: string) => {
+  emit("setInputWeight", ev);
+};
 </script>
 <template>
   <v-card class="w-100" elevation="4" variant="outlined">
@@ -113,9 +120,19 @@ if (props.editid) {
           ></AddSwitchForm>
         </v-col>
       </v-row>
-      <v-row no-gutters>
+      <v-row no-gutters v-show="props.editid === 0">
         <v-col cols="12">CSVファイルからデータ取得</v-col>
-        <v-col cols="12">重みマスタからデータ取得</v-col>
+      </v-row>
+      <v-row no-gutters v-show="props.editid === 0">
+        <v-col cols="12">
+          重みマスタからデータ取得<br />
+          <getWeightMasterView
+            :inputWeightMasterString="props.inputWeightMasterString"
+            class="w-50"
+            @onChange="(e) => setInputWeight(e)"
+            :items="props.inputWeight"
+          ></getWeightMasterView>
+        </v-col>
       </v-row>
 
       <p class="text-caption text-red" v-show="props.editid === 0">

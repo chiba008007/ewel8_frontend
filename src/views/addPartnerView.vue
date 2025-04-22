@@ -31,7 +31,7 @@ const tmpid = route.params.id;
 
 const tab = ref();
 const prefs = ref();
-const elements = ref();
+const elements = ref<Array<{ note?: string }>>([]);
 const licenses = ref();
 const post_code = ref();
 const post1 = ref();
@@ -156,7 +156,8 @@ if (tmpid) {
     licenseVal.value = objWithData.data.licenses;
 
     for (let i = 0; i < 14; i++) {
-      if (elements.value && !elements.value[i]) elements.value[i] = {};
+      if (!elements.value) elements.value = [];
+      if (!elements.value[i]) elements.value[i] = {};
       const key = `element${i + 1}`;
       elements.value[i].note = (objWithData.data as any)[key] || "";
     }

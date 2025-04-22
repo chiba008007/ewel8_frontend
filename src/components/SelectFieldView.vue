@@ -7,7 +7,7 @@ type TVDensity = VTextField["$props"]["density"];
 
 interface Props {
   type?: string;
-  items?: object[] | string[] | string | number[];
+  items?: object[] | string[] | string | number[] | any;
   name?: string;
   text?: string | number | any;
   placeholder?: string;
@@ -19,6 +19,7 @@ interface Props {
   person?: string;
   label?: string;
   class?: string;
+  clearable?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -33,6 +34,7 @@ const props = withDefaults(defineProps<Props>(), {
   person: undefined,
   label: undefined,
   class: undefined,
+  clearable: false,
 });
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
@@ -51,6 +53,7 @@ const emit = defineEmits<{
     :density="props.density"
     :class="props.class"
     :model-value="props.text"
+    :clearable="props.clearable"
     @keydown="removeTabKey($event)"
     @blur="emit('onBlur', $event.target.value)"
     @update:modelValue="emit('onChange', $event)"

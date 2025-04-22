@@ -23,6 +23,7 @@ import addPDFForm from "../components/addPDFForm.vue";
 import TextFieldView from "@/components/TextFieldView.vue";
 import { useRouter, useRoute } from "vue-router";
 import TestApiService from "@/services/TestApiService";
+import WeightApiService from "@/services/WeightApiService";
 import { numberValue, requiredValue } from "../plugins/validate";
 import CardViewPFS from "@/components/CardViewPFS.vue";
 import CardViewBAJ3 from "@/components/CardViewBAJ3.vue";
@@ -113,6 +114,20 @@ const inputTestPart = ref<{
   PFS: { ...initialPartStatus },
   BAJ3: { ...initialPartStatus },
 });
+
+// 重み付けマスタ取得
+const inputWeight = ref();
+try {
+  WeightApiService.getWeightMaster({ id: tmpid })
+    .then((res) => {
+      inputWeight.value = res.data;
+    })
+    .catch((e) => {
+      alert("error" + e);
+    });
+} catch (e) {
+  console.log(e);
+}
 
 const lisenceView = ref(pl.getUserLisence(tmpid));
 const lisenceViewCalc = ref(pl.getUserLisenceCalc(tmpid));
@@ -368,6 +383,32 @@ const edittingString = (type: boolean) => {
 const pagemove = () => {
   router.push({ name: "testLists", params: { id: tmpid } });
 };
+const inputWeightMasterString = ref();
+const setInputWeight = (e: string, type: string) => {
+  const result = inputWeight.value.find(
+    (item: { id: number; name: string; created_at: string; date: string }) =>
+      item.id === Number(e)
+  );
+
+  inputWeightMasterString.value = result && result.name ? result.name : "";
+  if (result && result?.id) {
+    WeightApiService.getWeightMasterDetail({
+      weightid: result.id,
+      customer_id: tmpid,
+    }).then((res) => {
+      if (type === "PFS") {
+        inputTestPart.value.PFS.weight = [];
+        for (let i = 1; i <= 14; i++) {
+          let data = res.data[`wt${i}`];
+          if (i == 13) data = res.data.ave;
+          if (i == 14) data = res.data.hensa;
+          (inputTestPart.value.PFS.weight as any)[i] = data;
+          (inputTestPart.value.PFS as any)["weight" + i] = data;
+        }
+      }
+    });
+  }
+};
 </script>
 <template>
   <PartnerAdmin coded="customer" />
@@ -502,7 +543,13 @@ const pagemove = () => {
             :value="inputData.testcount"
             :requriredIcon="true"
             :rules="
-              numberValue(inputData.testcount, '受検者数', 10000, editid, done)
+              numberValue(
+                inputData.testcount,
+                '受検者数',
+                10000,
+                Number(editid),
+                done
+              )
             "
             @onBlur="(e:any) => ((inputData.testcount = e), onBlurButton())"
           ></addPartnerForm>
@@ -695,6 +742,8 @@ const pagemove = () => {
                   :model="inputTestPart.PFS.threeflag"
                   :weightModel="inputTestPart.PFS.weightFlag"
                   :dataDetail="inputTestPart.PFS"
+                  :inputWeight="inputWeight"
+                  :inputWeightMasterString="inputWeightMasterString"
                   :element="elements"
                   @onThree="
                     (e) => (inputTestPart.PFS.threeflag = e ? false : true)
@@ -706,6 +755,7 @@ const pagemove = () => {
                   @onStatus="
                     (e) => ((inputTestPart.PFS.status = e), onBlurButton1())
                   "
+                  @setInputWeight="(e) => setInputWeight(e, val.code)"
                 ></CardViewPFS>
                 <CardViewBAJ3
                   v-show="(inputData.testparts as any)[val.code]?.id && editid || editid === 0 ? true:false"
