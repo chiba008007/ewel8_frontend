@@ -11,11 +11,11 @@ import UserApiService from "@/services/UserApiService";
 import pageClickMove from "../plugins/pagemove";
 import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
 
+import ProgressView from "@/components/ProgressView.vue";
 const move = pageClickMove();
 const route = useRoute();
-const user = useStoreUser();
 const tmpid = route.params.id;
-
+const loadingFlag = ref(true);
 const customerheaders = ref([
   { title: "企業名", key: "campany" },
   { title: "受検者数", key: "examCount" },
@@ -66,6 +66,7 @@ UserApiService.getLisencesList(tmp)
         zanCount: val.exam_count - val.ended_exam_count,
       });
     });
+    loadingFlag.value = false;
   })
   .catch((e) => {
     alert("ライセンス取得 ERROR" + e);
@@ -96,6 +97,7 @@ const onMove = (param: string, key: number) => {
 };
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <PartnerAdmin coded="customerTOP" />
   <InfoAreaView />
   <v-row justify="center">
@@ -112,13 +114,14 @@ const onMove = (param: string, key: number) => {
       <v-window v-model="tab">
         <v-window-item value="1">
           <v-data-table
+            v-if="!loadingFlag && customerList.length > 0"
             :headers="customerheaders"
             :items="customerList"
             class="listable ma-2"
             fixed-header
           >
             <template v-slot:item="{ item }">
-              <tr>
+              <tr v-show="item.id">
                 <td class="w-50">{{ item.campany }}</td>
                 <td>{{ item.examCount }}</td>
                 <td>{{ item.syoriCount }}</td>

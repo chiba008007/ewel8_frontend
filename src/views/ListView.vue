@@ -74,7 +74,7 @@ const onSearch = (e: string) => {
   <v-data-table
     :headers="headers"
     :items="desserts[0]"
-    class="listable ma-2"
+    class="listable ma-2 dataPartnerTableStyle dataTestList"
     :height="tableHeight"
     :search="``"
     fixed-header

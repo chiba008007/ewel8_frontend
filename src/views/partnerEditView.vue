@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStoreUser } from "../store/user";
@@ -16,15 +16,16 @@ import ComponentAlert from "../components/AlertView.vue";
 import { requiredValue, checkPassword } from "../plugins/validate";
 import { textString } from "@/plugins/const";
 import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import ProgressView from "@/components/ProgressView.vue";
 
 const route = useRoute();
 const regex = /(\d+)(?!.*\d)/;
 const isPortal = ref(route.path.match(regex));
 const paramId = isPortal.value ? isPortal.value[0] : 0;
-const router = useRouter();
 const user = useStoreUser();
 const userid = (user.userdata as any).id;
 const userType = (user.userdata as any).type;
+const loadingFlag = ref(true);
 
 const form = ref({
   password: "",
@@ -72,6 +73,8 @@ UserApiService.getPartnerDetailData(tmp).then((res) => {
   form.value.person_tel = userDetail.value.person_tel;
   form.value.person2 = userDetail.value.person2;
   form.value.person_address2 = userDetail.value.person_address2;
+
+  loadingFlag.value = false;
 });
 
 const post1 = ref();
@@ -92,7 +95,7 @@ const registButton = ref(false);
 
 const addRegist = () => {
   errorAlertFlag.value = false;
-
+  loadingFlag.value = true;
   var tmp = {
     id: paramId,
     password: form.value.password,
@@ -112,6 +115,7 @@ const addRegist = () => {
   UserApiService.editPartner(tmp)
     .then((res) => {
       successAlertFlag.value = true;
+      loadingFlag.value = false;
     })
     .catch((e) => {
       alert("edit ERROR" + e);
@@ -119,6 +123,7 @@ const addRegist = () => {
 };
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <PartnerAdmin coded="customerTOP" />
   <v-row align="center" justify="center">
     <CustomerMenu />

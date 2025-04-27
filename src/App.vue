@@ -79,5 +79,13 @@ const onLogout = () => {
       }
     }
   }
+  &.dataPartnerTableStyle {
+    table {
+      th {
+        background-color: rgb(0, 0, 255) !important;
+        white-space: nowrap;
+      }
+    }
+  }
 }
 </style>

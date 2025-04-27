@@ -90,8 +90,10 @@ const person2 = ref();
 const person_address2 = ref();
 const person_tel = ref();
 const licenseVal = ref({}) as any;
+const loadingFlag = ref(false);
 // 編集用データ取得
 if (tmpid) {
+  loadingFlag.value = true;
   UserApiService.getUserData({ id: tmpid }).then((rlt) => {
     const objWithData = rlt as {
       data: {
@@ -165,6 +167,7 @@ if (tmpid) {
     errorTab1.value = 0;
     errorTab2.value = 0;
     registButton.value = false;
+    loadingFlag.value = false;
   });
 }
 const onBlur = async (e: string | boolean, type: string) => {
@@ -244,7 +247,7 @@ const onBlur = async (e: string | boolean, type: string) => {
 
 const requestFlag = ref(true);
 const registAlert = ref(false);
-const loadingFlag = ref(false);
+
 const addRegist = () => {
   loadingFlag.value = true;
   let post = post1.value + "-" + post2.value;

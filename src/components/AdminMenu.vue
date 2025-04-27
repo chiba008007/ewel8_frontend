@@ -15,7 +15,6 @@ const pageClickMove = (pagename: string) => {
         :text="textString.CompanyEdit"
         variant="outlined"
         density="compact"
-        color="primary"
         class="w-25"
         @onClick="pageClickMove('partnerRegist')"
       ></ComponentButton>
@@ -23,7 +22,6 @@ const pageClickMove = (pagename: string) => {
         text="新規パートナー登録"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
         @onClick="pageClickMove('addPartner')"
       ></ComponentButton>
@@ -31,7 +29,6 @@ const pageClickMove = (pagename: string) => {
         text="受検者検索"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
         @onClick="pageClickMove('searchExam')"
       ></ComponentButton>
@@ -39,14 +36,12 @@ const pageClickMove = (pagename: string) => {
         text="検査ログ"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
         text="PDF出力ログ"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
     </div>
@@ -55,35 +50,30 @@ const pageClickMove = (pagename: string) => {
         text="検査種別ROWデータ"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
         text="請求書一覧"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
         text="ライセンス一覧"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
         text="お知らせ情報"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
         text="受検者ログイン状況"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
     </div>
@@ -92,28 +82,24 @@ const pageClickMove = (pagename: string) => {
         text="管理者ログイン状況"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
         text="企業一覧"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
         text="PDF一覧"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
         text="セキュリティログ"
         variant="outlined"
         density="compact"
-        color="primary"
         class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
