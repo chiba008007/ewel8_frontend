@@ -12,11 +12,13 @@ import pankuzuTest from "@/components/pankuzuTest.vue";
 import dayjs from "dayjs";
 import { useStoreUser } from "@/store/user";
 import { D_ADMIN, D_PARTNER } from "@/plugins/const";
+import ProgressView from "@/components/ProgressView.vue";
 import "dayjs/locale/ja";
 dayjs.locale("ja");
 const move = pageClickMove();
 const route = useRoute();
 const user = useStoreUser();
+const loadingFlag = ref(true);
 
 const testheaders = ref([
   { title: "企業名", align: undefined, key: "campany" },
@@ -47,6 +49,7 @@ type userAny = {
 const type = (user.userdata as userType).type;
 TestApiService.getTestList(tmp)
   .then(function (res) {
+    loadingFlag.value = false;
     testList.value = res.data;
   })
   .catch(function (e) {
@@ -68,14 +71,15 @@ const onResize = () => {
   <v-row justify="center">
     <TestMenu />
   </v-row>
-
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <pankuzuTest
     :partnerhref="{ pageName: 'testList', href: 'testLists' }"
     :adminhref="{ pageName: 'testList', href: 'testLists' }"
   ></pankuzuTest>
   <v-row v-resize="onResize">
-    <v-col class="ma-1">
+    <v-col class="mt-0 pt-0">
       <v-data-table
+        v-if="testList"
         :headers="testheaders"
         :items="testList"
         class="listable ma-2 dataTableStyle dataTestList"

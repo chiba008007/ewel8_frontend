@@ -105,7 +105,7 @@ const onMove = (param: string, key: number) => {
   </v-row>
   <pankuzuCustomer></pankuzuCustomer>
   <v-row>
-    <v-col class="ma-1">
+    <v-col class="mt-0 pt-0">
       <v-tabs v-model="tab">
         <v-tab value="1">顧客一覧</v-tab>
         <v-tab value="2">検査一覧</v-tab>

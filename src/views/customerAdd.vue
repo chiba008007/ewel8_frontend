@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import { useStoreUser } from "../store/user";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import InfoAreaView from "../components/InfoAreaView.vue";
@@ -23,13 +23,14 @@ import UserApiService from "@/services/UserApiService";
 import { imagePath, customer } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
 import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import ProgressView from "@/components/ProgressView.vue";
 
 import { displayStatus } from "@/plugins/const";
 const route = useRoute();
 const user = useStoreUser();
 const registButton = ref<boolean>(true);
 const tmpid = route.params.id;
-
+const loadingFlag = ref(false);
 const inputData = ref({
   name: "",
   login_id: "",
@@ -119,7 +120,7 @@ const onUpdate = () => {
 };
 const successAlertFlag = ref(false);
 const addRegist = () => {
-  console.log(inputData.value);
+  loadingFlag.value = true;
   let userdata = user.userdata as any;
   let tmp = {
     type: customer,
@@ -158,11 +159,12 @@ const addRegist = () => {
 
   UserApiService.setCustomerAdd(tmp)
     .then((res) => {
-      console.log("success");
       successAlertFlag.value = true;
+      loadingFlag.value = false;
     })
     .catch(function (e) {
       alert(e);
+      loadingFlag.value = false;
     });
 };
 
@@ -174,6 +176,7 @@ const pagemove = () => {
 };
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <InfoAreaView />
   <v-row justify="center">
     <CustomerMenu />
