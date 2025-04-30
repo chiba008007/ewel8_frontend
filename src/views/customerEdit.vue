@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useStoreUser } from "../store/user";
-import TextMenu from "../components/TestMenu.vue";
 import InfoAreaView from "../components/InfoAreaView.vue";
 import { useRouter, useRoute } from "vue-router";
 import addPartnerForm from "../components/addPartnerForm.vue";
@@ -20,10 +19,12 @@ import {
   checkEmail,
 } from "../plugins/validate";
 import UserApiService from "@/services/UserApiService";
-import { imagePath, customer, displayStatus } from "@/plugins/const";
+import UserApiGetCustomerEdit from "@/services/UserApiGetCustomerEdit";
+import { imagePath, displayStatus } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
-
-import pankuzuTest from "@/components/pankuzuTest.vue";
+import CustomerMenu from "../components/CustomerMenu.vue";
+import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import ProgressView from "@/components/ProgressView.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -32,7 +33,7 @@ const registButton = ref<boolean>(false);
 const tmpid = route.params.id;
 const editid = route.params.editid;
 const typeString = route.params.typeString;
-
+const loadingFlag = ref(true);
 const inputData = ref({
   name: "",
   login_id: "",
@@ -128,11 +129,11 @@ const onUpdate = () => {
     });
 };
 const successAlertFlag = ref(false);
-
 const editData = () => {
+  loadingFlag.value = true;
   let tmp = {
-    id: tmpid,
-    partner_id: editid,
+    id: editid,
+    partner_id: tmpid,
     name: inputData.value.name,
     // email: inputData.value.login_id,
     password: inputData.value.password,
@@ -165,19 +166,21 @@ const editData = () => {
 
   UserApiService.customerEdit(tmp)
     .then((res) => {
+      loadingFlag.value = false;
       successAlertFlag.value = true;
     })
     .catch(function (e) {
+      loadingFlag.value = false;
       alert(e);
     });
 };
 
 let editTmp = {
   type: "customer",
-  partnerId: editid,
-  editId: tmpid,
+  partner_id: editid,
+  edit_id: tmpid,
 };
-UserApiService.getPartnerDetail(editTmp)
+UserApiGetCustomerEdit.getCustomerEdit(editTmp)
   .then((rst) => {
     inputData.value.name = rst?.data.name;
     inputData.value.login_id = rst?.data.login_id;
@@ -205,10 +208,11 @@ UserApiService.getPartnerDetail(editTmp)
     inputData.value.tanto_tel2 = rst?.data.tanto_tel2;
     inputData.value.tanto_name2 = rst?.data.tanto_name2;
     inputData.value.tanto_address2 = rst?.data.tanto_address2;
+
+    loadingFlag.value = false;
   })
   .catch((e) => {
-    alert("editUserData ERROR" + e);
-    location.href = "/error";
+    loadingFlag.value = false;
   });
 
 const displayString = (type: boolean) => {
@@ -219,24 +223,15 @@ const backColor = () => {
 };
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <InfoAreaView />
   <v-row justify="center">
-    <TextMenu v-if="typeString == 'test'" />
-    <v-else CustomerMenu />
+    <CustomerMenu />
   </v-row>
-  <pankuzuTest
-    :pageName="user.testList"
-    :partnerhref="{
-      pageName: 'testList',
-      href: 'testLists',
-    }"
-    :partnerhref2="{
-      pageName: 'customerEdit',
-      href: 'customerEdit',
-    }"
-    :adminhref="{ pageName: 'testList', href: 'testLists' }"
-    :adminhref2="{ pageName: 'customerEdit' }"
-  ></pankuzuTest>
+  <pankuzuCustomer
+    :pageName="user.customerEdit"
+    name="customerList"
+  ></pankuzuCustomer>
 
   <v-row no-gutters>
     <v-col cols="12" class="pa-2 ma-2">
@@ -284,11 +279,12 @@ const backColor = () => {
         class="w-50"
         :hideDetails="`auto`"
         type="login_id"
-        :displayTextValue="inputData.login_id"
+        :value="inputData.login_id"
         :requriredIcon="true"
+        :maxlength="8"
         messages="4文字以上8文字以下で入力してください"
         @onBlur="(ev) => ((inputData.login_id = ev), onBlurButton())"
-        :rules="checkLoginID(inputData.login_id) as any"
+        :rules="checkLoginID(inputData.login_id, true, editid) as any"
       ></addPartnerForm>
       <addPartnerForm
         :color="backColor()"

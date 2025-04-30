@@ -27,7 +27,11 @@ export const numberValue = (
   return "";
 };
 
-export const checkLoginID = (value: string, flag = true) => {
+export const checkLoginID = (
+  value: string,
+  flag = true,
+  editid: string | string[] = "0"
+) => {
   if (!value) {
     return "ログインIDは必須です。";
   }
@@ -36,7 +40,7 @@ export const checkLoginID = (value: string, flag = true) => {
     return "ログインIDは半角英数4文字以上8文字以下で入力してください。";
   }
   if (flag) {
-    const tmp = UserApiService.checkLoginID(value);
+    const tmp = UserApiService.checkLoginID(value, editid as string);
     return tmp
       .then(function (rlt) {
         if (rlt.data === "success") {

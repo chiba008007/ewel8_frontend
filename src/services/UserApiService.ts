@@ -8,6 +8,12 @@ import axios, { AxiosInstance } from "axios";
 import { d_Path } from "@/plugins/const";
 const token = localStorage.getItem("user") as string;
 
+interface GetCustomerEditResponse {
+  data: {
+    name: string;
+  };
+}
+
 class UserApiService {
   checkTest() {
     return http.get("/api/test");
@@ -72,8 +78,10 @@ class UserApiService {
   checkEmail(data: string) {
     return httpAuth.get("/api/user/checkEmail?email=" + data);
   }
-  checkLoginID(data: string) {
-    return httpAuth.get("/api/user/checkLoginID?loginid=" + data);
+  checkLoginID(data: string, editid: string) {
+    return httpAuth.get(
+      "/api/user/checkLoginID?loginid=" + data + "&editid=" + editid
+    );
   }
   onUpload(form: FormData): Promise<object> {
     return httpUpload.post("/api/user/upload", form);
@@ -92,6 +100,10 @@ class UserApiService {
   }
   getCustomerList(data: object): Promise<object> {
     return httpAuth.post("/api/user/getCustomerList", data);
+  }
+
+  async getCustomerEdit(data: object): Promise<GetCustomerEditResponse> {
+    return await httpAuth.post("/api/user/getCustomerEdit", data);
   }
   async getPartnerid(data: object): Promise<{ data: number }> {
     return await httpAuth.post("/api/user/getPartnerid", data);
