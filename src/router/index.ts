@@ -24,6 +24,7 @@ import testListView from "../views/testListView.vue";
 import weightMaster from "../views/weightMaster.vue";
 import weightMasterSet from "../views/weightMasterSet.vue";
 import testAddView from "../views/testAddView.vue";
+import testDeleteView from "../views/testDeleteView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
 import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
@@ -189,6 +190,14 @@ const routes: Array<RouteRecordRaw> = [
     path: "/testEdit/:id/edit/:edit_id",
     name: "testEdit",
     component: testAddView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/testDelete/:id/delete/:edit_id",
+    name: "testDelete",
+    component: testDeleteView,
     meta: {
       requiresAuth: true,
     },

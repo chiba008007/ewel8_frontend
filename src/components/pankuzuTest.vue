@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { ref, defineProps, withDefaults } from "vue";
+import { ref, defineProps, withDefaults, defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import { textString } from "@/plugins/const";
 import { useStoreUser } from "../store/user";
 import UserApiService from "@/services/UserApiService";
+import ProgressView from "@/components/ProgressView.vue";
 
 const router = useRouter();
 const params = router.currentRoute.value.params;
-
+const emit = defineEmits<{
+  (e: "onEnabled", value: boolean): void;
+}>();
 interface PartnerResponse {
   data: number;
 }
@@ -21,7 +24,7 @@ interface Props {
   partnerhref2?: { pageName?: string; href?: string };
   partnerhref3?: { pageName?: string; href?: string };
 }
-
+const loadingFlag = ref(true);
 const props = withDefaults(defineProps<Props>(), {
   pageName: "",
   href: undefined,
@@ -95,13 +98,6 @@ UserApiService.getPartnerid(tmp)
             params: { id: res.data },
           }).href,
         },
-        // {
-        //   title: user.testList,
-        //   href: router.resolve({
-        //     name: "testLists",
-        //     params: { id: params.id },
-        //   }).href,
-        // },
       ];
 
       if (props.adminhref && props.adminhref.pageName) {
@@ -149,8 +145,11 @@ UserApiService.getPartnerid(tmp)
           title: (user as any)[props.pageName],
         });
       }
-  */
+      */
     }
+
+    emit("onEnabled", true);
+    loadingFlag.value = false;
   })
   .catch((e) => {
     console.log("TestMenu ERROR " + e);
@@ -159,6 +158,7 @@ UserApiService.getPartnerid(tmp)
   });
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
 </template>
 <style lang="scss"></style>

@@ -29,7 +29,9 @@ let tmp = { params: k };
 const errormessage = ref("");
 ExamApiService.getExam(tmp)
   .then(function (rlt) {
-    console.log(rlt.data);
+    if (rlt.data.length === 0) {
+      throw new Error("データが取得できませんでした");
+    }
     emit("onTest", rlt.data);
     let ls = localStorage.getItem("user") as string;
     emit("onLoginId", JSON.parse(ls)?.userExam.email);

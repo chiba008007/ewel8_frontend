@@ -21,7 +21,7 @@ const user = useStoreUser();
 const loadingFlag = ref(true);
 
 const testheaders = ref([
-  { title: "企業名", align: undefined, key: "campany" },
+  { title: "検査名", align: undefined, key: "campany" },
   { title: "実施期間", align: undefined, key: "examCount" },
   { title: "受検者数", align: undefined, key: "examCount" },
   { title: "処理数", align: undefined, key: "syoriCount" },
@@ -64,6 +64,7 @@ const onResize = () => {
   const wWidth = window.innerWidth;
   tableWidth.value = wWidth;
 };
+const onPankuzu = ref(false);
 </script>
 <template>
   <PartnerAdmin coded="customer" />
@@ -71,12 +72,14 @@ const onResize = () => {
   <v-row justify="center">
     <TestMenu />
   </v-row>
-  <ProgressView v-if="loadingFlag"></ProgressView>
+
   <pankuzuTest
     :partnerhref="{ pageName: 'testList', href: 'testLists' }"
     :adminhref="{ pageName: 'testList', href: 'testLists' }"
+    @onEnabled="(e:boolean) => (onPankuzu = e)"
   ></pankuzuTest>
-  <v-row v-resize="onResize">
+  <ProgressView v-if="loadingFlag"></ProgressView>
+  <v-row v-resize="onResize" v-if="onPankuzu">
     <v-col class="mt-0 pt-0">
       <v-data-table
         v-if="testList"
@@ -150,6 +153,12 @@ const onResize = () => {
                 class="text-caption mb-2 ml-2"
                 color="red"
                 size="small"
+                @click="
+                  move.pageTestEdit('testDelete', {
+                    id: tmp.user_id,
+                    editid: (item as userAny).id,
+                  })
+                "
               ></ButtonView>
               <ButtonView
                 v-if="type === D_ADMIN"

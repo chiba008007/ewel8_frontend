@@ -39,28 +39,37 @@ let tmp = {
 const typed = { code: "" };
 const testCount = ref(0);
 const tableWidth = ref("100%");
-TestApiService.getTestTableTh(tmp).then(function (rlt) {
-  testCount.value = rlt.data.length;
-  tableWidth.value = 1600 + 200 * testCount.value + "px";
-  rlt.data.forEach((x: typeof typed) => {
-    if (x.code === "PFS" || x.code === "BAJ3") {
-      headers.value.push({
-        title: x.code,
-        sortable: false,
-        key: x.code,
-        cols: 3, //pfs用
-        row: 1, //pfs用
-      });
+TestApiService.getTestTableTh(tmp)
+  .then(function (rlt) {
+    if (rlt.data.length === 0) {
+      throw new Error("データが取得できませんでした");
     }
-  });
+    testCount.value = rlt.data.length;
+    tableWidth.value = 1600 + 200 * testCount.value + "px";
+    rlt.data.forEach((x: typeof typed) => {
+      if (x.code === "PFS" || x.code === "BAJ3") {
+        headers.value.push({
+          title: x.code,
+          sortable: false,
+          key: x.code,
+          cols: 3, //pfs用
+          row: 1, //pfs用
+        });
+      }
+    });
 
-  headers.value.push(
-    { title: "メモ1", sortable: false, key: "no", cols: 1, row: 2 },
-    { title: "メモ2", sortable: false, key: "no", cols: 1, row: 2 },
-    { title: "PDF", sortable: false, key: "no", cols: 1, row: 2 },
-    { title: "機能", sortable: false, key: "no", cols: 1, row: 2 }
-  );
-});
+    headers.value.push(
+      { title: "メモ1", sortable: false, key: "no", cols: 1, row: 2 },
+      { title: "メモ2", sortable: false, key: "no", cols: 1, row: 2 },
+      { title: "PDF", sortable: false, key: "no", cols: 1, row: 2 },
+      { title: "機能", sortable: false, key: "no", cols: 1, row: 2 }
+    );
+  })
+  .catch((e) => {
+    console.log("TestMenu ERROR " + e);
+    //window.location.reload();
+    location.href = "/error";
+  });
 
 TestApiService.getExam(tmp).then(function (rlt) {
   detail.value = rlt;
@@ -118,13 +127,16 @@ const onResize = () => {
 };
 
 const dialog = ref(false);
+const onPankuzu = ref(false);
 </script>
 <template>
   <PartnerAdmin coded="customer" />
   <pankuzuTest
     :adminhref="{ pageName: 'testList', href: 'testLists' }"
     :adminhref2="{ pageName: 'testExamList' }"
+    @onEnabled="(e:boolean) => (onPankuzu = e)"
   ></pankuzuTest>
+
   <div class="text-center pa-4" v-if="dialogFlag">
     <v-dialog v-model="dialogFlag" width="auto">
       <v-card max-width="400" class="pa-4">
@@ -143,7 +155,7 @@ const dialog = ref(false);
     </v-dialog>
   </div>
 
-  <div id="divoverflow">
+  <div id="divoverflow" v-if="onPankuzu">
     <v-row v-resize="onResize" style="width: auto">
       <v-col class="ma-1" style="overflow: scroll">
         <v-data-table

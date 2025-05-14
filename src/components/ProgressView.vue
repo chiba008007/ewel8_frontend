@@ -13,7 +13,7 @@ const overlay = true;
 <style lang="scss" scoped>
 .progress-position {
   position: absolute;
-  top: 50%;
+  top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
 }

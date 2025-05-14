@@ -25,7 +25,6 @@ const errorflag = ref(false);
 const test_id = ref(0);
 
 const setExamData = (e: object | any) => {
-  console.log(e);
   test_id.value = e.id;
   recomendflag.value = e.recomendflag;
   logintext.value = e.logintext;
