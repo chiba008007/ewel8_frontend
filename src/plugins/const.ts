@@ -121,7 +121,16 @@ export const movieArray = [
     text: "表示しない",
   },
 ];
-
+/** CSVアップロード */
+export const csvUpload = [
+  { value: 1, label: "未受検者のみ変更" },
+  { value: 2, label: "受検済み・受検中も対象とする" },
+];
+/** CSVアップロード状態 */
+export const csvtypestatus: { [key: number]: string } = {
+  1: "成功",
+  2: "失敗",
+};
 /** PDFグループ */
 export const pdfGroup = [
   { key: 1, text: "行動価値検査結果レポート" },

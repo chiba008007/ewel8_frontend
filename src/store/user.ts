@@ -17,6 +17,7 @@ export const useStoreUser = defineStore("user", {
     upload: "添付",
     testList: "検査一覧",
     testExamList: "検査結果一覧",
+    csvupload: "CSVアップロード",
     examSearch: "受検者検索",
     testAdd: "検査登録",
     testDelete: "検査削除",

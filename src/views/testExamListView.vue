@@ -128,11 +128,21 @@ const onResize = () => {
 
 const dialog = ref(false);
 const onPankuzu = ref(false);
+const onCsvUpload = () => {
+  router.push({
+    name: "testExamListCsvupload",
+    params: { id: params.id, testid: params.testid },
+  });
+};
 </script>
 <template>
   <PartnerAdmin coded="customer" />
   <pankuzuTest
-    :adminhref="{ pageName: 'testList', href: 'testLists' }"
+    :adminhref="{
+      pageName: 'testList',
+      href: 'testLists',
+      params: { id: params.id },
+    }"
     :adminhref2="{ pageName: 'testExamList' }"
     @onEnabled="(e:boolean) => (onPankuzu = e)"
   ></pankuzuTest>
@@ -261,6 +271,11 @@ const onPankuzu = ref(false);
           <div class="d-flex">
             <excelDownload text="エクセルダウンロード"></excelDownload>
             <csvDownload text="CSVダウンロード"></csvDownload>
+            <ButtonView
+              text="CSVアップロード"
+              color="secondary"
+              @onClick="onCsvUpload()"
+            ></ButtonView>
           </div>
         </div>
       </v-col>

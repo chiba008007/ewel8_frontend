@@ -27,6 +27,7 @@ import testAddView from "../views/testAddView.vue";
 import testDeleteView from "../views/testDeleteView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
+import csvuploadView from "../views/csvuploadView.vue";
 import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
 import ExamPfsTake from "../views/examinate/PFS/ExamTake.vue";
 import ExamPfsTake2 from "../views/examinate/PFS/ExamTake2.vue";
@@ -214,6 +215,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/testExamList/:id/test/:testid",
     name: "testExamList",
     component: testExamListView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  // CSVアップロード
+  {
+    path: "/testExamList/:id/test/:testid/csvupload",
+    name: "testExamListCsvupload",
+    component: csvuploadView,
     meta: {
       requiresAuth: true,
     },

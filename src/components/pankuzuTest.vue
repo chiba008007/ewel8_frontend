@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, defineProps, withDefaults, defineEmits } from "vue";
 import { useRouter } from "vue-router";
-import { textString } from "@/plugins/const";
 import { useStoreUser } from "../store/user";
 import UserApiService from "@/services/UserApiService";
 import ProgressView from "@/components/ProgressView.vue";
@@ -17,12 +16,12 @@ interface PartnerResponse {
 interface Props {
   pageName?: string;
   href?: { pageName?: string; href?: string };
-  adminhref?: { pageName?: string; href?: string };
-  adminhref2?: { pageName?: string; href?: string };
-  adminhref3?: { pageName?: string; href?: string };
-  partnerhref?: { pageName?: string; href?: string };
-  partnerhref2?: { pageName?: string; href?: string };
-  partnerhref3?: { pageName?: string; href?: string };
+  adminhref?: { pageName?: string; href?: string; params?: object };
+  adminhref2?: { pageName?: string; href?: string; params?: object };
+  adminhref3?: { pageName?: string; href?: string; params?: object };
+  partnerhref?: { pageName?: string; href?: string; params?: object };
+  partnerhref2?: { pageName?: string; href?: string; params?: object };
+  partnerhref3?: { pageName?: string; href?: string; params?: object };
 }
 const loadingFlag = ref(true);
 const props = withDefaults(defineProps<Props>(), {
@@ -88,6 +87,7 @@ UserApiService.getPartnerid(tmp)
         });
       }
     } else {
+      let obj = {};
       pankuzu.value = [
         { title: user.home, href: router.resolve({ name: "List" }).href },
 
@@ -101,19 +101,32 @@ UserApiService.getPartnerid(tmp)
       ];
 
       if (props.adminhref && props.adminhref.pageName) {
+        if (props.adminhref.params) {
+          obj = {
+            name: props.adminhref.href,
+            params: props.adminhref.params,
+          };
+        } else {
+          obj = { name: props.adminhref.href };
+        }
         pankuzu.value.push({
           title: (user as any)[props.adminhref.pageName],
-          href: router.resolve({
-            name: props.adminhref.href,
-          }).href,
+          href: router.resolve(obj).href,
         });
       }
       if (props.adminhref2 && props.adminhref2.pageName) {
+        if (props.adminhref2.params) {
+          obj = {
+            name: props.adminhref2.href,
+            params: props.adminhref2.params,
+          };
+        } else {
+          obj = { name: props.adminhref2.href };
+        }
+
         pankuzu.value.push({
           title: (user as any)[props.adminhref2.pageName],
-          href: router.resolve({
-            name: props.adminhref2.href,
-          }).href,
+          href: router.resolve(obj).href,
         });
       }
       if (props.adminhref3 && props.adminhref3.pageName) {
@@ -159,6 +172,6 @@ UserApiService.getPartnerid(tmp)
 </script>
 <template>
   <ProgressView v-if="loadingFlag"></ProgressView>
-  <v-breadcrumbs :items="pankuzu"></v-breadcrumbs>
+  <v-breadcrumbs :items="pankuzu" class="pt-0 mt-2"></v-breadcrumbs>
 </template>
 <style lang="scss"></style>
