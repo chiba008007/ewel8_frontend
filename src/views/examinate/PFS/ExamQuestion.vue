@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref } from "vue";
 import exampfs from "@/plugins/exampfs";
+import ProgressView from "@/components/ProgressView.vue";
 
+const loadingFlag = ref(true);
 const examObj = exampfs();
 const heads = examObj.heads.value;
 const props = defineProps<{
@@ -22,10 +24,12 @@ select.then((value) => {
     let q = "q" + i;
     selected.value.push(value[q]);
   }
+  loadingFlag.value = false;
   emit("onSelected", selected);
 });
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <div class="table-display">
     <div class="table-row hques bg-blue pc">
       <div class="table-col w10 vertical-middle text-center">No</div>

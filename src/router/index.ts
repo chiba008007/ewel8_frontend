@@ -21,6 +21,7 @@ import ExamBrowserUpdateHelpView from "../views/examinate/BrowsserUpdateHelpView
 import ExamListView from "../views/examinate/ExamListView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import testListView from "../views/testListView.vue";
+import testListDownloadView from "../views/testListDownloadView.vue";
 import weightMaster from "../views/weightMaster.vue";
 import weightMasterSet from "../views/weightMasterSet.vue";
 import testAddView from "../views/testAddView.vue";
@@ -28,6 +29,7 @@ import testDeleteView from "../views/testDeleteView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
 import csvuploadView from "../views/csvuploadView.vue";
+import pdfdownloadView from "../views/pdfdownloadView.vue";
 import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
 import ExamPfsTake from "../views/examinate/PFS/ExamTake.vue";
 import ExamPfsTake2 from "../views/examinate/PFS/ExamTake2.vue";
@@ -154,6 +156,15 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true,
     },
   },
+  // 検査一覧用ダウンロード
+  {
+    path: "/testLists/:id/download",
+    name: "testListsDownload",
+    component: testListDownloadView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
   // 重み付けマスタ
   {
     path: "/weightMaster/:id",
@@ -224,6 +235,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/testExamList/:id/test/:testid/csvupload",
     name: "testExamListCsvupload",
     component: csvuploadView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  // PDF一括ダウンロード
+  {
+    path: "/testExamList/:id/test/:testid/pdf",
+    name: "testExamListPdf",
+    component: pdfdownloadView,
     meta: {
       requiresAuth: true,
     },

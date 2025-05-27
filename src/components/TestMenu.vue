@@ -66,7 +66,7 @@ const pageCustomerEditParam = (pagename: string) => {
         density="compact"
         color="lime"
         class="w-25 ml-1"
-        @onClick="pageClickMoveParam('partnerEdit')"
+        @onClick="pageClickMoveParam('testListsDownload')"
       ></ComponentButton>
       <ComponentButton
         text="重み付けマスタ登録"

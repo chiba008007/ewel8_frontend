@@ -12,6 +12,7 @@ import fileUpload from "@/components/fileUpload.vue";
 import { d_filePath, openStatus } from "@/plugins/const";
 import AlertView from "@/components/AlertView.vue";
 import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import { pagelink, deleteStatus } from "@/plugins/pagelink";
 
 const alertDeleteflag = ref(false);
 const alertRegistflag = ref(false);
@@ -52,19 +53,18 @@ const onClick = () => {
       alert("imageupload ERROR" + e);
     });
 };
+type DataType = {
+  key: number;
+  registdate: string;
+  filename: string;
+  filepath: string;
+  size: string;
+  openflag: string;
+  checked: boolean;
+  id: number;
+};
 
-const desserts = ref([
-  {
-    key: "" as unknown as number,
-    registdate: "" as string,
-    filename: "" as string,
-    filepath: "" as string,
-    size: "" as string,
-    openflag: "" as string,
-    checked: false as boolean,
-    id: 0 as number,
-  },
-]);
+const desserts = ref<DataType[]>([]);
 onMounted(() => {
   reading();
 });
@@ -98,26 +98,9 @@ const onResize = () => {
 const commaSeparated = (value: number) => {
   return new Intl.NumberFormat().format(value);
 };
-const pagelink = (link: string, id: number, key: number) => {
-  let tmp = {
-    id: id,
-  };
-  FileuploadApiService.openFlag(tmp).then((rlt) => {
-    location.href = link;
-    desserts.value[key].openflag = openStatus[1];
-  });
-};
+
 const onCheckbox = (e: boolean, key: number) => {
   desserts.value[key].checked = desserts.value[key].checked ? false : true;
-};
-const deleteStatus = (id: number, key: number) => {
-  let tmp = {
-    id: id,
-  };
-  FileuploadApiService.deleteStatus(tmp).then((rlt) => {
-    desserts.value.splice(key, 1);
-    alertDeleteflag.value = true;
-  });
 };
 </script>
 <template>
@@ -150,7 +133,7 @@ const deleteStatus = (id: number, key: number) => {
       ></ComponentButton>
     </v-col>
   </v-row> -->
-  <v-row>
+  <v-row v-show="desserts.length > 0">
     <v-col cols="10" class="ml-2 mr-2">
       <AlertView
         v-if="alertDeleteflag"
@@ -196,7 +179,12 @@ const deleteStatus = (id: number, key: number) => {
                 text="削除"
                 color="success"
                 density="compact"
-                @onClick="deleteStatus(item.id, item.key)"
+                @onClick="
+                  deleteStatus(item.id, item.key).then((key) => {
+                    desserts.splice(key, 1);
+                    alertDeleteflag = true;
+                  })
+                "
               />
             </td>
           </tr>

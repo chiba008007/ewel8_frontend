@@ -276,6 +276,12 @@ const onCsvUpload = () => {
               color="secondary"
               @onClick="onCsvUpload()"
             ></ButtonView>
+            <ButtonView
+              class="ml-2"
+              text="PDF一括ダウンロード"
+              color="secondary"
+              @onClick="onCsvUpload()"
+            ></ButtonView>
           </div>
         </div>
       </v-col>
