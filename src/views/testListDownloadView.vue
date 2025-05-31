@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import pankuzuTest from "../components/pankuzuTest.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import { useStoreUser } from "../store/user";
-import { pagelink, deleteStatus } from "@/plugins/pagelink";
-import AlertView from "@/components/AlertView.vue";
+import { pagelink } from "@/plugins/pagelink";
 import FileuploadApiService from "@/services/FileuploadApiService";
 import { d_filePath, openStatus } from "@/plugins/const";
 
 const router = useRouter();
 const params = router.currentRoute.value.params;
 const user = useStoreUser();
-const alertDeleteflag = ref(false);
 
 const onBack = () => {
   router.push({
@@ -29,7 +28,6 @@ const headers = [
   { title: "ファイル名", sortable: false, key: "speed" },
   { title: "サイズ", sortable: false, key: "length" },
   { title: "ステータス", sortable: false, key: "price" },
-  { title: "削除", sortable: false, key: "year" },
 ];
 
 const tableHeight = ref(100);
@@ -66,7 +64,7 @@ const reading = () => {
         key: i,
         registdate: val.date,
         filename: val.filename,
-        filepath: d_filePath + "/" + val.filepath,
+        filepath: d_filePath + "" + val.filepath,
         size: commaSeparated(val.size),
         openflag: openStatus[val.openflag],
         checked: false,
@@ -82,6 +80,9 @@ const commaSeparated = (value: number) => {
 </script>
 <template>
   <PartnerAdmin coded="customer" />
+  <v-row justify="center">
+    <TestMenu />
+  </v-row>
   <pankuzuTest
     :adminhref="{
       pageName: 'testList',
@@ -94,11 +95,6 @@ const commaSeparated = (value: number) => {
   <div v-if="onPankuzu" class="mx-3">
     <h4 class="mt-2">{{ user["testListsDownload"] }}</h4>
     <p>ダウンロードしたいファイル名を選択してください。</p>
-    <AlertView
-      v-if="alertDeleteflag"
-      text="削除を行いました。"
-      type="success"
-    ></AlertView>
     <v-row v-resize="onResize">
       <v-col>
         <v-data-table
@@ -120,19 +116,6 @@ const commaSeparated = (value: number) => {
               </td>
               <td class="text-right">{{ item.size }}</td>
               <td class="text-center">{{ item.openflag }}</td>
-              <td class="text-center">
-                <ButtonView
-                  text="削除"
-                  color="success"
-                  density="compact"
-                  @onClick="
-                    deleteStatus(item.id, item.key).then((key) => {
-                      desserts.splice(key, 1);
-                      alertDeleteflag = true;
-                    })
-                  "
-                />
-              </td>
             </tr>
           </template>
         </v-data-table>
@@ -144,4 +127,9 @@ const commaSeparated = (value: number) => {
     </div>
   </div>
 </template>
-<style lang="scss"></style>
+<style scoped>
+::v-deep(.v-data-table thead th) {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+</style>

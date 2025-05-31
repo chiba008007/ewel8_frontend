@@ -2,23 +2,21 @@
 import { ref, onMounted } from "vue";
 import { useStoreUser } from "../store/user";
 import ComponentButton from "../components/ButtonView.vue";
-import CheckboxView from "@/components/CheckboxView.vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import UserApiService from "@/services/UserApiService";
 import FileuploadApiService from "@/services/FileuploadApiService";
 import { useRouter, useRoute } from "vue-router";
-import pagemove from "@/plugins/pagemove";
 import fileUpload from "@/components/fileUpload.vue";
 import { d_filePath, openStatus } from "@/plugins/const";
 import AlertView from "@/components/AlertView.vue";
 import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
 import { pagelink, deleteStatus } from "@/plugins/pagelink";
+import ProgressView from "../components/ProgressView.vue";
 
 const alertDeleteflag = ref(false);
 const alertRegistflag = ref(false);
-const router = useRouter();
 const route = useRoute();
-const pages = pagemove();
+
 const headers = [
   { title: "登録日", sortable: true, key: "name" },
   { title: "ファイル名", sortable: false, key: "speed" },
@@ -26,10 +24,12 @@ const headers = [
   { title: "ステータス", sortable: false, key: "price" },
   { title: "削除", sortable: false, key: "year" },
 ];
-const user = useStoreUser();
-const tmpid = route.params.id;
-const editid = route.params.editid;
 
+const user = useStoreUser();
+const partner_id = route.params.id;
+const customer_id = route.params.editid;
+
+const loadingFlag = ref(false);
 const file = ref<File | null>(null);
 const formData = new FormData();
 
@@ -39,9 +39,11 @@ const onChange = (event: Event) => {
     file.value = input.files[0];
   }
   formData.append("file", file.value as File);
-  formData.append("editid", editid as string);
+  formData.append("customer_id", customer_id as string);
+  formData.append("partner_id", partner_id as string);
 };
 const onClick = () => {
+  loadingFlag.value = true;
   UserApiService.onFileUpload(formData)
     .then((res: any) => {
       console.log(res.data);
@@ -69,8 +71,10 @@ onMounted(() => {
   reading();
 });
 const reading = () => {
+  loadingFlag.value = true;
   let tmp = {
-    partner_id: editid,
+    partner_id: partner_id,
+    customer_id: customer_id,
   };
   FileuploadApiService.getList(tmp).then((res) => {
     desserts.value = [];
@@ -88,6 +92,7 @@ const reading = () => {
       });
       i++;
     });
+    loadingFlag.value = false;
   });
 };
 const tableHeight = ref(100);
@@ -98,12 +103,9 @@ const onResize = () => {
 const commaSeparated = (value: number) => {
   return new Intl.NumberFormat().format(value);
 };
-
-const onCheckbox = (e: boolean, key: number) => {
-  desserts.value[key].checked = desserts.value[key].checked ? false : true;
-};
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <v-row justify="center">
     <CustomerMenu />
   </v-row>
@@ -124,15 +126,6 @@ const onCheckbox = (e: boolean, key: number) => {
       ></fileUpload>
     </v-col>
   </v-row>
-  <!-- <v-row no-gutters class="ml-2">
-    <v-col cols="12">
-      <ComponentButton
-        text="チェックしたファイルを削除"
-        density="compact"
-        color="red"
-      ></ComponentButton>
-    </v-col>
-  </v-row> -->
   <v-row v-show="desserts.length > 0">
     <v-col cols="10" class="ml-2 mr-2">
       <AlertView
@@ -158,12 +151,6 @@ const onCheckbox = (e: boolean, key: number) => {
       >
         <template v-slot:item="{ item }">
           <tr>
-            <!-- <td class="text-center">
-              <CheckboxView
-                :value="item.checked"
-                @onChange="(e) => onCheckbox(e, item.key)"
-              ></CheckboxView>
-            </td> -->
             <td class="text-left">{{ item.registdate }}</td>
             <td class="text-xs-right">
               <a

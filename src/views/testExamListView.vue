@@ -134,6 +134,12 @@ const onCsvUpload = () => {
     params: { id: params.id, testid: params.testid },
   });
 };
+const onPdfDownload = () => {
+  router.push({
+    name: "testExamListPdf",
+    params: { id: params.id, testid: params.testid },
+  });
+};
 </script>
 <template>
   <PartnerAdmin coded="customer" />
@@ -280,7 +286,7 @@ const onCsvUpload = () => {
               class="ml-2"
               text="PDF一括ダウンロード"
               color="secondary"
-              @onClick="onCsvUpload()"
+              @onClick="onPdfDownload()"
             ></ButtonView>
           </div>
         </div>
