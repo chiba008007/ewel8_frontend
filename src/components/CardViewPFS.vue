@@ -120,21 +120,22 @@ const setInputWeight = (ev: string) => {
           ></AddSwitchForm>
         </v-col>
       </v-row>
-      <v-row no-gutters v-show="props.editid === 0">
-        <v-col cols="12">CSVファイルからデータ取得</v-col>
-      </v-row>
-      <v-row no-gutters v-show="props.editid === 0">
-        <v-col cols="12">
-          重みマスタからデータ取得<br />
-          <getWeightMasterView
-            :inputWeightMasterString="props.inputWeightMasterString"
-            class="w-50"
-            @onChange="(e) => setInputWeight(e)"
-            :items="props.inputWeight"
-          ></getWeightMasterView>
-        </v-col>
-      </v-row>
-
+      <div v-show="props.inputWeight">
+        <v-row no-gutters v-show="props.editid === 0">
+          <v-col cols="12">CSVファイルからデータ取得</v-col>
+        </v-row>
+        <v-row no-gutters v-show="props.editid === 0">
+          <v-col cols="12">
+            重みマスタからデータ取得<br />
+            <getWeightMasterView
+              :inputWeightMasterString="props.inputWeightMasterString"
+              class="w-50"
+              @onChange="(e) => setInputWeight(e)"
+              :items="props.inputWeight"
+            ></getWeightMasterView>
+          </v-col>
+        </v-row>
+      </div>
       <p class="text-caption text-red" v-show="props.editid === 0">
         重み付けを設定する場合は、各々数値を入力してください。入力する場合は、半角数字で入力してください。<br />
         既存の重み付けマスタ、csvファイルから取得することも可能です。<br />

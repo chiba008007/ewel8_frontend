@@ -16,5 +16,6 @@ const overlay = true;
   top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 100000;
 }
 </style>

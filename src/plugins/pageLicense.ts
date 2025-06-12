@@ -1,6 +1,8 @@
 import { ref } from "vue";
 import UserApiService from "@/services/UserApiService";
+import { useStoreUser } from "@/store/user";
 export default function () {
+  const user = useStoreUser();
   const lisenceView = ref();
   const getUserLisence = (tmpid: string | string[]) => {
     UserApiService.getUserLisence({
@@ -18,6 +20,7 @@ export default function () {
     const lisenceViewCalc = ref();
     UserApiService.getUserLisenceCalc({
       user_id: tmpid,
+      customer_id: user.getSession("customer_id"),
     })
       .then((res: any) => {
         lisenceViewCalc.value = res.data;
@@ -28,10 +31,7 @@ export default function () {
     return lisenceView;
   };
 
-  const getPartnerDetail = async (
-    tmpid: string | string[] | number | number[],
-    typeStr: string
-  ) => {
+  const getPartnerDetail = async (tmpid: string | null, typeStr: string) => {
     const partnerDetail = ref();
     const partner_id = ref();
     const tmp = {

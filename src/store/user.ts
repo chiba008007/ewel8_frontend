@@ -39,6 +39,12 @@ export const useStoreUser = defineStore("user", {
     doubleCount: (state) => state.count * 2,
   },
   actions: {
+    setSession(key: string, id: string | string[] | number) {
+      sessionStorage.setItem(key, String(id));
+    },
+    getSession(key: string) {
+      return sessionStorage.getItem(key);
+    },
     increment() {
       this.count++;
     },

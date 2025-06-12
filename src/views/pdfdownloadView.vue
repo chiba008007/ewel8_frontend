@@ -2,9 +2,9 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
-import pankuzuTest from "../components/pankuzuTest.vue";
+import pankuzuMain from "../components/pankuzuMain.vue";
 import ButtonView from "@/components/ButtonView.vue";
-import { useStoreUser } from "../store/user";
+import { useStoreUser } from "@/store/user";
 import PdfDownloadApiService from "@/services/PdfDownloadApiService";
 import AlertView from "@/components/AlertView.vue";
 import ProgressView from "../components/ProgressView.vue";
@@ -14,9 +14,10 @@ const router = useRouter();
 const params = router.currentRoute.value.params;
 const user = useStoreUser();
 const customer_id = params.id;
+const partner_id = user.getSession("partner_id");
 const test_id = params.testid;
 const alertFlag = ref(false);
-const progressFlag = ref(false);
+const progressFlag = ref(true);
 
 const onBack = () => {
   router.push({
@@ -78,9 +79,9 @@ onMounted(() => {
 const reading = () => {
   PdfDownloadApiService.getTest({
     customer_id: customer_id,
+    partner_id: partner_id,
     test_id: test_id,
   }).then(function (res) {
-    console.log(res);
     dataList.value = res.data.map(
       (item: { start: string; end: string; type: number; code: number }) => ({
         start: item.start ?? "",
@@ -89,6 +90,7 @@ const reading = () => {
         code: codeString[item.code - 1].label, // 必要に応じて整形
       })
     );
+    progressFlag.value = false;
   });
 };
 const onClick = () => {
@@ -108,7 +110,7 @@ const onClick = () => {
 </script>
 <template>
   <PartnerAdmin coded="customer" />
-  <pankuzuTest
+  <pankuzuMain
     :adminhref="{
       pageName: 'testList',
       href: 'testLists',
@@ -120,10 +122,9 @@ const onClick = () => {
       params: { id: params.id, testid: params.testid },
     }"
     :adminhref3="{ pageName: 'pdfdownload' }"
-    @onEnabled="(e:boolean) => (onPankuzu = e)"
-  ></pankuzuTest>
+  ></pankuzuMain>
 
-  <div v-if="onPankuzu" class="mx-3">
+  <div class="mx-3">
     <AlertView
       title=""
       text="PDF一括ダウンロード実行予約しました。"

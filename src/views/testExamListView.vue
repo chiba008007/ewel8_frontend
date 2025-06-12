@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import TestApiService from "@/services/TestApiService";
-import pankuzuTest from "../components/pankuzuTest.vue";
+import pankuzuMain from "../components/pankuzuMain.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import csvDownload from "@/components/csvDownload.vue";
 import excelDownload from "@/components/excelDownload.vue";
@@ -12,6 +12,8 @@ import { passArray } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
 import { pdfDownload } from "@/plugins/pdf";
+import { useStoreUser } from "@/store/user";
+import ProgressView from "@/components/ProgressView.vue";
 
 const pdfcode = ref();
 const onPDfOutput = (id: number, code: string, birth: string) => {
@@ -30,11 +32,14 @@ const headers = ref([
 const examList = ref();
 const router = useRouter();
 const detail = ref();
+const user = useStoreUser();
+const loadingFlag = ref(true);
 
 const params = router.currentRoute.value.params;
 let tmp = {
   user_id: params.id,
   test_id: params.testid,
+  partner_id: user.getSession("partner_id"),
 };
 const typed = { code: "" };
 const testCount = ref(0);
@@ -78,6 +83,7 @@ TestApiService.getExam(tmp).then(function (rlt) {
   examList.value.map((value: any, k: number) => {
     examList.value[k]["passText"] = (passArray as any)[value.passflag];
   });
+  loadingFlag.value = false;
 });
 
 const tableHeight = ref(100);
@@ -126,8 +132,6 @@ const onResize = () => {
   tableHeight.value = wHeight - 320;
 };
 
-const dialog = ref(false);
-const onPankuzu = ref(false);
 const onCsvUpload = () => {
   router.push({
     name: "testExamListCsvupload",
@@ -142,16 +146,16 @@ const onPdfDownload = () => {
 };
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <PartnerAdmin coded="customer" />
-  <pankuzuTest
+  <pankuzuMain
     :adminhref="{
       pageName: 'testList',
       href: 'testLists',
       params: { id: params.id },
     }"
     :adminhref2="{ pageName: 'testExamList' }"
-    @onEnabled="(e:boolean) => (onPankuzu = e)"
-  ></pankuzuTest>
+  ></pankuzuMain>
 
   <div class="text-center pa-4" v-if="dialogFlag">
     <v-dialog v-model="dialogFlag" width="auto">
@@ -171,7 +175,7 @@ const onPdfDownload = () => {
     </v-dialog>
   </div>
 
-  <div id="divoverflow" v-if="onPankuzu">
+  <div id="divoverflow">
     <v-row v-resize="onResize" style="width: auto">
       <v-col class="ma-1" style="overflow: scroll">
         <v-data-table

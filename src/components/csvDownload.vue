@@ -5,8 +5,11 @@ import { useRoute, useRouter } from "vue-router";
 import TestApiService from "@/services/TestApiService";
 import ButtonView from "@/components/ButtonView.vue";
 import { pfsCsv } from "@/plugins/csv";
+import { useStoreUser } from "@/store/user";
+
 const router = useRouter();
 const params = router.currentRoute.value.params;
+const user = useStoreUser();
 
 const csvList = ref([
   {
@@ -17,6 +20,7 @@ const csvList = ref([
 let tmp = {
   user_id: params.id,
   test_id: params.testid,
+  partner_id: user.getSession("partner_id"),
 };
 TestApiService.getCsvList(tmp).then(function (rlt) {
   csvList.value = [];

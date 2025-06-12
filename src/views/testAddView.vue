@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { useStoreUser } from "../store/user";
+import { useStoreUser } from "@/store/user";
 import { getTodayDateTime, getTodayDate } from "@/plugins/date";
 import {
   movieArray,
@@ -29,12 +29,13 @@ import CardViewPFS from "@/components/CardViewPFS.vue";
 import CardViewBAJ3 from "@/components/CardViewBAJ3.vue";
 import ElementApiService from "@/services/ElementApiService";
 import AlertView from "@/components/AlertView.vue";
-import pankuzuTest from "@/components/pankuzuTest.vue";
+import pankuzuMain from "@/components/pankuzuMain.vue";
 import pageLicense from "@/plugins/pageLicense";
 import dateChecked from "@/plugins/dateChecked";
 import testPartsAdd from "@/plugins/testPartsAdd";
 import testAdd from "@/plugins/testAdd";
 import { inputDataPartsType, inputDataType, testpdfType } from "@/types";
+import ProgressView from "@/components/ProgressView.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -52,6 +53,7 @@ const errorTab2 = ref(1);
 // console.log(user.userdata);
 const isLoading = ref(true);
 const tab = ref(0);
+const loadingFlag = ref(true);
 
 const inputData = ref({
   testname: "",
@@ -224,17 +226,17 @@ const onBlurButton = () => {
   }
 };
 
-// パートナー企業の取得
-const partner_id = ref();
+// パートナー・顧客企業の取得
+const partner_id = user.getSession("partner_id");
 const partnerDetail = ref();
-pl.getPartnerDetail(tmpid.toString(), "partner").then((res) => {
-  partnerDetail.value = res.partnerDetail;
-  partner_id.value = res.partner_id;
-});
 const customerDetail = ref();
-// 顧客企業情報の取得
-pl.getPartnerDetail(tmpid.toString(), "customer").then((res) => {
-  customerDetail.value = res?.partnerDetail;
+pl.getPartnerDetail(partner_id, "partner").then((res) => {
+  partnerDetail.value = res.partnerDetail;
+  // 顧客企業情報の取得
+  pl.getPartnerDetail(tmpid.toString(), "customer").then((res) => {
+    customerDetail.value = res?.partnerDetail;
+    loadingFlag.value = false;
+  });
 });
 
 const dateErrorMessage = ref("");
@@ -277,10 +279,13 @@ const onSearch = (e: string) => {
 
 const alertFlag = ref(false);
 
+/**
+ * 検査登録実行
+ */
 const onClick = () => {
   alertFlag.value = false;
   let tmp = {
-    partner_id: partner_id.value,
+    partner_id: partner_id,
     customer_id: tmpid,
     user_id: tmpid,
     testname: inputData.value.testname,
@@ -323,7 +328,7 @@ const onClick = () => {
 const onEditClick = () => {
   alertFlag.value = false;
   let tmp = {
-    partner_id: partner_id.value,
+    partner_id: partner_id,
     customer_id: tmpid,
     user_id: tmpid,
     edit_id: editid,
@@ -411,16 +416,18 @@ const setInputWeight = (e: string, type: string) => {
 };
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <PartnerAdmin coded="customer" />
   <v-row justify="center" class="mt-5">
     <TestMenu />
   </v-row>
-  <pankuzuTest
+  <pankuzuMain
+    type="testList"
     :partnerhref="{ pageName: 'testList', href: 'testLists' }"
     :partnerhref2="{ pageName: 'testAdd' }"
     :adminhref="{ pageName: 'testList', href: 'testLists' }"
     :adminhref2="{ pageName: 'testAdd' }"
-  ></pankuzuTest>
+  ></pankuzuMain>
   <p class="text-lowercase ml-2 text-caption">
     検査内容を入力してください。 <br />
     赤丸内の数が残り必須入力数になります。<br />

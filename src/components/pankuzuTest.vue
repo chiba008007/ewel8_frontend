@@ -137,28 +137,6 @@ UserApiService.getPartnerid(tmp)
           }).href,
         });
       }
-
-      // 追加
-      /*
-      if (props.href && props.href.pageName) {
-        pankuzu.value.push({
-          title: (user as any)[props.href.pageName],
-          href: router.resolve({
-            name: props.href.pageName,
-            params: { id: params.id },
-          }).href,
-        });
-        if (props.href.href) {
-          pankuzu.value.push({
-            title: (user as any)[props.href.href],
-          });
-        }
-      } else {
-        pankuzu.value.push({
-          title: (user as any)[props.pageName],
-        });
-      }
-      */
     }
 
     emit("onEnabled", true);

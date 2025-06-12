@@ -2,18 +2,21 @@
 import { ref, onMounted } from "vue";
 import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
-import pankuzuTest from "@/components/pankuzuTest.vue";
+import pankuzuMain from "@/components/pankuzuMain.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import WeightApiService from "@/services/WeightApiService";
 import AlertView from "@/components/AlertView.vue";
 import { useRouter } from "vue-router";
+import ProgressView from "@/components/ProgressView.vue";
+import { useStoreUser } from "@/store/user";
 import dayjs from "dayjs";
 import "dayjs/locale/ja";
 dayjs.locale("ja");
 
+const user = useStoreUser();
 const item = ref([]);
 const router = useRouter();
-
+const loadingFlag = ref(true);
 const testheaders = ref([
   { title: "重み付けマスター名", sortable: false },
   { title: "作成日", sortable: false },
@@ -26,6 +29,7 @@ const params = router.currentRoute.value.params;
 const onTableSet = () => {
   const tmp = {
     id: params.id,
+    partner_id: user.getSession("partner_id"),
   };
   testList.value = [];
   WeightApiService.getWeightMaster(tmp)
@@ -39,6 +43,7 @@ const onTableSet = () => {
           });
         }
       );
+      loadingFlag.value = false;
     })
     .catch((e) => {
       alert("Weight Set ERROR" + e);
@@ -77,11 +82,12 @@ onMounted(() => {
 });
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <PartnerAdmin coded="customer" />
   <v-row justify="center" class="mt-6">
     <TestMenu />
   </v-row>
-  <pankuzuTest
+  <pankuzuMain
     :partnerhref="{
       pageName: 'testList',
       href: 'testLists',
@@ -92,7 +98,7 @@ onMounted(() => {
     }"
     :adminhref="{ pageName: 'testList', href: 'testLists' }"
     :adminhref2="{ pageName: 'weightMaster' }"
-  ></pankuzuTest>
+  ></pankuzuMain>
   <ButtonView
     text="新規登録"
     class="ml-3"

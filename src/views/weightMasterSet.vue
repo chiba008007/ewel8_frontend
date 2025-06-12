@@ -2,7 +2,7 @@
 import { ref, defineEmits } from "vue";
 import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
-import pankuzuTest from "@/components/pankuzuTest.vue";
+import pankuzuMain from "@/components/pankuzuMain.vue";
 import TextFieldView from "@/components/TextFieldView.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import { useRouter } from "vue-router";
@@ -12,9 +12,14 @@ import UserApiService from "@/services/UserApiService";
 import WeightApiService from "@/services/WeightApiService";
 import AlertView from "@/components/AlertView.vue";
 import Papa from "papaparse";
+import ProgressView from "@/components/ProgressView.vue";
+import { useStoreUser } from "@/store/user";
 
 import dayjs from "dayjs";
 import "dayjs/locale/ja";
+
+const loadingFlag = ref(true);
+const user = useStoreUser();
 dayjs.locale("ja");
 const inputData = ref({
   element1: "0",
@@ -59,6 +64,7 @@ if (params.pattern === "edit") {
       inputData.value.element13 = rst.data["ave"];
       inputData.value.element14 = rst.data["hensa"];
       disabled.value = false;
+      loadingFlag.value = false;
     })
     .catch((e) => {
       console.log(e);
@@ -81,6 +87,7 @@ UserApiService.getUserElement(tmp)
       let elem = "element" + i;
       elements.value.push({ text: res.data[elem], num: i });
     }
+    loadingFlag.value = false;
   })
   .catch((e) => {
     console.log("TestMenu ERROR" + e);
@@ -114,6 +121,7 @@ const onRegist = () => {
 const onOkClick = () => {
   let data = {
     id: params.id,
+    partner_id: user.getSession("partner_id"),
     name: inputData.value.name,
     wt1: inputData.value.element1,
     wt2: inputData.value.element2,
@@ -190,6 +198,7 @@ const onFormat = () => {
 };
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <DialogWeight
     message="入力内容に問題がない場合は「はい」、問題がある場合は「いいえ」を画面下のボタンで選択してください。"
     :elements="elements"
@@ -202,7 +211,7 @@ const onFormat = () => {
   <v-row justify="center" class="mt-6">
     <TestMenu />
   </v-row>
-  <pankuzuTest
+  <pankuzuMain
     pageName="weightMaster"
     :partnerhref="{
       pageName: 'testList',
@@ -219,7 +228,7 @@ const onFormat = () => {
     :adminhref="{ pageName: 'testList', href: 'testLists' }"
     :adminhref2="{ pageName: 'weightMaster', href: 'weightMaster' }"
     :adminhref3="{ pageName: 'weightMasterSet', href: 'weightMasterSet' }"
-  ></pankuzuTest>
+  ></pankuzuMain>
   <div class="mx-3">
     <p class="text-caption">
       この画面では、CSVファイルをアップロードして重み付けデータを一括登録することができます。CSVファイルに含まれるデータを自動的に読み込み、各重み付けに反映します。<br />
@@ -267,8 +276,8 @@ const onFormat = () => {
         <TextFieldView
           placeholder="0.0"
           type="number"
-          :value="(inputData as unknown as inputDataType)['element' + parseInt(idx + 1)]"
-          @onKeyup="(e:number) => onKeyup(elem, e)"
+          :value="(inputData as unknown as inputDataType)['element' + (idx + 1)]"
+          @onKeyup="(e:number|string) => onKeyup(elem, Number(e))"
         ></TextFieldView>
       </v-col>
     </v-row>

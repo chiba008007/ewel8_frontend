@@ -12,6 +12,7 @@ import pageClickMove from "../plugins/pagemove";
 import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
 
 import ProgressView from "@/components/ProgressView.vue";
+const user = useStoreUser();
 const move = pageClickMove();
 const route = useRoute();
 const tmpid = route.params.id;
@@ -93,6 +94,8 @@ UserApiService.getCustomerList(ctmp)
 
 const tab = ref(0);
 const onMove = (param: string, key: number) => {
+  // sessionstrageにpartner_idを保持
+  user.setSession("partner_id", tmpid);
   move.pageClickMoveParamCode(param, key);
 };
 </script>

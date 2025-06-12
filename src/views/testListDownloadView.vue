@@ -3,16 +3,18 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
-import pankuzuTest from "../components/pankuzuTest.vue";
+import pankuzuMain from "../components/pankuzuMain.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import { useStoreUser } from "../store/user";
 import { pagelink } from "@/plugins/pagelink";
 import FileuploadApiService from "@/services/FileuploadApiService";
 import { d_filePath, openStatus } from "@/plugins/const";
+import ProgressView from "@/components/ProgressView.vue";
 
 const router = useRouter();
 const params = router.currentRoute.value.params;
 const user = useStoreUser();
+const loadingFlag = ref(true);
 
 const onBack = () => {
   router.push({
@@ -20,8 +22,6 @@ const onBack = () => {
     params: { id: params.id },
   });
 };
-
-const onPankuzu = ref(false);
 
 const headers = [
   { title: "登録日", sortable: true, key: "name" },
@@ -54,7 +54,8 @@ onMounted(() => {
 });
 const reading = () => {
   let tmp = {
-    partner_id: params.id,
+    customer_id: params.id,
+    partner_id: user.getSession("partner_id"),
   };
   FileuploadApiService.getList(tmp).then((res) => {
     desserts.value = [];
@@ -72,6 +73,7 @@ const reading = () => {
       });
       i++;
     });
+    loadingFlag.value = false;
   });
 };
 const commaSeparated = (value: number) => {
@@ -79,20 +81,20 @@ const commaSeparated = (value: number) => {
 };
 </script>
 <template>
+  <ProgressView v-if="loadingFlag"></ProgressView>
   <PartnerAdmin coded="customer" />
   <v-row justify="center">
     <TestMenu />
   </v-row>
-  <pankuzuTest
+  <pankuzuMain
     :adminhref="{
       pageName: 'testList',
       href: 'testLists',
       params: { id: params.id },
     }"
     :adminhref2="{ pageName: 'testListsDownload' }"
-    @onEnabled="(e:boolean) => (onPankuzu = e)"
-  ></pankuzuTest>
-  <div v-if="onPankuzu" class="mx-3">
+  ></pankuzuMain>
+  <div class="mx-3">
     <h4 class="mt-2">{{ user["testListsDownload"] }}</h4>
     <p>ダウンロードしたいファイル名を選択してください。</p>
     <v-row v-resize="onResize">

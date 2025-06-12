@@ -8,7 +8,7 @@ import ButtonView from "@/components/ButtonView.vue";
 import { useRoute } from "vue-router";
 import TestApiService from "@/services/TestApiService";
 import pageClickMove from "@/plugins/pagemove";
-import pankuzuTest from "@/components/pankuzuTest.vue";
+import pankuzuMain from "@/components/pankuzuMain.vue";
 import dayjs from "dayjs";
 import { useStoreUser } from "@/store/user";
 import { D_ADMIN, D_PARTNER } from "@/plugins/const";
@@ -29,8 +29,10 @@ const testheaders = ref([
   { title: "機能", align: undefined, key: "method" },
 ]);
 
+const partner_id = user.getSession("partner_id");
 const tmp = {
   user_id: route.params.id,
+  partner_id: partner_id,
 };
 const testList = ref();
 
@@ -47,7 +49,10 @@ type userAny = {
   syori: number;
 };
 const type = (user.userdata as userType).type;
-TestApiService.getTestList(tmp)
+TestApiService.getTestList({
+  user_id: route.params.id,
+  partner_id: partner_id,
+})
   .then(function (res) {
     loadingFlag.value = false;
     testList.value = res.data;
@@ -64,7 +69,6 @@ const onResize = () => {
   const wWidth = window.innerWidth;
   tableWidth.value = wWidth;
 };
-const onPankuzu = ref(false);
 </script>
 <template>
   <PartnerAdmin coded="customer" />
@@ -73,13 +77,12 @@ const onPankuzu = ref(false);
     <TestMenu />
   </v-row>
 
-  <pankuzuTest
+  <pankuzuMain
     :partnerhref="{ pageName: 'testList', href: 'testLists' }"
     :adminhref="{ pageName: 'testList', href: 'testLists' }"
-    @onEnabled="(e:boolean) => (onPankuzu = e)"
-  ></pankuzuTest>
+  ></pankuzuMain>
   <ProgressView v-if="loadingFlag"></ProgressView>
-  <v-row v-resize="onResize" v-if="onPankuzu">
+  <v-row v-resize="onResize">
     <v-col class="mt-0 pt-0">
       <v-data-table
         v-if="testList"
