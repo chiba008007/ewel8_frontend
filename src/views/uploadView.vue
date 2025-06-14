@@ -9,13 +9,16 @@ import { useRouter, useRoute } from "vue-router";
 import fileUpload from "@/components/fileUpload.vue";
 import { d_filePath, openStatus } from "@/plugins/const";
 import AlertView from "@/components/AlertView.vue";
-import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import pankuzuMain from "@/components/pankuzuMain.vue";
 import { pagelink, deleteStatus } from "@/plugins/pagelink";
 import ProgressView from "../components/ProgressView.vue";
 
 const alertDeleteflag = ref(false);
 const alertRegistflag = ref(false);
 const route = useRoute();
+const router = useRouter();
+const params = router.currentRoute.value.params;
+const paramId = params.id;
 
 const headers = [
   { title: "登録日", sortable: true, key: "name" },
@@ -109,13 +112,16 @@ const commaSeparated = (value: number) => {
   <v-row justify="center">
     <CustomerMenu />
   </v-row>
-  <pankuzuCustomer
-    :pageName="user.upload"
-    name="customerList"
-  ></pankuzuCustomer>
+
   <v-row class="ml-2">
-    <v-col>
-      <p class="text-h6">ファイルアップロード</p>
+    <pankuzuMain
+      :partnerid="paramId"
+      :adminhref="{
+        pageName: 'uploadView',
+      }"
+    ></pankuzuMain>
+    <v-col cols="12">
+      <p class="text-h6">{{ user.uploadView }}</p>
     </v-col>
   </v-row>
   <v-row no-gutters class="ml-2">

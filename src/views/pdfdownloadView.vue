@@ -18,6 +18,7 @@ const partner_id = user.getSession("partner_id");
 const test_id = params.testid;
 const alertFlag = ref(false);
 const progressFlag = ref(true);
+const checkButtonDisableFlag = ref(true);
 
 const onBack = () => {
   router.push({
@@ -26,7 +27,6 @@ const onBack = () => {
   });
 };
 
-const onPankuzu = ref(false);
 const statusString: { [key: number]: string } = {
   1: "実行前",
   2: "実行中",
@@ -70,6 +70,8 @@ type typed = {
   end: string;
   type: string;
   code: string;
+  typeStatus: number;
+  updated_at: Date;
 };
 const dataList = ref<Array<typed>>([]);
 
@@ -82,14 +84,41 @@ const reading = () => {
     partner_id: partner_id,
     test_id: test_id,
   }).then(function (res) {
+    checkButtonDisableFlag.value = true;
     dataList.value = res.data.map(
-      (item: { start: string; end: string; type: number; code: number }) => ({
+      (item: {
+        start: string;
+        end: string;
+        type: number;
+        code: number;
+        typeStatus: number;
+        updated_at: Date;
+      }) => ({
         start: item.start ?? "",
         end: item.type == 3 ? item.end : "",
         type: statusString[item.type] ?? "", // 必要に応じて整形
         code: codeString[item.code - 1].label, // 必要に応じて整形
+        updated_at: item.updated_at ?? "",
+        typeStatus: item.type ?? "",
       })
     );
+    // 配列の最後をで確認
+    let last = dataList.value[dataList.value.length - 1];
+
+    if (!last) {
+      checkButtonDisableFlag.value = false;
+    } else {
+      const targetTime = new Date(last.updated_at);
+      const now = new Date();
+      // 差をミリ秒単位で取得
+      const diffMs = now.getTime() - targetTime.getTime();
+      // 1時間以内かどうか（60分 × 60秒 × 1000ミリ秒）
+      const isWithin1Hour = diffMs >= 0 && diffMs <= 60 * 60 * 1000;
+      if (!isWithin1Hour) {
+        // 実行済みの時
+        checkButtonDisableFlag.value = false;
+      }
+    }
     progressFlag.value = false;
   });
 };
@@ -157,6 +186,7 @@ const onClick = () => {
               @onChange="(e) => onChange(e)"
             ></RadioView>
             <ButtonView
+              :disabled="checkButtonDisableFlag"
               :text="user['pdfdownload']"
               class="bg-lime"
               @onClick="onClick()"

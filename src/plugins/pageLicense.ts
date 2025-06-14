@@ -20,7 +20,7 @@ export default function () {
     const lisenceViewCalc = ref();
     UserApiService.getUserLisenceCalc({
       user_id: tmpid,
-      customer_id: user.getSession("customer_id"),
+      customer_id: user.getSession("partner_id"),
     })
       .then((res: any) => {
         lisenceViewCalc.value = res.data;

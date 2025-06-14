@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { useRouter, useRoute } from "vue-router";
-import { textString } from "@/plugins/const";
+import { textString, SECRET_KEY } from "@/plugins/const";
+import * as CryptoJS from "crypto-js";
+
 export const useStoreUser = defineStore("user", {
   state: () => ({
     count: 1,
@@ -18,6 +20,7 @@ export const useStoreUser = defineStore("user", {
     testList: "検査一覧",
     testExamList: "検査結果一覧",
     testListsDownload: "ダウンロード",
+    uploadView: "ファイルアップロード",
     csvupload: "CSVアップロード",
     pdfdownload: "PDF一括ダウンロード",
     examSearch: "受検者検索",
@@ -40,10 +43,14 @@ export const useStoreUser = defineStore("user", {
   },
   actions: {
     setSession(key: string, id: string | string[] | number) {
-      sessionStorage.setItem(key, String(id));
+      const str = CryptoJS.AES.encrypt(String(id), SECRET_KEY).toString();
+      localStorage.setItem(key, str);
     },
     getSession(key: string) {
-      return sessionStorage.getItem(key);
+      const k = localStorage.getItem(key);
+      if (!k) return "";
+      const bytes = CryptoJS.AES.decrypt(k, SECRET_KEY);
+      return bytes.toString(CryptoJS.enc.Utf8);
     },
     increment() {
       this.count++;

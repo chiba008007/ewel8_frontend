@@ -9,7 +9,7 @@ import ButtonView from "@/components/ButtonView.vue";
 import { useRoute } from "vue-router";
 import UserApiService from "@/services/UserApiService";
 import pageClickMove from "../plugins/pagemove";
-import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import pankuzuMain from "@/components/pankuzuMain.vue";
 
 import ProgressView from "@/components/ProgressView.vue";
 const user = useStoreUser();
@@ -103,10 +103,10 @@ const onMove = (param: string, key: number) => {
   <ProgressView v-if="loadingFlag"></ProgressView>
   <PartnerAdmin coded="customerTOP" />
   <InfoAreaView />
-  <v-row justify="center">
+  <v-row justify="center" class="my-2">
     <CustomerMenu />
   </v-row>
-  <pankuzuCustomer></pankuzuCustomer>
+  <pankuzuMain :partnerid="tmpid"></pankuzuMain>
   <v-row>
     <v-col class="mt-0 pt-0">
       <v-tabs v-model="tab">

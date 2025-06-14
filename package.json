@@ -34,6 +34,7 @@
     "yubinbango-core2": "^0.6.3"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/html-to-pdfmake": "^2.4.4",
     "@types/jest": "^27.0.1",
     "@types/pdfmake": "^0.2.11",

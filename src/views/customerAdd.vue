@@ -22,7 +22,7 @@ import {
 import UserApiService from "@/services/UserApiService";
 import { imagePath, customer } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
-import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import pankuzuMain from "@/components/pankuzuMain.vue";
 import ProgressView from "@/components/ProgressView.vue";
 
 import { displayStatus } from "@/plugins/const";
@@ -67,7 +67,8 @@ const inputData = ref({
 const prefs = ref();
 const myimage_path = ref();
 const router = useRouter();
-
+const params = router.currentRoute.value.params;
+const paramId = params.id;
 const onBlurButton = async () => {
   registButton.value = true;
   if (
@@ -120,6 +121,9 @@ const onUpdate = () => {
 };
 const successAlertFlag = ref(false);
 const addRegist = () => {
+  if (!confirm("登録を行います。よろしいですか？")) {
+    return false;
+  }
   loadingFlag.value = true;
   let userdata = user.userdata as any;
   let tmp = {
@@ -181,13 +185,15 @@ const pagemove = () => {
   <v-row justify="center">
     <CustomerMenu />
   </v-row>
-
-  <pankuzuCustomer
-    :pageName="user.customerRegist"
-    name="customerList"
-  ></pankuzuCustomer>
   <v-row no-gutters>
-    <v-col cols="12" class="pa-2 ma-2">
+    <pankuzuMain
+      :partnerid="paramId"
+      :adminhref="{
+        pageName: 'customerRegist',
+      }"
+      class="my-0 pb-0 mt-4"
+    ></pankuzuMain>
+    <v-col cols="12" class="py-0 ml-4">
       <ComponentButton
         text="顧客企業一覧"
         color="red"
@@ -211,7 +217,7 @@ const pagemove = () => {
   </v-row>
 
   <v-row no-gutters>
-    <v-col cols="12" class="pa-2 ma-2 mt-0 pt-0">
+    <v-col cols="12" class="pa-2 ma-2 mt-2 pt-0">
       顧客企業情報を入力してください。
       <addPartnerForm
         title="顧客企業名"

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
-import { useRouter, useRoute } from "vue-router";
-import { useStoreUser } from "../store/user";
+import { useRouter } from "vue-router";
 import UserApiService from "@/services/UserApiService";
 
 import addPartnerForm from "../components/addPartnerForm.vue";
@@ -15,16 +14,13 @@ import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ComponentAlert from "../components/AlertView.vue";
 import { requiredValue, checkPassword } from "../plugins/validate";
 import { textString } from "@/plugins/const";
-import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import pankuzuMain from "@/components/pankuzuMain.vue";
 import ProgressView from "@/components/ProgressView.vue";
 
-const route = useRoute();
-const regex = /(\d+)(?!.*\d)/;
-const isPortal = ref(route.path.match(regex));
-const paramId = isPortal.value ? isPortal.value[0] : 0;
-const user = useStoreUser();
-const userid = (user.userdata as any).id;
-const userType = (user.userdata as any).type;
+const router = useRouter();
+const params = router.currentRoute.value.params;
+const paramId = params.id;
+
 const loadingFlag = ref(true);
 
 const form = ref({
@@ -125,15 +121,17 @@ const addRegist = () => {
 <template>
   <ProgressView v-if="loadingFlag"></ProgressView>
   <PartnerAdmin coded="customerTOP" />
-  <v-row align="center" justify="center">
+  <v-row justify="center">
     <CustomerMenu />
   </v-row>
   <v-row>
     <v-col class="ma-0">
-      <pankuzuCustomer
-        :pageName="user.partnerEdit"
-        name="customerList"
-      ></pankuzuCustomer>
+      <pankuzuMain
+        :partnerid="paramId"
+        :adminhref="{
+          pageName: 'partnerEdit',
+        }"
+      ></pankuzuMain>
       <v-row no-gutters>
         <v-col cols="12" class="ml-2">
           <ComponentButton

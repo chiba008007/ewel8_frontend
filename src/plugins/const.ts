@@ -2,6 +2,9 @@ interface NumberCodeOrNullListType {
   [key: number]: string;
   null: string;
 }
+/** キー */
+export const SECRET_KEY = "my-secret-key";
+
 /** 画像 */
 
 const uri = new URL(window.location.href);
