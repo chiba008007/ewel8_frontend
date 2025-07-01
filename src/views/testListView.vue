@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import InfoAreaView from "../components/InfoAreaView.vue";
-import TestMenu from "../components/TestMenu.vue";
-import PartnerAdmin from "../components/PartnerAdmin.vue";
+import InfoAreaView from "@/components/InfoAreaView.vue";
+import TestMenu from "@/components/TestMenu.vue";
+import PartnerAdmin from "@/components/PartnerAdmin.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import { useRoute } from "vue-router";
 import TestApiService from "@/services/TestApiService";
@@ -169,6 +169,12 @@ const onResize = () => {
                 class="text-caption mb-2 ml-2"
                 color="success"
                 size="small"
+                @click="
+                  move.pageTestEdit('testCopy', {
+                    id: tmp.user_id,
+                    editid: (item as userAny).id,
+                  })
+                "
               ></ButtonView>
             </td>
           </tr>

@@ -117,6 +117,8 @@ const reading = () => {
       if (!isWithin1Hour) {
         // 実行済みの時
         checkButtonDisableFlag.value = false;
+      } else {
+        checkButtonDisableFlag.value = true;
       }
     }
     progressFlag.value = false;

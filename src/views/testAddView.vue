@@ -478,7 +478,7 @@ const setInputWeight = (e: string, type: string) => {
       "
     />
     <ButtonView
-      v-else-if="editid"
+      v-else-if="editid && route.name != 'testCopy'"
       text="検査更新実行"
       color="green"
       class="mt-3 mb-3 ml-1"
@@ -740,6 +740,7 @@ const setInputWeight = (e: string, type: string) => {
             <v-col cols="12">
               <div v-for="val in lisenceView" :key="val.id">
                 <CardViewPFS
+                  :pagename="route.name"
                   :editid="editid"
                   v-show="(inputData.testparts as any)[val.code]?.id && editid || editid === 0 ? true:false"
                   class="mt-3"

@@ -10,6 +10,7 @@ const settingString = (type: boolean) => {
 };
 
 interface Props {
+  pagename?: string | symbol | undefined;
   title?: string;
   editid?: number | string | string[];
   testcount?: number | string;
@@ -77,16 +78,19 @@ const setInputWeight = (ev: string) => {
         :variant="`outlined`"
         :class="bgcolor[0]"
         @onClick="onClick(0)"
-        :readonly="props.editid ? true : false"
+        :readonly="pagename != 'testCopy' && props.editid ? true : false"
       ></ButtonView>
       <ButtonView
         text="利用する"
         :class="bgcolor[1]"
         :variant="`outlined`"
         @onClick="onClick(1)"
-        :readonly="props.editid ? true : false"
+        :readonly="pagename != 'testCopy' && props.editid ? true : false"
       ></ButtonView>
-      <p v-show="props.editid ? true : false" class="text-red">
+      <p
+        v-show="pagename != 'testCopy' && props.editid ? true : false"
+        class="text-red"
+      >
         ※ データ更新時は変更不可となります。
       </p>
     </v-card-actions>
@@ -155,7 +159,10 @@ const setInputWeight = (ev: string) => {
                   {{ val.note }}
                 </p>
               </div>
-              <div v-if="editid" class="text-right pa-1 box">
+              <div
+                v-if="pagename != 'testCopy' && editid"
+                class="text-right pa-1 box"
+              >
                 {{ props.dataDetail[`weight${val.id}`] }}
               </div>
               <TextField

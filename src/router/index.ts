@@ -214,6 +214,14 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/testCopy/:id/copy/:edit_id",
+    name: "testCopy",
+    component: testAddView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/testQr/:id/test/:testid",
     name: "testQr",
     component: testQrView,
