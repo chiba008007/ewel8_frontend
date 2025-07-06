@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { D_TEST_VGATE } from "@/plugins/const";
 import TestApiService from "@/services/TestApiService";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import AlertView from "@/components/AlertView.vue";
@@ -20,7 +21,11 @@ let tmp = {
 };
 TestApiService.getQRParam(tmp).then(function (res) {
   testname.value = res.data.testname;
-  origin.value = uri.origin + "/exam/?k=" + res.data.params;
+  if (location.hostname == "localhost") {
+    origin.value = uri.origin + "/exam/?k=" + res.data.params;
+  } else {
+    origin.value = D_TEST_VGATE + "/?k=" + res.data.params;
+  }
 });
 const examList = ref();
 TestApiService.getQRLists(tmp).then(function (res) {

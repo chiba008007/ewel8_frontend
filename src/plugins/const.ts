@@ -19,6 +19,7 @@ if (reg.test(uri.toString())) {
   frontpath = "https://ewel.uh-oh.jp";
 }
 
+export const D_TEST_VGATE = "https://test.v-gate.jp";
 export const D_ADMIN = "admin";
 export const D_PARTNER = "partner";
 export const D_CUSTOMER = "customer";
@@ -35,12 +36,24 @@ export const gender: NumberCodeOrNullListType = {
   1: "男性",
   2: "女性",
 };
+
+export const genderLabel: Array<{ label: string; value: number | null }> = [
+  { value: 0, label: "未指定" },
+  { value: 1, label: gender[1] },
+  { value: 2, label: gender[2] },
+];
+
 /** 合否 */
-export const passArray: object = {
+export const passArray = {
   0: "未指定",
   1: "合格",
   2: "不合格",
 };
+export const passArrayLabel: Array<{ label: string; value: number | null }> = [
+  { value: 0, label: "未指定" },
+  { value: 1, label: passArray[1] },
+  { value: 2, label: passArray[2] },
+];
 export const genderArray = [
   { value: 1, label: "男性" },
   { value: 2, label: "女性" },

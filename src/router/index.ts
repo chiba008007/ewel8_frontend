@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { useStoreUser } from "../store/user";
 import HomeView from "../views/HomeView.vue";
+import BlankView from "../views/BlankView.vue";
 import LoginView from "../views/LoginView.vue";
 import ListView from "../views/ListView.vue";
 import partnerRegistView from "../views/partnerRegistView.vue";
@@ -27,6 +28,7 @@ import testAddView from "../views/testAddView.vue";
 import testDeleteView from "../views/testDeleteView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
+import testExamEditView from "../views/testExamEditView.vue";
 import csvuploadView from "../views/csvuploadView.vue";
 import pdfdownloadView from "../views/pdfdownloadView.vue";
 import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
@@ -36,9 +38,27 @@ import ExamPfsTake3 from "../views/examinate/PFS/ExamTake3.vue";
 import ExamPfsTake4 from "../views/examinate/PFS/ExamTake4.vue";
 import ExamPfsTakeFin from "../views/examinate/PFS/ExamTakeFin.vue";
 
-import store from "@/store";
+const hostname = location.hostname;
+const isTestSite = hostname === "test.v-gate.jp";
+//const isTestSite = hostname === "localhost";
 
 const routes: Array<RouteRecordRaw> = [
+  ...(isTestSite
+    ? [
+        {
+          path: "/",
+          name: "exam",
+          component: ExamView,
+        },
+      ]
+    : [
+        {
+          path: "/",
+          name: "BlankView",
+          component: BlankView,
+        },
+      ]),
+
   {
     path: "/home",
     name: "Home",
@@ -237,6 +257,14 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/testExamEdit/:id/test/:testid/exam/:exam_id",
+    name: "testExamEdit",
+    component: testExamEditView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
   // CSVアップロード
   {
     path: "/testExamList/:id/test/:testid/csvupload",
@@ -257,11 +285,7 @@ const routes: Array<RouteRecordRaw> = [
   },
 
   // 受検用
-  {
-    path: "/exam",
-    name: "exam",
-    component: ExamView,
-  },
+
   {
     path: "/exam/profile",
     name: "examProfile",

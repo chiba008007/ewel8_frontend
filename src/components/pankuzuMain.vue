@@ -13,9 +13,11 @@ interface Props {
   adminhref?: { pageName?: string; href?: string; params?: object };
   adminhref2?: { pageName?: string; href?: string; params?: object };
   adminhref3?: { pageName?: string; href?: string; params?: object };
+  adminhref4?: { pageName?: string; href?: string; params?: object };
   partnerhref?: { pageName?: string; href?: string; params?: object };
   partnerhref2?: { pageName?: string; href?: string; params?: object };
   partnerhref3?: { pageName?: string; href?: string; params?: object };
+  partnerhref4?: { pageName?: string; href?: string; params?: object };
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -80,6 +82,14 @@ if (props.adminhref3 && props.adminhref3.pageName) {
     title: (user as any)[props.adminhref3.pageName],
     href: router.resolve({
       name: props.adminhref3.href,
+    }).href,
+  });
+}
+if (props.adminhref4 && props.adminhref4.pageName) {
+  pankuzu.value.push({
+    title: (user as any)[props.adminhref4.pageName],
+    href: router.resolve({
+      name: props.adminhref4.href,
     }).href,
   });
 }

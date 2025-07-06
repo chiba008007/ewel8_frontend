@@ -19,16 +19,22 @@ const props = withDefaults(defineProps<Props>(), {
   checked: true,
 });
 const emit = defineEmits<{
-  (e: "onChange", val: number | string | boolean | null): void;
+  (e: "update:modelValue", val: boolean): void;
+  (e: "onChange", val: boolean): void;
 }>();
 </script>
 <template>
   <v-checkbox
     class="ml-2"
     :label="props.label"
-    :model-value="props.value"
     :hide-details="props.hideDetail"
     :class="props.class"
-    @change="emit('onChange', props.value)"
+    @update:model-value="
+      (val) => {
+        const checked = val as boolean
+        emit('update:modelValue', checked)
+        emit('onChange', checked)
+      }
+    "
   ></v-checkbox>
 </template>

@@ -250,6 +250,16 @@ const onPdfDownload = () => {
                   variant="tonal"
                   density="compact"
                   color="primary"
+                  @onClick="
+                    router.push({
+                      name: 'testExamEdit',
+                      params: {
+                        id: params.id,
+                        test_id: params.testid,
+                        exam_id: (item as any).id,
+                      },
+                    })
+                  "
                 ></ButtonView>
                 <ButtonView
                   :disabled="(item as any).ended_at ? false : true"

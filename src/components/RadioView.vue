@@ -1,28 +1,68 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, watch } from "vue";
 
 const props = defineProps<{
-  model?: number | string;
-  default?: number | string;
-  items: Array<{
-    label: string;
-    value: any;
-  }>;
+  modelValue?: number | string | null; // v-model 用
+  default?: number | string | null; // 旧 default
+  selectedValue?: number | string | null; // 旧 selectedValue
+  items: Array<{ label: string; value: any }>;
+  inline?: boolean;
 }>();
+
 const emit = defineEmits<{
-  (e: "onChange", value: number): void;
+  (e: "update:modelValue", value: number | string | null): void;
+  (e: "onChange", value: number | string | null): void;
 }>();
-const selectedValue = ref(props.default);
+
+// ✅ 優先順位: modelValue > selectedValue > default
+const selected = ref<number | string | null>(
+  props.modelValue ?? props.selectedValue ?? props.default ?? null
+);
+
+// 🔄 modelValue が変わったら反映
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val !== undefined) selected.value = val;
+  }
+);
+
+// 🔄 props.selectedValue や default も反映（フォールバック用途）
+watch(
+  () => props.selectedValue,
+  (val) => {
+    if (props.modelValue === undefined && val !== undefined)
+      selected.value = val;
+  }
+);
+
+watch(
+  () => props.default,
+  (val) => {
+    if (
+      props.modelValue === undefined &&
+      props.selectedValue === undefined &&
+      val !== undefined
+    ) {
+      selected.value = val;
+    }
+  }
+);
+
+// ✅ ユーザー操作時
+watch(selected, (val) => {
+  emit("update:modelValue", val);
+  emit("onChange", val);
+});
 </script>
+
 <template>
-  <v-radio-group hide-details="false" v-model="selectedValue">
+  <v-radio-group v-model="selected" :inline="props.inline" :hide-details="true">
     <v-radio
-      v-for="item in items"
+      v-for="item in props.items"
       :key="item.value"
       :label="item.label"
       :value="item.value"
-      @change="emit('onChange', $event.target.value)"
-      @click:append="emit('onChange', $event.target.value)"
-    ></v-radio>
+    />
   </v-radio-group>
 </template>

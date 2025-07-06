@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { defineProps, withDefaults, defineEmits } from "vue";
-import type { VAutocomplete, VTextField } from "vuetify/components";
+import { defineProps, withDefaults, defineEmits, useAttrs } from "vue";
+import type { VTextField } from "vuetify/components";
 import { removeTabKey } from "../plugins/validate";
 type TVariant = VTextField["$props"]["variant"];
 type TVDensity = VTextField["$props"]["density"];
@@ -18,7 +18,6 @@ interface Props {
   messages?: string;
   person?: string;
   label?: string;
-  class?: string;
   clearable?: boolean;
 }
 
@@ -33,7 +32,6 @@ const props = withDefaults(defineProps<Props>(), {
   hideDetails: "auto",
   person: undefined,
   label: undefined,
-  class: undefined,
   clearable: false,
 });
 const emit = defineEmits<{
@@ -41,9 +39,11 @@ const emit = defineEmits<{
   (e: "onBlur", value: string): void;
   (e: "onChange", value: string): void;
 }>();
+const attrs = useAttrs();
 </script>
 <template>
   <v-select
+    v-bind="attrs"
     :label="props.label"
     :items="props.items"
     item-value="id"
@@ -51,7 +51,6 @@ const emit = defineEmits<{
     :hide-details="props.hideDetails"
     :variant="props.variant"
     :density="props.density"
-    :class="props.class"
     :model-value="props.text"
     :clearable="props.clearable"
     @keydown="removeTabKey($event)"
@@ -59,3 +58,6 @@ const emit = defineEmits<{
     @update:modelValue="emit('onChange', $event)"
   ></v-select>
 </template>
+<style lang="scss" scoped>
+@import "@/assets/styles/util.scss";
+</style>

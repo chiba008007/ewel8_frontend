@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { defineProps, withDefaults, defineEmits } from "vue";
-import type { VAutocomplete, VTextField } from "vuetify/components";
-import { removeTabKey } from "../plugins/validate";
+import { defineProps, withDefaults, defineEmits, computed } from "vue";
+import type { VTextField } from "vuetify/components";
 type TVariant = VTextField["$props"]["variant"];
 type TVDensity = VTextField["$props"]["density"];
 
@@ -18,7 +17,11 @@ interface Props {
   person?: string;
   class?: string;
   errormessage?: string;
-  rules?: string | "" | null | undefined;
+  rules?:
+    | string
+    | null
+    | undefined
+    | Array<(value: string) => boolean | string>;
   maxlength?: number;
   step?: string;
 }
@@ -42,6 +45,21 @@ const emit = defineEmits<{
   (e: "onKeyup", value: string, name: string | undefined): void;
   (e: "onBlur", value: string, name: string): void;
 }>();
+
+const normalizedRules = computed(() => {
+  const r = props.rules;
+  if (!r) return [];
+
+  if (typeof r === "string") {
+    return [(v: string) => !!v || r];
+  }
+
+  if (Array.isArray(r)) {
+    return r;
+  }
+
+  return [];
+});
 </script>
 <template>
   <v-text-field
@@ -56,7 +74,7 @@ const emit = defineEmits<{
     :hide-details="props.hideDetails"
     :messages="props.messages"
     :class="props.class"
-    :rules="props.rules ? [props.rules] : undefined"
+    :rules="normalizedRules"
     :maxlength="props.maxlength"
     @keyup="emit('onKeyup', $event.target.value, props.name ?? '')"
     @blur="emit('onBlur', $event.target.value, props.name ?? '')"
@@ -65,3 +83,6 @@ const emit = defineEmits<{
     {{ props.errormessage }}
   </p>
 </template>
+<style lang="scss" scoped>
+@import "@/assets/styles/util.scss";
+</style>
