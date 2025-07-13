@@ -11,7 +11,7 @@ import ExamBAJ3View from "@/components/ExamBAJ3View.vue";
 import { passArray } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
-import { pdfDownload } from "@/plugins/pdf";
+import { pdfDownload, onCertficate } from "@/plugins/pdf";
 import { useStoreUser } from "@/store/user";
 import ProgressView from "@/components/ProgressView.vue";
 
@@ -83,6 +83,7 @@ TestApiService.getExam(tmp).then(function (rlt) {
   examList.value.map((value: any, k: number) => {
     examList.value[k]["passText"] = (passArray as any)[value.passflag];
   });
+  console.log(examList.value);
   loadingFlag.value = false;
 });
 
@@ -276,12 +277,22 @@ const onPdfDownload = () => {
                     )
                   "
                 ></ButtonView>
+
                 <ButtonView
+                  v-show="(item as any).lisencedownloadflag"
+                  :disabled="(item as any).ended_at ? false : true"
                   text="証書"
                   variant="tonal"
                   density="compact"
                   color="purple"
                   class="ml-1"
+                  @click="
+                    onCertficate(
+                      (item as any).id,
+                      (item as any).email,
+                      (item as any).birth
+                    )
+                  "
                 ></ButtonView>
               </td>
             </tr>
