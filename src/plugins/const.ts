@@ -49,6 +49,14 @@ export const passArray = {
   1: "合格",
   2: "不合格",
 };
+
+export const examStatusArray = [
+  { id: 0, name: "未受検" },
+  { id: 1, name: "受検中" },
+  { id: 2, name: "受検済" },
+  { id: 3, name: "-" },
+];
+
 export const passArrayLabel: Array<{ label: string; value: number | null }> = [
   { value: 0, label: "未指定" },
   { value: 1, label: passArray[1] },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
 import TestApiService from "@/services/TestApiService";
 import pankuzuMain from "../components/pankuzuMain.vue";
@@ -8,12 +8,16 @@ import csvDownload from "@/components/csvDownload.vue";
 import excelDownload from "@/components/excelDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
 import ExamBAJ3View from "@/components/ExamBAJ3View.vue";
-import { passArray } from "@/plugins/const";
+import { passArray, examStatusArray } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
 import { pdfDownload, onCertficate } from "@/plugins/pdf";
 import { useStoreUser } from "@/store/user";
 import ProgressView from "@/components/ProgressView.vue";
+import AlertView from "@/components/AlertView.vue";
+import TextFieldView from "@/components/TextFieldView.vue";
+import DateView from "@/components/DateView.vue";
+import SelectFieldView from "@/components/SelectFieldView.vue";
 
 const pdfcode = ref();
 const onPDfOutput = (id: number, code: string, birth: string) => {
@@ -29,11 +33,34 @@ const headers = ref([
   { title: "生年月日", sortable: false, key: "birth", cols: 1, row: 2 },
   { title: "合否", sortable: false, key: "passflag", cols: 1, row: 2 },
 ]);
-const examList = ref();
+
 const router = useRouter();
 const detail = ref();
 const user = useStoreUser();
 const loadingFlag = ref(true);
+const today = new Date(); // 今日の日時
+const oneYearAgo = new Date(today); // 今日をコピー
+
+oneYearAgo.setFullYear(today.getFullYear() - 1); // ← ここで1年前にずらす
+
+const yearStr = oneYearAgo
+  .toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+  .replace(/\//g, "-");
+
+const todayStr = today
+  .toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+  .replace(/\//g, "-");
+
+const startDate = ref(yearStr); // ← 1年前
+const endDate = ref(todayStr); // ← 今日
 
 const params = router.currentRoute.value.params;
 let tmp = {
@@ -76,17 +103,93 @@ TestApiService.getTestTableTh(tmp)
     location.href = "/error";
   });
 
-TestApiService.getExam(tmp).then(function (rlt) {
-  detail.value = rlt;
-  // title.value = detail.value.data.detail.testname;
-  examList.value = detail.value.data.exams;
-  examList.value.map((value: any, k: number) => {
-    examList.value[k]["passText"] = (passArray as any)[value.passflag];
-  });
-  console.log(examList.value);
-  loadingFlag.value = false;
+const pagetitle = ref("");
+const originalExamList = ref<any[]>([]);
+const filteredExamList = ref<any[]>([]);
+const filterText = reactive({
+  email: "",
+  name: "",
+  kana: "",
+  examStatus: "",
+  started_at: "",
+  memo1: "",
+  memo2: "",
 });
 
+onMounted(async () => {
+  try {
+    const rlt = await TestApiService.getTest({
+      user_id: params.id,
+      test_id: params.testid,
+    });
+    pagetitle.value = rlt.data.testname;
+
+    TestApiService.getExam(tmp).then(function (rlt) {
+      detail.value = rlt;
+
+      // パスフラグを変換してからリストに設定
+      const exams = rlt.data.exams.map((value: any, index: number) => ({
+        ...value,
+        originalIndex: index + 1,
+        passText: (passArray as any)[value.passflag],
+      }));
+      originalExamList.value = exams;
+      filteredExamList.value = exams;
+
+      loadingFlag.value = false;
+    });
+  } catch (error) {
+    console.error("APIエラー:", error);
+  }
+});
+
+const applyFilter = () => {
+  filteredExamList.value = originalExamList.value.filter((item) => {
+    const nameMatch = !filterText.name || item.name?.includes(filterText.name);
+    const emailMatch =
+      !filterText.email || item.email?.includes(filterText.email);
+    const kanaMatch = !filterText.kana || item.kana?.includes(filterText.kana);
+
+    const memo1Match =
+      !filterText.memo1 || item.memo1?.includes(filterText.memo1);
+    console.log(memo1Match);
+    const memo2Match =
+      !filterText.memo2 || item.memo2?.includes(filterText.memo2);
+
+    // examStatus（数値化）
+    const rawStatus = filterText.examStatus;
+    const status =
+      rawStatus === "" || rawStatus === undefined || rawStatus === null
+        ? null
+        : Number(rawStatus);
+    let examStatusMatch = true;
+
+    if (status === 0) {
+      examStatusMatch = !item.started_at && !item.ended_at;
+    } else if (status === 1) {
+      examStatusMatch = !!item.started_at && !item.ended_at;
+    } else if (status === 2) {
+      examStatusMatch = !!item.started_at && !!item.ended_at;
+    } else if (status === 3) {
+      examStatusMatch = true; // 未指定: フィルタ無効
+    }
+    let startedAtMatch = true;
+    if (item.started_at && startDate.value && endDate.value) {
+      const itemDate = item.started_at.slice(0, 10);
+      startedAtMatch = itemDate >= startDate.value && itemDate <= endDate.value;
+    }
+
+    return (
+      nameMatch &&
+      emailMatch &&
+      kanaMatch &&
+      examStatusMatch &&
+      startedAtMatch &&
+      memo1Match &&
+      memo2Match
+    );
+  });
+};
 const tableHeight = ref(100);
 const dialogFlag = ref(false);
 const pfsDialogText = ref({
@@ -177,11 +280,86 @@ const onPdfDownload = () => {
   </div>
 
   <div id="divoverflow">
+    <AlertView :border="`top`" color="green" :text="pagetitle"></AlertView>
+
     <v-row v-resize="onResize" style="width: auto">
       <v-col class="ma-1" style="overflow: scroll">
+        <v-card class="pa-3 ma-2">
+          <v-card-text>
+            <v-row no-gutters>
+              <v-col cols="2">
+                ID
+                <TextFieldView
+                  density="compact"
+                  @onKeyup="(e) => (filterText.email = e)"
+                ></TextFieldView>
+              </v-col>
+              <v-col cols="2">
+                氏名
+                <TextFieldView
+                  density="compact"
+                  @onKeyup="(e) => (filterText.name = e)"
+                ></TextFieldView>
+              </v-col>
+              <v-col cols="2">
+                ふりがな
+                <TextFieldView
+                  density="compact"
+                  @onKeyup="(e) => (filterText.kana = e)"
+                ></TextFieldView>
+              </v-col>
+              <v-col cols="2">
+                ステータス
+                <SelectFieldView
+                  :items="examStatusArray"
+                  :text="filterText.examStatus"
+                  @onChange="(e) => (filterText.examStatus = e)"
+                ></SelectFieldView>
+              </v-col>
+              <v-col cols="2">
+                受検日(開始)
+                <DateView
+                  v-model:value="startDate"
+                  name="start"
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="2">
+                受検日(終了)
+                <DateView
+                  v-model:value="endDate"
+                  name="end"
+                  :min="startDate"
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="5">
+                メモ1
+                <TextFieldView
+                  density="compact"
+                  @onKeyup="(e) => (filterText.memo1 = e)"
+                ></TextFieldView>
+              </v-col>
+              <v-col cols="5">
+                メモ2
+                <TextFieldView
+                  density="compact"
+                  @onKeyup="(e) => (filterText.memo2 = e)"
+                ></TextFieldView>
+              </v-col>
+              <v-col cols="2" class="text-right">
+                <ButtonView
+                  text="検索"
+                  class="bg-blue mt-5 w-50"
+                  @onClick="applyFilter"
+                ></ButtonView>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
         <v-data-table
           :headers="headers"
-          :items="examList"
+          :items="filteredExamList"
           class="listable ma-2 dataTableStyle"
           id="testTable"
           :height="tableHeight"
@@ -216,9 +394,9 @@ const onPdfDownload = () => {
               </template>
             </tr>
           </template>
-          <template v-slot:item="{ item, index }">
+          <template v-slot:item="{ item }">
             <tr>
-              <td width="40">{{ index + 1 }}</td>
+              <td width="40">{{ (item as any).originalIndex }}</td>
               <td width="80">{{ (item as any).email }}</td>
               <td class="text-xs-right">{{ (item as any).name }}</td>
               <td class="text-xs-right">{{ (item as any).kana }}</td>

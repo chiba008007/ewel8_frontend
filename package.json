@@ -13,6 +13,7 @@
     "axios": "^1.6.8",
     "core-js": "^3.8.3",
     "crypto-js": "^4.2.0",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "html-to-pdfmake": "^2.5.20",
     "html2canvas": "^1.4.1",
@@ -28,10 +29,11 @@
     "vue": "^3.2.13",
     "vue-qrcode": "^2.2.2",
     "vue-router": "^4.0.3",
-    "vuetify": "^3.0.0-beta.0",
+    "vuetify": "^3.9.2",
     "vuex": "^4.1.0",
     "vuex-persistedstate": "^4.1.0",
     "webfontloader": "^1.0.0",
+    "webpack-plugin-vuetify": "^3.1.1",
     "yubinbango-core2": "^0.6.3"
   },
   "devDependencies": {
@@ -63,8 +65,7 @@
     "sass-loader": "^12.0.0",
     "ts-jest": "^27.0.4",
     "typescript": "^4.9.5",
-    "vue-cli-plugin-vuetify": "~2.5.8",
-    "webpack-plugin-vuetify": "^2.0.0-alpha.0"
+    "vue-cli-plugin-vuetify": "~2.5.8"
   },
   "eslintConfig": {
     "root": true,
