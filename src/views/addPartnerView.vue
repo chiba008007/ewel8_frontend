@@ -31,7 +31,7 @@ const tmpid = route.params.id;
 
 const tab = ref();
 const prefs = ref();
-const elements = ref<Array<{ note?: string }>>([]);
+const elements = ref<Array<{ id?: number; text?: string; note?: string }>>([]);
 const licenses = ref();
 const post_code = ref();
 const post1 = ref();
@@ -69,9 +69,7 @@ const postBlur = (e: string, type: string) => {
     });
   }
 };
-const onChange = (e: string) => {
-  preftext.value = e;
-};
+
 const licensesKey = ref<string[]>([]);
 const licensesBody = ref<string[]>([]);
 // const codes = ref([]);
@@ -197,7 +195,7 @@ const onBlur = async (e: string | boolean, type: string) => {
   if (match) {
     const index = Number(match[1]) - 1;
     if (elements.value[index]) {
-      elements.value[index].note = e;
+      elements.value[index].note = String(e);
     }
   }
   registButton.value = true;
@@ -258,7 +256,10 @@ const addRegist = () => {
     email: email.value,
     password: password.value,
     post_code: post,
-    pref: preftext.value,
+    pref: prefs.value.find(
+      (pref: { id: string; name: string }) =>
+        pref.id === preftext.value || pref.name === preftext.value
+    ).name,
     address1: addressText.value,
     address2: addressText2.value,
     tel: tel.value,
@@ -407,8 +408,7 @@ const displayString = (type: boolean) => {
             :items="prefs"
             :value="preftext"
             type="pref"
-            @onBlur="(e, type) => onBlur(e, type)"
-            @onChange="(e) => onChange(e)"
+            @onChange="(e) => (preftext = e)"
           ></addPrefCodeForm>
           <addPartnerForm
             title="住所"

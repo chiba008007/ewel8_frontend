@@ -10,7 +10,14 @@ import pankuzuAdmin from "@/components/pankuzuAdmin.vue";
 const user = useStoreUser();
 
 const loading = ref(true);
-
+interface DessertItem {
+  testname: string;
+  email: string;
+  customer_name: string;
+  partner_name: string;
+  name: string;
+  endtime: string;
+}
 const headers = [
   { title: "検査名", sortable: false, key: "testname" },
   { title: "ID", sortable: false, key: "id" },
@@ -27,8 +34,8 @@ const form = ref({
   month: "",
   day: "",
 });
-const desserts = ref<object[]>([]);
-const defaulted = ref<object[]>([]);
+const desserts = ref<DessertItem[]>([]);
+const defaulted = ref<DessertItem[]>([]);
 try {
   TestApiService.getSearchExam().then(function (rlt) {
     console.log(rlt.data);
@@ -45,26 +52,33 @@ try {
 const typed = ref() as any;
 const onclick = () => {
   desserts.value = [];
-  let date = form.value.year + "-" + form.value.month + "-" + form.value.day;
-  if (
-    form.value.id ||
-    form.value.customer_name ||
-    form.value.name ||
-    form.value.year ||
-    form.value.month ||
-    form.value.day
-  ) {
-    defaulted.value.forEach((element: typeof typed) => {
-      if (
-        element.email == form.value.id ||
-        element.customer_name == form.value.customer_name ||
-        element.name == form.value.name ||
-        element.endtime.startsWith(date)
-      ) {
-        desserts.value.push(element);
-      }
+  let date: string | null = null;
+  if (form.value.year && form.value.month && form.value.day) {
+    const y = form.value.year;
+    const m = form.value.month.padStart(2, "0");
+    const d = form.value.day.padStart(2, "0");
+    date = `${y}-${m}-${d}`;
+  }
+
+  // 検索条件が入力されているか判定
+  const hasInput =
+    form.value.id || form.value.customer_name || form.value.name || date;
+
+  if (hasInput) {
+    desserts.value = defaulted.value.filter((element: typeof typed) => {
+      const matchId = !form.value.id || element.email === form.value.id;
+      const matchCustomer =
+        !form.value.customer_name ||
+        element.customer_name === form.value.customer_name;
+      const matchName = !form.value.name || element.name === form.value.name;
+      const matchDate =
+        !date || (element.endtime && element.endtime.startsWith(date));
+
+      // 入力されている項目だけにマッチさせる
+      return matchId && matchCustomer && matchName && matchDate;
     });
   } else {
+    // 検索条件が空なら全件表示
     desserts.value = defaulted.value;
   }
 };

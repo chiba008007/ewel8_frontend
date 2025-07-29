@@ -9,7 +9,7 @@ export const useStoreUser = defineStore("user", {
     count2: 2,
     isLogin: false,
     isExamLogin: false,
-    userdata: {},
+    userdata: {} as { id: string; type: "admin" | "partner" | "user" },
     userToken: {},
     userTokenExam: {},
     userExam: {},
@@ -64,7 +64,7 @@ export const useStoreUser = defineStore("user", {
       this.userToken = data;
       this.isLogin = true;
     },
-    setUserData(data: object) {
+    setUserData(data: { id: string; type: "admin" | "partner" | "user" }) {
       this.userdata = data;
     },
     setUserExamData(data: object) {
@@ -80,7 +80,6 @@ export const useStoreUser = defineStore("user", {
     IsLogoutExam() {
       this.isExamLogin = false;
     },
-
     // ログインした人のIDとパラメータのIDが同じ確認
     sameIdChecked(userid: number, paramId: number) {
       const router = useRouter();

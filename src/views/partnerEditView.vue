@@ -16,11 +16,9 @@ import { requiredValue, checkPassword } from "../plugins/validate";
 import { textString } from "@/plugins/const";
 import pankuzuMain from "@/components/pankuzuMain.vue";
 import ProgressView from "@/components/ProgressView.vue";
-
 const router = useRouter();
 const params = router.currentRoute.value.params;
 const paramId = params.id;
-
 const loadingFlag = ref(true);
 
 const form = ref({
@@ -50,28 +48,31 @@ PrefApiService.getPrefData().then((res) => {
   prefs.value = res;
 });
 
-const tmp = {
+const userDetail = ref();
+const result = UserApiService.getPartnerDetailData({
   partnerId: paramId,
   type: "partner",
-};
-const userDetail = ref();
-UserApiService.getPartnerDetailData(tmp).then((res) => {
-  const entries = res?.data;
-  userDetail.value = entries;
-  form.value.post = userDetail.value.post_code;
-  form.value.preftext = userDetail.value.pref;
-  form.value.addressText = userDetail.value.address1;
-  form.value.addressText2 = userDetail.value.address2;
-  form.value.tel = userDetail.value.tel;
-  form.value.fax = userDetail.value.fax;
-  form.value.person = userDetail.value.person;
-  form.value.person_address = userDetail.value.person_address;
-  form.value.person_tel = userDetail.value.person_tel;
-  form.value.person2 = userDetail.value.person2;
-  form.value.person_address2 = userDetail.value.person_address2;
-
-  loadingFlag.value = false;
 });
+
+if (result) {
+  result.then((res) => {
+    const entries = res?.data;
+    userDetail.value = entries;
+    form.value.post = userDetail.value.post_code;
+    form.value.preftext = userDetail.value.pref;
+    form.value.addressText = userDetail.value.address1;
+    form.value.addressText2 = userDetail.value.address2;
+    form.value.tel = userDetail.value.tel;
+    form.value.fax = userDetail.value.fax;
+    form.value.person = userDetail.value.person;
+    form.value.person_address = userDetail.value.person_address;
+    form.value.person_tel = userDetail.value.person_tel;
+    form.value.person2 = userDetail.value.person2;
+    form.value.person_address2 = userDetail.value.person_address2;
+
+    loadingFlag.value = false;
+  });
+}
 
 const post1 = ref();
 const post2 = ref();
@@ -96,7 +97,10 @@ const addRegist = () => {
     id: paramId,
     password: form.value.password,
     post_code: form.value.post,
-    pref: form.value.preftext,
+    pref: prefs.value.find(
+      (pref: { id: string; name: string }) =>
+        pref.id === form.value.preftext || pref.name === form.value.preftext
+    ).name,
     address1: form.value.addressText,
     address2: form.value.addressText2,
     tel: form.value.tel,

@@ -106,6 +106,7 @@ const onSearch = (e: string) => {
             color="success"
             class="ml-2"
             density="compact"
+            @onClick="pages.pageClickMoveLinkParam('uploadView', item.id)"
           />
         </td>
       </tr>

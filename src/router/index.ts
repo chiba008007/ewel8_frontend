@@ -71,6 +71,7 @@ const routes: Array<RouteRecordRaw> = [
     component: ListView,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
     },
   },
   {
@@ -79,6 +80,7 @@ const routes: Array<RouteRecordRaw> = [
     component: partnerRegistView,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
     },
   },
   {
@@ -87,6 +89,8 @@ const routes: Array<RouteRecordRaw> = [
     component: partnerEditView,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin", "partner"], // 管理者のみ
+      partnercheck: true,
     },
   },
   {
@@ -95,6 +99,7 @@ const routes: Array<RouteRecordRaw> = [
     component: addPartner,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
     },
   },
   {
@@ -140,6 +145,8 @@ const routes: Array<RouteRecordRaw> = [
     component: customerList,
     meta: {
       requiresAuth: true,
+      allowedRoles: ["admin", "partner"],
+      partnercheck: true,
     },
   },
   {
@@ -148,22 +155,26 @@ const routes: Array<RouteRecordRaw> = [
     component: customerAdd,
     meta: {
       requiresAuth: true,
+      partnercheck: true,
     },
   },
   {
-    path: "/customerEdit/edit/:id/:editid/:typeString?",
+    path: "/customerEdit/edit/:id/:editid?/:typeString?",
     name: "customerEdit",
     component: customerEdit,
     meta: {
       requiresAuth: true,
+      allowedRoles: ["admin", "partner"],
+      partnercheck: true,
     },
   },
   {
-    path: "/uploadView/:id/:editid",
+    path: "/uploadView/:id/:editid?",
     name: "uploadView",
     component: uploadView,
     meta: {
       requiresAuth: true,
+      allowedRoles: ["admin", "partner"],
     },
   },
   // 検査一覧用
@@ -358,24 +369,35 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  // ...
-  // explicitly return false to cancel the navigation
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const user = useStoreUser();
   const isLogin = user.isLogin;
-
-  //  const type = (user.userdata as any).type;
+  const userType = (user.userdata as any).type;
+  const allowedRoles = to.meta.allowedRoles as string[] | undefined;
+  const partnercheck = to.meta.partnercheck as boolean; // パートナー権限でログインした場合 idとpartnerのidが同じ
 
   if (requiresAuth) {
-    if (isLogin && requiresAuth == true) {
-      next();
-    } else {
-      next({
+    if (!isLogin) {
+      return next({
         path: "/login",
         query: { redirect: to.fullPath },
       });
     }
+
+    if (allowedRoles && !allowedRoles.includes(userType)) {
+      return next({ path: "/forbidden" });
+    }
+    if (
+      partnercheck &&
+      !to.params.typeString &&
+      user.userdata.type === "partner" &&
+      user.userdata.id != to.params.id
+    ) {
+      return next({ path: "/forbidden" });
+    }
+    return next(); // 認証 & 権限 OK
   }
-  next();
+
+  return next(); // 認証不要ルートはそのまま許可
 });
 export default router;

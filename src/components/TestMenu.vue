@@ -36,7 +36,11 @@ const pageCustomerEditParam = (pagename: string) => {
   router.push(
     router.resolve({
       name: pagename,
-      params: { id: tmpid, editid: partnerid.value, typeString: "test" },
+      params: {
+        id: user.getSession("partner_id"),
+        editid: tmpid,
+        typeString: "test",
+      },
     }).href
   );
 };

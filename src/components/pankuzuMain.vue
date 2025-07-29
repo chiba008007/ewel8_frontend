@@ -32,65 +32,63 @@ const props = withDefaults(defineProps<Props>(), {
 
 const user = useStoreUser();
 const pankuzu = ref();
-
 let obj = {};
-pankuzu.value = [
-  { title: user.home, href: router.resolve({ name: "List" }).href },
+pankuzu.value = [];
 
-  {
-    title: user.customerInfoList,
-    href: router.resolve({
-      name: "customerList",
-      params: {
-        id: props.partnerid ? props.partnerid : user.getSession("partner_id"),
-      },
-    }).href,
-  },
-];
+if (user.userdata.type == "admin") {
+  pankuzu.value.push({
+    title: user.home,
+    href: router.resolve({ name: "List" }).href,
+  });
+}
 
-if (props.adminhref && props.adminhref.pageName) {
-  if (props.adminhref.params) {
-    obj = {
-      name: props.adminhref.href,
-      params: props.adminhref.params,
-    };
-  } else {
-    obj = { name: props.adminhref.href };
-  }
+// 常に表示する顧客情報一覧パンくず
+pankuzu.value.push({
+  title: user.customerInfoList,
+  href: router.resolve({
+    name: "customerList",
+    params: {
+      id: props.partnerid ?? user.getSession("partner_id"),
+    },
+  }).href,
+});
+
+// adminhref（動的パンくず）
+if (props.adminhref?.pageName) {
+  obj = props.adminhref.params
+    ? { name: props.adminhref.href, params: props.adminhref.params }
+    : { name: props.adminhref.href };
   pankuzu.value.push({
     title: (user as any)[props.adminhref.pageName],
     href: router.resolve(obj).href,
   });
 }
-if (props.adminhref2 && props.adminhref2.pageName) {
-  if (props.adminhref2.params) {
-    obj = {
-      name: props.adminhref2.href,
-      params: props.adminhref2.params,
-    };
-  } else {
-    obj = { name: props.adminhref2.href };
-  }
+
+// adminhref2
+if (props.adminhref2?.pageName) {
+  obj = props.adminhref2.params
+    ? { name: props.adminhref2.href, params: props.adminhref2.params }
+    : { name: props.adminhref2.href };
 
   pankuzu.value.push({
     title: (user as any)[props.adminhref2.pageName],
     href: router.resolve(obj).href,
   });
 }
-if (props.adminhref3 && props.adminhref3.pageName) {
+
+// adminhref3
+if (props.adminhref3?.pageName) {
   pankuzu.value.push({
     title: (user as any)[props.adminhref3.pageName],
-    href: router.resolve({
-      name: props.adminhref3.href,
-    }).href,
+    href: router.resolve({ name: props.adminhref3.href }).href,
   });
 }
-if (props.adminhref4 && props.adminhref4.pageName) {
+
+// adminhref4
+if (props.adminhref4?.pageName) {
   pankuzu.value.push({
     title: (user as any)[props.adminhref4.pageName],
-    href: router.resolve({
-      name: props.adminhref4.href,
-    }).href,
+    href: router.resolve({ name: props.adminhref4.href }).href,
   });
 }
 </script>

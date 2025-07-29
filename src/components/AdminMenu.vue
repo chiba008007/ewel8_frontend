@@ -37,6 +37,7 @@ const pageClickMove = (pagename: string) => {
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
+        @onClick="pageClickMove('searchExamlog')"
       ></ComponentButton>
       <ComponentButton
         text="PDF出力ログ"

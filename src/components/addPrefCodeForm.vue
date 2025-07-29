@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, withDefaults } from "vue";
-import ComponentSelectField from "../components/SelectFieldView.vue";
+import ComponentSelectField from "@/components/SelectFieldView.vue";
 
 interface Props {
   title?: string;

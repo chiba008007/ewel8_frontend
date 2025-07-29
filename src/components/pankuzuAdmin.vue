@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, defineProps } from "vue";
 import { useRouter } from "vue-router";
-import { textString } from "@/plugins/const";
 
 const props = defineProps<{
-  pageName: "";
+  pageName: "" | string;
 }>();
 
 const router = useRouter();

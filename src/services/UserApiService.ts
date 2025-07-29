@@ -60,7 +60,6 @@ class UserApiService {
       return httpAuth.post("/api/user/getPartnerDetailData", data);
     } catch (e) {
       return false;
-      //location.href="/error"
     }
   }
   setPartner(data: object): Promise<object> {

@@ -11,7 +11,6 @@ const partner_id = ref();
 const pankuzu = ref();
 // 階層の数
 const rowCount = router.currentRoute.value.fullPath.split("/").length;
-console.log(rowCount);
 if ((user.userdata as any).type === "partner") {
   pankuzu.value = [{ title: user.customerInfoList }];
 } else {

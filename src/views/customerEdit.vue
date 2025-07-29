@@ -23,16 +23,18 @@ import UserApiGetCustomerEdit from "@/services/UserApiGetCustomerEdit";
 import { imagePath, displayStatus } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
-import pankuzuCustomer from "@/components/pankuzuCustomer.vue";
+import pankuzuMain from "@/components/pankuzuMain.vue";
+
 import ProgressView from "@/components/ProgressView.vue";
+import TestMenu from "@/components/TestMenu.vue";
 
 const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
 const registButton = ref<boolean>(false);
+const typeString = route.params.typeString;
 const tmpid = route.params.id;
 const editid = route.params.editid;
-const typeString = route.params.typeString;
 const loadingFlag = ref(true);
 const inputData = ref({
   name: "",
@@ -72,9 +74,9 @@ const myimage_path = ref();
 
 const pageBack = () => {
   if (typeString == "test") {
-    router.push({ name: "testLists", params: { id: tmpid } });
+    router.push({ name: "testLists", params: { id: editid } });
   } else {
-    router.push({ name: "customerList", params: { id: editid } });
+    router.push({ name: "customerList", params: { id: tmpid } });
   }
 };
 const onBlurButton = async () => {
@@ -226,26 +228,41 @@ const backColor = () => {
   <ProgressView v-if="loadingFlag"></ProgressView>
   <InfoAreaView />
   <v-row justify="center">
-    <CustomerMenu />
+    <TestMenu v-if="typeString === 'test'" />
+    <CustomerMenu v-else />
   </v-row>
-  <pankuzuCustomer
-    :pageName="user.customerEdit"
-    name="customerList"
-  ></pankuzuCustomer>
-
-  <v-row no-gutters>
-    <v-col cols="12" class="pa-2 ma-2">
+  <pankuzuMain
+    class="pt-2"
+    v-if="typeString === 'test'"
+    :adminhref="{
+      pageName: 'testList',
+      href: 'testLists',
+      params: { id: editid },
+    }"
+    :adminhref2="{ pageName: 'customerEdit', href: 'customerEdit' }"
+  ></pankuzuMain>
+  <pankuzuMain
+    v-else
+    class="pt-2"
+    :partnerid="tmpid"
+    :adminhref="{
+      pageName: 'editPartner',
+      href: 'editPartner',
+      params: { id: 0 },
+    }"
+  ></pankuzuMain>
+  <v-row class="ml-2">
+    <v-col cols="12">
       <ComponentButton
         :text="typeString === 'test' ? '検査一覧' : '顧客企業一覧'"
         color="red"
-        class="my-3"
         variant="outlined"
         @onClick="pageBack()"
       />
       <ComponentButton
         text="編集"
         color="primary"
-        class="my-3 ml-2"
+        class="ml-2"
         @onClick="editData()"
         :disabled="registButton"
       />
@@ -312,9 +329,9 @@ const backColor = () => {
         class="w-50"
         :hideDetails="true"
         :items="prefs"
-        :value="inputData.preftext ?? ``"
+        :value="inputData.preftext"
         type="pref"
-        @onBlur="(e) => (inputData.preftext = e)"
+        @onChange="(e) => (inputData.preftext = prefs.find((pref: { id: string; name: string }) => pref.id === e || pref.name === e).name)"
       ></addPrefCodeForm>
       <addPartnerForm
         :color="backColor()"
