@@ -112,23 +112,23 @@ PrefApiService.getPrefData().then((res) => {
   prefs.value = res;
 });
 
-const onUpdate = () => {
-  let blob: Blob;
-  let formData = new FormData();
-  let imageUrl: string;
+const onUpdate = async () => {
+  const file = inputData.value.logoImagePath as unknown as File;
+  if (!(file instanceof File)) {
+    alert("画像ファイルが不正です");
+    return;
+  }
+  const formData = new FormData();
+  formData.append("photo", file, file.name);
+  try {
+    const res = (await UserApiService.onUpload(formData)) as { data: string };
+    const uploadedUrl = imagePath + res.data;
 
-  blob = new Blob([inputData.value.logoImagePath], { type: "image/jpeg" });
-  imageUrl = window.URL.createObjectURL(blob);
-  formData.append("photo", blob, "image.jpg");
-  myimage_path.value = imageUrl;
-
-  UserApiService.onUpload(formData)
-    .then((res: any) => {
-      inputData.value.logoImagePath = imagePath + res.data;
-    })
-    .catch((e) => {
-      alert("editUserData ERROR" + e);
-    });
+    myimage_path.value = uploadedUrl;
+    inputData.value.logoImagePath = uploadedUrl;
+  } catch (e) {
+    alert("editUserData ERROR: " + e);
+  }
 };
 const successAlertFlag = ref(false);
 const editData = () => {

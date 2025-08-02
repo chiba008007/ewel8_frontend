@@ -11,6 +11,7 @@ import searchExam from "../views/searchExam.vue";
 import customerList from "../views/customerListView.vue";
 import customerAdd from "../views/customerAdd.vue";
 import customerEdit from "../views/customerEdit.vue";
+import pdflogoView from "../views/pdflogoView.vue";
 import uploadView from "../views/uploadView.vue";
 import ErrorView from "../views/errorView.vue";
 import ExamView from "../views/examinate/ExamView.vue";
@@ -154,6 +155,27 @@ const routes: Array<RouteRecordRaw> = [
     name: "customerAdd",
     component: customerAdd,
     meta: {
+      allowedRoles: ["admin", "partner"],
+      requiresAuth: true,
+      partnercheck: true,
+    },
+  },
+  {
+    path: "/customerDown/:id",
+    name: "customerDown",
+    component: testListDownloadView,
+    meta: {
+      allowedRoles: ["admin", "partner"],
+      requiresAuth: true,
+      partnercheck: true,
+    },
+  },
+  {
+    path: "/pdflogo/:id",
+    name: "pdflogo",
+    component: pdflogoView,
+    meta: {
+      allowedRoles: ["admin", "partner"],
       requiresAuth: true,
       partnercheck: true,
     },

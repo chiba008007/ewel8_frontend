@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import pankuzuMain from "../components/pankuzuMain.vue";
@@ -10,8 +10,10 @@ import { pagelink } from "@/plugins/pagelink";
 import FileuploadApiService from "@/services/FileuploadApiService";
 import { d_filePath, openStatus } from "@/plugins/const";
 import ProgressView from "@/components/ProgressView.vue";
+import CustomerMenu from "../components/CustomerMenu.vue";
 
 const router = useRouter();
+const route = useRoute();
 const params = router.currentRoute.value.params;
 const user = useStoreUser();
 const loadingFlag = ref(true);
@@ -53,11 +55,16 @@ onMounted(() => {
   reading();
 });
 const reading = () => {
-  let tmp = {
-    customer_id: params.id,
+  let tmp: { customer_id?: number; partner_id: number } = {
     partner_id: user.getSession("partner_id"),
   };
+
+  if (route.name !== "customerDown") {
+    tmp.customer_id = Number(params.id);
+  }
+
   FileuploadApiService.getList(tmp).then((res) => {
+    console.log(res);
     desserts.value = [];
     let i = 0;
     res?.data.map((val: any) => {
@@ -84,9 +91,15 @@ const commaSeparated = (value: number) => {
   <ProgressView v-if="loadingFlag"></ProgressView>
   <PartnerAdmin coded="customer" />
   <v-row justify="center">
-    <TestMenu />
+    <CustomerMenu v-if="route.name === 'customerDown'" />
+    <TestMenu v-else />
   </v-row>
   <pankuzuMain
+    v-if="route.name === 'customerDown'"
+    :adminhref="{ pageName: 'testListsDownload' }"
+  ></pankuzuMain>
+  <pankuzuMain
+    v-else
     :adminhref="{
       pageName: 'testList',
       href: 'testLists',
@@ -94,6 +107,7 @@ const commaSeparated = (value: number) => {
     }"
     :adminhref2="{ pageName: 'testListsDownload' }"
   ></pankuzuMain>
+
   <div class="mx-3">
     <h4 class="mt-2">{{ user["testListsDownload"] }}</h4>
     <p>ダウンロードしたいファイル名を選択してください。</p>
@@ -103,6 +117,7 @@ const commaSeparated = (value: number) => {
           :headers="headers"
           :items="desserts"
           class="listable ma-2"
+          :class="route.name === 'customerDown' ? `customer` : ''"
           :height="tableHeight"
           fixed-header
         >
@@ -132,6 +147,10 @@ const commaSeparated = (value: number) => {
 <style scoped>
 ::v-deep(.v-data-table thead th) {
   background-color: #4caf50 !important;
+  color: white !important;
+}
+.v-data-table.customer >>> thead th {
+  background-color: #1d6fce !important;
   color: white !important;
 }
 </style>

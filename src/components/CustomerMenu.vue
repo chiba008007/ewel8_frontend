@@ -11,9 +11,9 @@ const id = userdata.id;
 
 const route = useRoute();
 const tmpid = route.params.id;
-const pageClickMove = (pagename: string) => {
-  router.push(router.resolve({ name: pagename }).href);
-};
+// const pageClickMove = (pagename: string) => {
+//   router.push(router.resolve({ name: pagename }).href);
+// };
 const pageClickMoveParam = (pagename: string) => {
   router.push(router.resolve({ name: pagename, params: { id: tmpid } }).href);
 };
@@ -35,7 +35,7 @@ const pageClickMoveParam = (pagename: string) => {
         density="compact"
         color="primary"
         class="ml-1 w-25"
-        @onClick="pageClickMove('customerAdd')"
+        @onClick="pageClickMoveParam('customerAdd')"
       ></ComponentButton>
       <ComponentButton
         text="ダウンロード"
@@ -43,6 +43,7 @@ const pageClickMoveParam = (pagename: string) => {
         density="compact"
         color="primary"
         class="ml-1 w-25"
+        @onClick="pageClickMoveParam('customerDown')"
       ></ComponentButton>
       <ComponentButton
         text="PDFロゴ画像登録"
@@ -50,6 +51,7 @@ const pageClickMoveParam = (pagename: string) => {
         density="compact"
         color="primary"
         class="ml-1 w-25"
+        @onClick="pageClickMoveParam('pdflogo')"
       ></ComponentButton>
       <ComponentButton
         text="企業登録フォーム"
@@ -57,17 +59,17 @@ const pageClickMoveParam = (pagename: string) => {
         density="compact"
         color="primary"
         class="w-25"
-        @onClick="pageClickMove('partnerRegist')"
+        @onClick="pageClickMoveParam('partnerRegist')"
       ></ComponentButton>
     </div>
-    <div class="d-flex flex-row justify-center mt-1">
+    <div class="d-flex flex-row justify-center mt-1 pb-2">
       <ComponentButton
         text="検査申込み料金設定"
         variant="outlined"
         density="compact"
         color="primary"
         class="ml-1 w-25"
-        @onClick="pageClickMove('addPartner')"
+        @onClick="pageClickMoveParam('addPartner')"
       ></ComponentButton>
       <ComponentButton
         text="検査申込み履歴"

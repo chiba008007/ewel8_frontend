@@ -100,6 +100,14 @@ class UserApiService {
   getCustomerList(data: object): Promise<object> {
     return httpAuth.post("/api/user/getCustomerList", data);
   }
+  editUserPdfLogo(data: object): Promise<object> {
+    return httpAuth.post("/api/user/editUserPdfLogo", data);
+  }
+  getUserPdfLogo(data: object): Promise<string> {
+    return httpAuth.post("/api/user/getUserPdfLogo", data).then((res) => {
+      return res.data.pdfImagePath;
+    });
+  }
 
   async getCustomerEdit(data: object): Promise<GetCustomerEditResponse> {
     return await httpAuth.post("/api/user/getCustomerEdit", data);

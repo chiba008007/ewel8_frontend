@@ -36,6 +36,7 @@ const emit = defineEmits<{
     </v-col>
     <v-col sm="1">
       <img
+        class="pa-2"
         :width="100"
         aspect-ratio="16/9"
         cover

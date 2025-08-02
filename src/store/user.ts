@@ -29,6 +29,7 @@ export const useStoreUser = defineStore("user", {
     testDelete: "検査削除",
     customerRegist: "新規顧客登録",
     customerEdit: "新規顧客編集",
+    pdflogo: "PDFロゴ画像登録",
     partnerEdit: textString.CompanyEdit,
     addPartner: "新規パートナー登録",
     editPartner: "パートナー情報変更",
