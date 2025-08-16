@@ -1,6 +1,25 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, withDefaults } from "vue";
+import { defineProps, defineEmits, withDefaults, computed } from "vue";
 import ComponentTextField from "../components/TextFieldView.vue";
+
+type Rule = (value: string) => true | string | Promise<true | string>;
+
+type ValidationResult = string | boolean;
+type RuleElement =
+  | string
+  | boolean
+  | PromiseLike<ValidationResult>
+  | ((value: any) => ValidationResult)
+  | ((value: any) => PromiseLike<ValidationResult>)
+  | [string, any, (string | undefined)?];
+
+const adaptedRules = computed<RuleElement[] | null | undefined>(() => {
+  const r = props.rules;
+  if (r == null) return r; // null/undefined はそのまま
+  return typeof r === "string"
+    ? [r] // 文字列なら配列に包む
+    : r; // 配列ならそのまま
+});
 
 interface Props {
   title?: string;
@@ -13,7 +32,7 @@ interface Props {
   errormessage?: string;
   value?: string | number;
   type?: string;
-  rules?: string | void | null;
+  rules?: string | RuleElement[] | null;
   displayTextValue?: string;
   passwordFlag?: boolean;
   requriredIcon?: boolean;
@@ -64,7 +83,7 @@ const emit = defineEmits<{
         :messages="props.messages"
         :errormessage="props.errormessage"
         :maxlength="props.maxlength"
-        :rules="props.rules ?? ''"
+        :rules="adaptedRules"
         @onBlur="emit('onBlur', $event, props.type ?? '')"
         @onKeyup="emit('onKeyup', $event, props.type ?? '')"
       />

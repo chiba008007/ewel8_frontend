@@ -17,6 +17,7 @@ import {
   checkPasswordEdit,
   requiredValue,
   checkEmail,
+  checkEmailRequired,
 } from "../plugins/validate";
 import UserApiService from "@/services/UserApiService";
 import UserApiGetCustomerEdit from "@/services/UserApiGetCustomerEdit";
@@ -35,6 +36,17 @@ const registButton = ref<boolean>(false);
 const typeString = route.params.typeString;
 const tmpid = route.params.id;
 const editid = route.params.editid;
+
+type ValidationResult = string | boolean;
+
+// checkLoginID の戻り値（true | string | Promise<...>）を
+// Vuetifyが期待する型（ValidationResult | PromiseLike<ValidationResult>）に正規化
+const loginIdRule = (v: string): PromiseLike<ValidationResult> => {
+  return Promise.resolve(
+    checkLoginID(v, /* 重複チェックするなら true */ true, editid)
+  ).then((res) => (res === true ? true : String(res)));
+};
+
 const loadingFlag = ref(true);
 const inputData = ref({
   name: "",
@@ -80,16 +92,22 @@ const pageBack = () => {
   }
 };
 const onBlurButton = async () => {
-  registButton.value = true;
-  if (
-    !requiredValue(inputData.value.name, "顧客企業名") &&
-    (!inputData.value.password ||
-      !checkPasswordEdit(inputData.value.password)) &&
-    !requiredValue(inputData.value.tanto_name, "担当者氏名") &&
-    !checkEmail(inputData.value.tanto_address)
-  ) {
-    registButton.value = false;
-  }
+  registButton.value = true; // まず無効化
+
+  // 共通: true または "" を OK とみなす
+  const isValid = (r: unknown) => r === true || r === "";
+  console.log(inputData.value);
+  // それぞれの結果を取得（非同期含む）
+  const results = await Promise.all([
+    checkLoginID(inputData.value.login_id, false), // true | string | Promise
+    Promise.resolve(requiredValue(inputData.value.name, "顧客企業名")), // true | string
+    Promise.resolve(requiredValue(inputData.value.tanto_name, "担当者氏名")),
+    Promise.resolve(checkEmailRequired(inputData.value.tanto_address)),
+  ]);
+
+  // 全て OK ならボタンを有効化
+  const allValid = results.every(isValid);
+  registButton.value = !allValid; // true=無効, false=有効
 };
 
 const postBlur = (e: string, type: string) => {
@@ -286,7 +304,7 @@ const backColor = () => {
         type="name"
         :value="inputData.name"
         :requriredIcon="true"
-        :rules="requiredValue(inputData.name, '顧客企業名')"
+        :rules="[(v) => requiredValue(v, '顧客企業名')]"
         @onBlur="(ev) => ((inputData.name = ev), onBlurButton())"
       ></addPartnerForm>
       <addPartnerForm
@@ -301,7 +319,7 @@ const backColor = () => {
         :maxlength="8"
         messages="4文字以上8文字以下で入力してください"
         @onBlur="(ev) => ((inputData.login_id = ev), onBlurButton())"
-        :rules="checkLoginID(inputData.login_id, true, editid) as any"
+        :rules="[loginIdRule]"
       ></addPartnerForm>
       <addPartnerForm
         :color="backColor()"
@@ -312,7 +330,7 @@ const backColor = () => {
         type="password"
         :value="inputData.password"
         @onBlur="(e) => ((inputData.password = e), onBlurButton())"
-        :rules="checkPasswordEdit(inputData.password)"
+        :rules="[(e) => checkPasswordEdit(e)]"
       ></addPartnerForm>
       <addPostCodeForm
         :color="backColor()"
@@ -536,7 +554,7 @@ const backColor = () => {
         class="w-100"
         :hideDetails="`auto`"
         :requriredIcon="true"
-        :rules="requiredValue(inputData.tanto_name, '担当者氏名')"
+        :rules="[(v) => requiredValue(v, '担当者氏名')]"
         :value="inputData.tanto_name"
         @onBlur="(e) => ((inputData.tanto_name = e), onBlurButton())"
       ></addPartnerForm>
@@ -548,7 +566,7 @@ const backColor = () => {
         :hideDetails="`auto`"
         :value="inputData.tanto_address"
         :requriredIcon="true"
-        :rules="checkEmail(inputData.tanto_address)"
+        :rules="[(v) => checkEmailRequired(v)]"
         @onBlur="(e) => ((inputData.tanto_address = e), onBlurButton())"
       ></addPartnerForm>
       <addPartnerForm

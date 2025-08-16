@@ -6,6 +6,7 @@ import LoginView from "../views/LoginView.vue";
 import ListView from "../views/ListView.vue";
 import partnerRegistView from "../views/partnerRegistView.vue";
 import partnerEditView from "../views/partnerEditView.vue";
+import testExecView from "../views/testExecView.vue";
 import addPartner from "../views/addPartnerView.vue";
 import searchExam from "../views/searchExam.vue";
 import customerList from "../views/customerListView.vue";
@@ -174,6 +175,16 @@ const routes: Array<RouteRecordRaw> = [
     path: "/pdflogo/:id",
     name: "pdflogo",
     component: pdflogoView,
+    meta: {
+      allowedRoles: ["admin", "partner"],
+      requiresAuth: true,
+      partnercheck: true,
+    },
+  },
+  {
+    path: "/testExec/:id",
+    name: "testExec",
+    component: testExecView,
     meta: {
       allowedRoles: ["admin", "partner"],
       requiresAuth: true,

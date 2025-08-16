@@ -19,14 +19,14 @@ const pageClickMoveParam = (pagename: string) => {
 };
 </script>
 <template>
-  <v-sheet width="76%">
-    <div class="d-flex flex-row justify-center mt-5">
+  <v-sheet width="96%">
+    <div class="d-flex flex-row mt-5">
       <ComponentButton
         :text="textString.CompanyEdit"
         variant="outlined"
         density="compact"
         color="primary"
-        class="w-25"
+        class="w-20"
         @onClick="pageClickMoveParam('partnerEdit')"
       ></ComponentButton>
       <ComponentButton
@@ -34,7 +34,7 @@ const pageClickMoveParam = (pagename: string) => {
         variant="outlined"
         density="compact"
         color="primary"
-        class="ml-1 w-25"
+        class="ml-1 w-20"
         @onClick="pageClickMoveParam('customerAdd')"
       ></ComponentButton>
       <ComponentButton
@@ -42,7 +42,7 @@ const pageClickMoveParam = (pagename: string) => {
         variant="outlined"
         density="compact"
         color="primary"
-        class="ml-1 w-25"
+        class="ml-1 w-20"
         @onClick="pageClickMoveParam('customerDown')"
       ></ComponentButton>
       <ComponentButton
@@ -50,57 +50,22 @@ const pageClickMoveParam = (pagename: string) => {
         variant="outlined"
         density="compact"
         color="primary"
-        class="ml-1 w-25"
+        class="ml-1 w-20"
         @onClick="pageClickMoveParam('pdflogo')"
-      ></ComponentButton>
-      <ComponentButton
-        text="企業登録フォーム"
-        variant="outlined"
-        density="compact"
-        color="primary"
-        class="w-25"
-        @onClick="pageClickMoveParam('partnerRegist')"
-      ></ComponentButton>
-    </div>
-    <div class="d-flex flex-row justify-center mt-1 pb-2">
-      <ComponentButton
-        text="検査申込み料金設定"
-        variant="outlined"
-        density="compact"
-        color="primary"
-        class="ml-1 w-25"
-        @onClick="pageClickMoveParam('addPartner')"
-      ></ComponentButton>
-      <ComponentButton
-        text="検査申込み履歴"
-        variant="outlined"
-        density="compact"
-        color="primary"
-        class="ml-1 w-25"
       ></ComponentButton>
       <ComponentButton
         text="実施件数確認"
         variant="outlined"
         density="compact"
         color="primary"
-        class="ml-1 w-25"
-      ></ComponentButton>
-      <ComponentButton
-        text=""
-        variant="outlined"
-        density="compact"
-        color="primary"
-        class="ml-1 w-25"
-        disabled
-      ></ComponentButton>
-      <ComponentButton
-        text=""
-        variant="outlined"
-        density="compact"
-        color="primary"
-        class="ml-1 w-25"
-        disabled
+        class="ml-1 w-20"
+        @onClick="pageClickMoveParam('testExec')"
       ></ComponentButton>
     </div>
   </v-sheet>
 </template>
+<style lang="scss">
+.w-20 {
+  width: 19.8%;
+}
+</style>

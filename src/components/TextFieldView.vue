@@ -4,6 +4,20 @@ import type { VTextField } from "vuetify/components";
 type TVariant = VTextField["$props"]["variant"];
 type TVDensity = VTextField["$props"]["density"];
 
+type ValidationResult = string | boolean;
+
+type InputRule = (
+  value: string
+) => boolean | string | Promise<boolean | string>;
+
+type RuleElement =
+  | string
+  | boolean
+  | PromiseLike<ValidationResult>
+  | ((value: any) => ValidationResult)
+  | ((value: any) => PromiseLike<ValidationResult>)
+  | [string, any, (string | undefined)?];
+
 interface Props {
   type?: string;
   name?: string;
@@ -17,11 +31,7 @@ interface Props {
   person?: string;
   class?: string;
   errormessage?: string;
-  rules?:
-    | string
-    | null
-    | undefined
-    | Array<(value: string) => boolean | string>;
+  rules?: RuleElement[] | null | undefined;
   maxlength?: number;
   step?: string;
 }
@@ -46,19 +56,10 @@ const emit = defineEmits<{
   (e: "onBlur", value: string, name: string): void;
 }>();
 
-const normalizedRules = computed(() => {
+const normalizedRules = computed<readonly RuleElement[]>(() => {
   const r = props.rules;
   if (!r) return [];
-
-  if (typeof r === "string") {
-    return [(v: string) => !!v || r];
-  }
-
-  if (Array.isArray(r)) {
-    return r;
-  }
-
-  return [];
+  return r;
 });
 </script>
 <template>

@@ -24,7 +24,11 @@ import TextFieldView from "@/components/TextFieldView.vue";
 import { useRouter, useRoute } from "vue-router";
 import TestApiService from "@/services/TestApiService";
 import WeightApiService from "@/services/WeightApiService";
-import { numberValue, requiredValue } from "../plugins/validate";
+import {
+  numberValue,
+  requiredValue,
+  makeNumberRule,
+} from "../plugins/validate";
 import CardViewPFS from "@/components/CardViewPFS.vue";
 import CardViewBAJ3 from "@/components/CardViewBAJ3.vue";
 import ElementApiService from "@/services/ElementApiService";
@@ -537,7 +541,7 @@ const setInputWeight = (e: string, type: string) => {
             :hideDetails="`auto`"
             :value="inputData.testname"
             :requriredIcon="true"
-            :rules="requiredValue(inputData.testname, '検査名')"
+            :rules="[(e) => requiredValue(e, '検査名')]"
             @onBlur="(e:any) => ((inputData.testname = e), onBlurButton())"
           ></addPartnerForm>
           <addPartnerForm
@@ -549,15 +553,10 @@ const setInputWeight = (e: string, type: string) => {
             :hideDetails="`auto`"
             :value="inputData.testcount"
             :requriredIcon="true"
-            :rules="
-              numberValue(
-                inputData.testcount,
-                '受検者数',
-                10000,
-                Number(editid),
-                done
-              )
-            "
+            :rules="[
+              (v) =>
+                numberValue(Number(v), '受検者数', 10000, Number(editid), done),
+            ]"
             @onBlur="(e:any) => ((inputData.testcount = e), onBlurButton())"
           ></addPartnerForm>
           <addSwitchForm
@@ -598,9 +597,9 @@ const setInputWeight = (e: string, type: string) => {
             tooltipMessage="残数（未受検者）が指定の人数以下になった際に担当者にメールが配信されます。"
             :hideDetails="`auto`"
             :value="inputData.mailremaincount"
-            :rules="
-              numberValue(inputData.mailremaincount, 'メール配信受検者残数')
-            "
+            :rules="[
+              makeNumberRule('メール配信受検者残数', { allowEmpty: true }),
+            ]"
             @onBlur="(e:any) => ((inputData.mailremaincount = e), onBlurButton())"
           ></addPartnerForm>
           <addDateForm

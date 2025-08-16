@@ -4,8 +4,35 @@ export const requiredValue = (value: string, item: string) => {
   if (!value) {
     return item + "は必須です。";
   }
-  return "";
+  return true;
 };
+
+type ValidationResult = string | boolean;
+
+/**
+ * Vuetify rules 用のラッパー
+ * - 空欄は許可（allowEmpty=true）
+ * - それ以外は numberValue に委譲
+ */
+export const makeNumberRule = (
+  label: string,
+  { max = 0, editid = 0, done = 0, allowEmpty = true } = {}
+) => {
+  return (v: string | number): ValidationResult => {
+    const s = (v ?? "").toString().trim();
+
+    // 空欄許可
+    if (allowEmpty && s === "") return true;
+
+    // 数値以外は弾く（全角や文字列含む）
+    const n = Number(s);
+    if (!Number.isFinite(n)) return `${label}は数値を入力してください。`;
+
+    // 既存の numberValue をそのまま利用（true | string）
+    return numberValue(n, label, max, editid, done);
+  };
+};
+
 export const numberValue = (
   value: number,
   item: string,
@@ -24,14 +51,14 @@ export const numberValue = (
       return "受検者数が少なすぎます。";
     }
   }
-  return "";
+  return true;
 };
 
 export const checkLoginID = (
   value: string,
   flag = true,
   editid: string | string[] = "0"
-) => {
+): true | string | Promise<true | string> => {
   if (!value) {
     return "ログインIDは必須です。";
   }
@@ -41,8 +68,10 @@ export const checkLoginID = (
   }
   if (flag) {
     const tmp = UserApiService.checkLoginID(value, editid as string);
+
     return tmp
-      .then(function (rlt) {
+      .then<true | string>(function (rlt) {
+        console.log(rlt.data);
         if (rlt.data === "success") {
           return "ログインIDが重複しています。";
         }
@@ -55,12 +84,13 @@ export const checkLoginID = (
     return true;
   }
 };
+
 export const checkEmail = (value: string) => {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (value && !emailPattern.test(value)) {
     return "メールアドレスの形式に誤りがあります。";
   }
-  return "";
+  return true;
 };
 export const checkEmailRequired = (value: string) => {
   if (!value) return "メールアドレスは必須です。";
@@ -68,7 +98,7 @@ export const checkEmailRequired = (value: string) => {
   if (value && !emailPattern.test(value)) {
     return "メールアドレスの形式に誤りがあります。";
   }
-  return "";
+  return true;
 };
 export const checkPassword = (value: string, type = "", tmpid: any = "") => {
   if (tmpid && !value) return "";
@@ -78,7 +108,7 @@ export const checkPassword = (value: string, type = "", tmpid: any = "") => {
   if (!emailPattern.test(value)) {
     return "半角8文字以上、半角15文字以内。大文字と小文字は区別さ英大文字・英小文字・数、字それぞれを最低1文字ずつ含めてください";
   }
-  return "";
+  return true;
 };
 export const checkPasswordEdit = (value: string) => {
   if (value) {
@@ -87,7 +117,7 @@ export const checkPasswordEdit = (value: string) => {
       return "半角8文字以上、半角15文字以内。大文字と小文字は区別さ英大文字・英小文字・数、字それぞれを最低1文字ずつ含めてください";
     }
   }
-  return "";
+  return true;
 };
 
 export const removeTabKey = (e: any) => {

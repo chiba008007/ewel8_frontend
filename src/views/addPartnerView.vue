@@ -202,42 +202,43 @@ const onBlur = async (e: string | boolean, type: string) => {
   if (!tmpid) {
     errorTab1.value = 3;
     errorTab2.value = 2;
+
     if (name.value && name.value.length > 0) errorTab1.value -= 1;
-    if (
-      login_id.value &&
-      ((await checkLoginID(login_id.value)) as boolean | string) == true
-    ) {
+
+    if (login_id.value && (await checkLoginID(login_id.value)) == true) {
       errorTab1.value -= 1;
     }
-    if (checkPassword(password.value).length < 1) errorTab1.value -= 1;
+    if (checkPassword(password.value) === true) {
+      errorTab1.value -= 1;
+    }
   }
 
-  if (requiredValue(person.value, "主担当者氏名").length < 1)
+  if (requiredValue(person.value, "主担当者氏名") === true)
     errorTab2.value -= 1;
-  if (requiredValue(person_address.value, "主担当者アドレス").length < 1)
+  if (requiredValue(person_address.value, "主担当者アドレス") === true)
     errorTab2.value -= 1;
 
   errorTab1.value = errorTab1.value < 0 ? 0 : errorTab1.value;
   errorTab2.value = errorTab2.value < 0 ? 0 : errorTab2.value;
   if (tmpid) {
     if (
-      requiredValue(person.value, "主担当者氏名").length < 1 &&
-      requiredValue(person_address.value, "主担当者アドレス").length < 1
+      requiredValue(person.value, "主担当者氏名") === true &&
+      requiredValue(person_address.value, "主担当者アドレス") === true
     ) {
       registButton.value = false;
     }
   } else if (
     name.value &&
-    ((await checkLoginID(login_id.value)) as boolean | string) == true &&
-    checkPassword(password.value).length < 1 &&
-    requiredValue(person.value, "主担当者氏名").length < 1 &&
-    requiredValue(person_address.value, "主担当者アドレス").length < 1
+    (await checkLoginID(login_id.value)) == true &&
+    checkPassword(password.value) === true &&
+    requiredValue(person.value, "主担当者氏名") === true &&
+    requiredValue(person_address.value, "主担当者アドレス") === true
   ) {
     registButton.value = false;
   }
 
   if (tmpid) {
-    if (password.value && checkPassword(password.value).length > 1) {
+    if (password.value && checkPassword(password.value) === true) {
       registButton.value = true;
     }
   }
@@ -249,6 +250,12 @@ const registAlert = ref(false);
 const addRegist = () => {
   loadingFlag.value = true;
   let post = post1.value + "-" + post2.value;
+
+  const prefObj = prefs.value.find(
+    (pref: { id: string; name: string }) =>
+      pref.id === preftext.value || pref.name === preftext.value
+  );
+
   settingData.value = {
     type: "partner",
     name: tmpid ? "" : name.value,
@@ -256,10 +263,7 @@ const addRegist = () => {
     email: email.value,
     password: password.value,
     post_code: post,
-    pref: prefs.value.find(
-      (pref: { id: string; name: string }) =>
-        pref.id === preftext.value || pref.name === preftext.value
-    ).name,
+    pref: prefObj ? prefObj.name : "",
     address1: addressText.value,
     address2: addressText2.value,
     tel: tel.value,
@@ -279,7 +283,7 @@ const addRegist = () => {
   for (let i = 1; i <= 14; i++) {
     settingData.value[`element${i}`] = elements.value[i - 1]?.note || ""; // noteが無い場合は空文字をセット
   }
-
+  console.log(tmpid);
   if (tmpid) {
     settingData.value.id = tmpid;
     UserApiService.editPartnerData(settingData.value).then(() => {
@@ -365,7 +369,7 @@ const displayString = (type: boolean) => {
             type="name"
             :requriredIcon="true"
             :displayTextValue="tmpid ? name : ''"
-            :rules="requiredValue(name, '企業名')"
+            :rules="[(v) => requiredValue(v, '企業名')]"
             @onBlur="(ev, type) => onBlur(ev, type)"
           ></addPartnerForm>
           <addPartnerForm
@@ -377,7 +381,7 @@ const displayString = (type: boolean) => {
             type="login_id"
             :displayTextValue="tmpid ? login_id : ''"
             messages="半角英数・4文字以上で入力してください。大文字と小文字は区別されます。"
-            :rules="checkLoginID(login_id) as any"
+            :rules="[(v : any) => checkLoginID(v)]"
             @onBlur="(ev, type) => onBlur(ev, type)"
           ></addPartnerForm>
 
@@ -391,7 +395,7 @@ const displayString = (type: boolean) => {
             :value="password"
             :requriredIcon="true"
             @onBlur="(ev, type) => onBlur(ev, type)"
-            :rules="checkPassword(password, '', tmpid)"
+            :rules="[(v) => checkPassword(v, '', tmpid)]"
           ></addPartnerForm>
           <addPostCodeForm
             title="郵便番号"
@@ -477,7 +481,7 @@ const displayString = (type: boolean) => {
             :value="person"
             hideDetails="auto"
             type="person"
-            :rules="requiredValue(person, '主担当者氏名')"
+            :rules="[(v) => requiredValue(v, '主担当者氏名')]"
             @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
           <addPartnerForm
@@ -488,7 +492,7 @@ const displayString = (type: boolean) => {
             :requriredIcon="true"
             :value="person_address"
             type="person_address"
-            :rules="checkEmailRequired(person_address)"
+            :rules="[(v) => checkEmailRequired(v)]"
             @onBlur="(e, type) => onBlur(e, type)"
           ></addPartnerForm>
           <addPartnerForm

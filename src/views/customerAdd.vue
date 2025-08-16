@@ -18,6 +18,7 @@ import {
   checkPassword,
   requiredValue,
   checkEmail,
+  checkEmailRequired,
 } from "../plugins/validate";
 import UserApiService from "@/services/UserApiService";
 import { imagePath, customer } from "@/plugins/const";
@@ -64,24 +65,40 @@ const inputData = ref({
   tanto_name2: "",
   tanto_address2: "",
 });
+
+type ValidationResult = string | boolean;
+
+// checkLoginID の戻り値（true | string | Promise<...>）を
+// Vuetifyが期待する型（ValidationResult | PromiseLike<ValidationResult>）に正規化
+const loginIdRule = (v: string): PromiseLike<ValidationResult> => {
+  return Promise.resolve(
+    checkLoginID(v, /* 重複チェックするなら true */ true)
+  ).then((res) => (res === true ? true : String(res)));
+};
+
 const prefs = ref();
 const myimage_path = ref();
 const router = useRouter();
 const params = router.currentRoute.value.params;
 const paramId = params.id;
 const onBlurButton = async () => {
-  registButton.value = true;
-  if (
-    !requiredValue(inputData.value.name, "顧客企業名") &&
-    ((await checkLoginID(inputData.value.login_id, false)) as
-      | boolean
-      | string) == true &&
-    !checkPassword(inputData.value.password) &&
-    !requiredValue(inputData.value.tanto_name, "担当者氏名") &&
-    !checkEmail(inputData.value.tanto_address)
-  ) {
-    registButton.value = false;
-  }
+  registButton.value = true; // まず無効化
+
+  // 共通: true または "" を OK とみなす
+  const isValid = (r: unknown) => r === true || r === "";
+  console.log(inputData.value);
+  // それぞれの結果を取得（非同期含む）
+  const results = await Promise.all([
+    checkLoginID(inputData.value.login_id, false), // true | string | Promise
+    Promise.resolve(requiredValue(inputData.value.name, "顧客企業名")), // true | string
+    Promise.resolve(checkPassword(inputData.value.password)), // true | string | ""
+    Promise.resolve(requiredValue(inputData.value.tanto_name, "担当者氏名")),
+    Promise.resolve(checkEmailRequired(inputData.value.tanto_address)),
+  ]);
+
+  // 全て OK ならボタンを有効化
+  const allValid = results.every(isValid);
+  registButton.value = !allValid; // true=無効, false=有効
 };
 
 const postBlur = (e: string, type: string) => {
@@ -227,7 +244,7 @@ const pagemove = () => {
         type="name"
         :value="inputData.name"
         :requriredIcon="true"
-        :rules="requiredValue(inputData.name, '顧客企業名')"
+        :rules="[(v) => requiredValue(v, '顧客企業名')]"
         @onBlur="(ev) => ((inputData.name = ev), onBlurButton())"
       ></addPartnerForm>
       <addPartnerForm
@@ -240,7 +257,7 @@ const pagemove = () => {
         :requriredIcon="true"
         messages="4文字以上8文字以下で入力してください"
         @onBlur="(ev) => ((inputData.login_id = ev), onBlurButton())"
-        :rules="checkLoginID(inputData.login_id) as any"
+        :rules="[loginIdRule]"
       ></addPartnerForm>
       <addPartnerForm
         title="パスワード"
@@ -250,8 +267,8 @@ const pagemove = () => {
         type="password"
         :value="inputData.password"
         :requriredIcon="true"
-        :rules="checkPassword(inputData.password)"
-        @onBlur="(e) => ((inputData.password = e), onBlurButton())"
+        :rules="[(v) => checkPassword(v)]"
+        @onKeyup="(e) => ((inputData.password = e), onBlurButton())"
       ></addPartnerForm>
       <addPostCodeForm
         title="郵便番号"
@@ -268,7 +285,7 @@ const pagemove = () => {
         :items="prefs"
         :value="inputData.preftext ?? ``"
         type="pref"
-        @onBlur="(e) => (inputData.preftext = e)"
+        @onChange="(e) => (inputData.preftext = e)"
       ></addPrefCodeForm>
       <addPartnerForm
         title="住所"
@@ -456,7 +473,7 @@ const pagemove = () => {
         class="w-100"
         :hideDetails="`auto`"
         :requriredIcon="true"
-        :rules="requiredValue(inputData.tanto_name, '担当者氏名')"
+        :rules="[(v) => requiredValue(v, '担当者氏名')]"
         :value="inputData.tanto_name"
         @onBlur="(e) => ((inputData.tanto_name = e), onBlurButton())"
       ></addPartnerForm>
@@ -464,10 +481,10 @@ const pagemove = () => {
         title="担当者アドレス"
         text="担当者アドレスを入力してください"
         class="w-100"
-        :hideDetails="`auto`"
+        hideDetails="auto"
         :value="inputData.tanto_address"
         :requriredIcon="true"
-        :rules="checkEmail(inputData.tanto_address)"
+        :rules="[(v) => checkEmailRequired(v)]"
         @onBlur="(e) => ((inputData.tanto_address = e), onBlurButton())"
       ></addPartnerForm>
       <addPartnerForm
