@@ -35,7 +35,7 @@ for (let i = 1; i <= 31; i++) {
       text="年"
       :value="props.yearValue"
       @onBlur="(e) => emit('onYear', e)"
-      :rules="requiredValue(props.yearValue, '年')"
+      :rules="[(e) => requiredValue(e, '年')]"
     ></ComponentTextField>
     <p class="pa-2">年</p>
     <ComponentSelectField

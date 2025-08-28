@@ -47,7 +47,7 @@ const onClick = () => {
     zeroPadding(inputData.value.birth_month) +
     "/" +
     zeroPadding(inputData.value.birth_day);
-  if (!requiredValue(inputData.value.login_id, "ログインID")) {
+  if (requiredValue(inputData.value.login_id, "ログインID") === true) {
     let tmp = {
       email: inputData.value.login_id,
       password: password,
@@ -65,6 +65,8 @@ const onClick = () => {
       .catch(function (e) {
         errorflag.value = true;
       });
+  } else {
+    errorflag.value = true;
   }
 };
 const enabledFlag = ref(false);
@@ -97,7 +99,7 @@ const enabledTest = (e: boolean) => {
           :hideDetails="`auto`"
           @onBlur="(val) => (inputData.login_id = val)"
           class="mb-6"
-          :rules="requiredValue(inputData.login_id, 'ログインID')"
+          :rules="[(e) => requiredValue(e, 'ログインID')]"
         />
 
         <BirthComponent

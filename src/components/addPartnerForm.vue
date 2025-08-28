@@ -13,12 +13,12 @@ type RuleElement =
   | ((value: any) => PromiseLike<ValidationResult>)
   | [string, any, (string | undefined)?];
 
-const adaptedRules = computed<RuleElement[] | null | undefined>(() => {
-  const r = props.rules;
-  if (r == null) return r; // null/undefined はそのまま
-  return typeof r === "string"
-    ? [r] // 文字列なら配列に包む
-    : r; // 配列ならそのまま
+const adaptedRules = computed<RuleElement[]>(() => {
+  const r = props.rules as unknown;
+  if (r == null) return []; // ★ 常に配列で返す
+  return Array.isArray(r)
+    ? (r as RuleElement[]) // ★ 配列ならそのまま
+    : [r as RuleElement]; // ★ 文字列/関数などは配列化
 });
 
 interface Props {

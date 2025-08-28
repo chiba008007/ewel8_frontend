@@ -41,14 +41,15 @@ import ExamPfsTake4 from "../views/examinate/PFS/ExamTake4.vue";
 import ExamPfsTakeFin from "../views/examinate/PFS/ExamTakeFin.vue";
 
 const hostname = location.hostname;
-const isTestSite = hostname === "test.v-gate.jp";
+//const isTestSite = hostname === "test.v-gate.jp";
 //const isTestSite = hostname === "localhost";
+const isTestSite = hostname === "test.v-gate.jp" || hostname === "localhost";
 
 const routes: Array<RouteRecordRaw> = [
   ...(isTestSite
     ? [
         {
-          path: "/",
+          path: "/exam",
           name: "exam",
           component: ExamView,
         },

@@ -95,10 +95,17 @@ const onEdit = () => {
 };
 const onSetBirth = (str: string, type: string) => {
   let birth = data.value.birth.split("/");
+
   let y = type === "year" ? str : birth[0];
   let m = type === "month" ? str : birth[1];
   let d = type === "day" ? str : birth[2];
-  data.value.birth = y + "/" + m + "/" + d;
+
+  // 年を4桁ゼロ埋め、日を2桁ゼロ埋め
+  const year = y ? y.toString().padStart(4, "0") : "";
+  const month = m ? m.toString().padStart(2, "0") : "";
+  const day = d ? d.toString().padStart(2, "0") : "";
+
+  data.value.birth = `${year}/${month}/${day}`;
 };
 const isDisabled = ref(false);
 const onChecked = (e: boolean) => {
@@ -209,6 +216,7 @@ const registButtonDisabled = computed(
             type="number"
             @onKeyup="(e) => onSetBirth(e, 'year')"
             :maxlength="4"
+            :rules="[(v) => /^\d{4}$/.test(v) || '4桁数字']"
           ></TextFieldView>
           <span class="mt-2">年</span>
 

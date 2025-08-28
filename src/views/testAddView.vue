@@ -288,6 +288,7 @@ const alertFlag = ref(false);
  */
 const onClick = () => {
   alertFlag.value = false;
+  console.log(inputData.value);
   let tmp = {
     partner_id: partner_id,
     customer_id: tmpid,
@@ -331,6 +332,7 @@ const onClick = () => {
 
 const onEditClick = () => {
   alertFlag.value = false;
+  console.log(inputPDf.value);
   let tmp = {
     partner_id: partner_id,
     customer_id: tmpid,
@@ -372,7 +374,7 @@ const onEditClick = () => {
 };
 
 const pdfCheck = (e: any, k: number) => {
-  inputPDf.value[k].value = e ? false : true;
+  inputPDf.value[k].value = e;
 };
 
 const elements = ref();
@@ -438,15 +440,15 @@ const setInputWeight = (e: string, type: string) => {
     入力し終えたら「次へ」ボタンを押下してください。「販売可能ライセンス」まで遷移すると表示される「検査登録実行」ボタンを押下し検査登録を行ってください。<br />
   </p>
   <v-tabs v-model="tab" class="ma-1">
-    <v-tab value="0">
+    <v-tab :value="0">
       <v-badge color="error" :content="errorTab1" floating>
         検査新規登録
       </v-badge>
     </v-tab>
-    <v-tab value="1">
+    <v-tab :value="1">
       <v-badge color="error" :content="errorTab2" floating> 検査種別 </v-badge>
     </v-tab>
-    <v-tab value="2">出力PDF選択</v-tab>
+    <v-tab :value="2">出力PDF選択</v-tab>
   </v-tabs>
   <div class="ma-2">
     <AlertView
@@ -467,7 +469,7 @@ const setInputWeight = (e: string, type: string) => {
       text="戻る"
       color="purple"
       class="mt-3 mb-3 mr-2"
-      @onClick="tab = parseInt((tab - 1) as unknown as string)"
+      @onClick="tab = Number(tab) - 1"
     />
     <ButtonView
       v-if="tab <= 1"
@@ -475,11 +477,7 @@ const setInputWeight = (e: string, type: string) => {
       color="lime"
       class="mt-3 mb-3"
       :disabled="registButton"
-      @onClick="
-        tab = parseInt(
-          (parseInt(tab as unknown as string) + 1) as unknown as string
-        )
-      "
+      @onClick="tab = Number(tab) + 1"
     />
     <ButtonView
       v-else-if="editid && route.name != 'testCopy'"
@@ -502,7 +500,7 @@ const setInputWeight = (e: string, type: string) => {
   <div v-if="isLoading">Loading...</div>
   <div v-else>
     <v-window v-model="tab">
-      <v-window-item value="0">
+      <v-window-item :value="0">
         <p class="ml-2 text-caption">販売可能ライセンス</p>
         <v-row dense class="ml-2">
           <v-col
@@ -733,7 +731,7 @@ const setInputWeight = (e: string, type: string) => {
           ></addMovieForm>
         </section>
       </v-window-item>
-      <v-window-item value="1">
+      <v-window-item :value="1">
         <section class="pa-2">
           <v-row>
             <v-col cols="12">
@@ -790,7 +788,7 @@ const setInputWeight = (e: string, type: string) => {
           </v-row>
         </section>
       </v-window-item>
-      <v-window-item value="2">
+      <v-window-item :value="2">
         <section class="pa-2">
           <addPDFForm
             title="PDF出力制限"
@@ -818,8 +816,8 @@ const setInputWeight = (e: string, type: string) => {
             v-for="pdf in pdfLists"
             :key="pdf.key"
             :label="pdf.text"
-            :value="inputPDf[pdf.key].value ? true : false"
-            hide-details="false"
+            :value="inputPDf[pdf.key].value"
+            :hide-details="false"
             class="ma-0 pa-0"
             @onChange="(e) => pdfCheck(e, pdf.key)"
           >

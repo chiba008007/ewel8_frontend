@@ -390,7 +390,7 @@ const displayString = (type: boolean) => {
             text="パスワードを入力してください"
             class="w-100"
             :hideDetails="false"
-            messages="半角8文字以上、半角15文字で入力してください。大文字と小文字は区別さ英大文字・英小文字・数、字それぞれを最低1文字ずつ含む必要があります。"
+            messages="半角8文字以上、半角15文字で入力してください。大文字と小文字は区別さ英大文字・英小文字・数字それぞれを最低1文字ずつ含む必要があります。"
             type="password"
             :value="password"
             :requriredIcon="true"

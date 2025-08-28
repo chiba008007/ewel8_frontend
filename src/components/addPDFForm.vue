@@ -127,7 +127,11 @@ const pdfCount = ref(props.inputData?.pdflimitcount);
               <span class="mt-3 text-caption">年</span>
               <SelectFieldView
                 :items="monthArray"
-                :text="editid ? datePDFStart.month() + 1 : props.defaultmonth"
+                :text="
+                  editid || datePDFStart
+                    ? datePDFStart.month() + 1
+                    : props.defaultmonth
+                "
                 class="w-25"
                 @onChange="
                   (e) => (
@@ -139,7 +143,11 @@ const pdfCount = ref(props.inputData?.pdflimitcount);
               <SelectFieldView
                 :items="dayArray"
                 class="w-25"
-                :text="editid ? datePDFStart.date() : props.defaultday"
+                :text="
+                  editid || datePDFStart
+                    ? datePDFStart.date()
+                    : props.defaultday
+                "
                 @onChange="
                   (e) => (
                     (startdate.startday = zeroPadding(e)), requestDateTime()
@@ -206,7 +214,7 @@ const pdfCount = ref(props.inputData?.pdflimitcount);
           :value="pdfCount"
           :maxlength="4"
           :hideDetails="`auto`"
-          :rules="numberValue(Number(pdfCount), 'PDF出力制限')"
+          :rules="[(v) => numberValue(Number(v), 'PDF出力制限')]"
           @onKeyup="
             (e) => ((pdfCount = parseInt(e)), emit('onPdfCount', pdfCount))
           "

@@ -181,7 +181,7 @@ const addRegist = () => {
                 class="w-75"
                 :passwordFlag="true"
                 :maxlength="15"
-                :rules="checkPassword(form.password, 'edit')"
+                :rules="[(e) => checkPassword(e, 'edit')]"
                 @onBlur="(e) => (form.password = e)"
               ></addPartnerForm>
               <addPostCodeForm
@@ -249,7 +249,7 @@ const addRegist = () => {
                 class="w-100"
                 :hideDetails="`auto`"
                 :value="form.person"
-                :rules="requiredValue(form.person, '主担当者氏名')"
+                :rules="[(e) => requiredValue(e, '主担当者氏名')]"
                 @onBlur="(e) => (form.person = e)"
               ></addPartnerForm>
               <addPartnerForm
@@ -259,7 +259,7 @@ const addRegist = () => {
                 :hideDetails="`auto`"
                 type="person_address"
                 :value="form.person_address"
-                :rules="requiredValue(form.person_address, '主担当者アドレス')"
+                :rules="[(e) => requiredValue(e, '主担当者アドレス')]"
                 @onBlur="(e) => (form.person_address = e)"
               ></addPartnerForm>
               <addPartnerForm

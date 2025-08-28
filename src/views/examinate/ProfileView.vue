@@ -105,10 +105,10 @@ ExamApiService.getExamData()
 
 const buttonCheck = () => {
   if (
-    requiredValue(profile.value.name1, "姓").length === 0 &&
-    requiredValue(profile.value.name2, "名").length === 0 &&
-    requiredValue(profile.value.kana1, "姓かな").length === 0 &&
-    requiredValue(profile.value.kana2, "名かな").length === 0
+    requiredValue(profile.value.name1, "姓") === true &&
+    requiredValue(profile.value.name2, "名") === true &&
+    requiredValue(profile.value.kana1, "姓かな") === true &&
+    requiredValue(profile.value.kana2, "名かな") === true
   ) {
     buttonFlag.value = false;
   }
@@ -141,7 +141,7 @@ const enabledTest = (e: boolean) => {
               variant="outlined"
               :hideDetails="`auto`"
               messages="例:佐藤"
-              :rules="requiredValue(profile.name1, '姓')"
+              :rules="[(e) => requiredValue(e, '姓')]"
               :value="profile.name1"
               @onBlur="(val) => ((profile.name1 = val), buttonCheck())"
             ></ComponentTextField>
@@ -155,7 +155,7 @@ const enabledTest = (e: boolean) => {
               :hideDetails="`auto`"
               messages="例:太郎"
               :value="profile.name2"
-              :rules="requiredValue(profile.name2, '名')"
+              :rules="[(e) => requiredValue(e, '名')]"
               @onBlur="(val) => ((profile.name2 = val), buttonCheck())"
             ></ComponentTextField>
           </v-col>
@@ -176,7 +176,7 @@ const enabledTest = (e: boolean) => {
               :hideDetails="`auto`"
               messages="例:さとう"
               :value="profile.kana1"
-              :rules="requiredValue(profile.kana1, '姓かな')"
+              :rules="[(e) => requiredValue(e, '姓かな')]"
               @onBlur="(val) => ((profile.kana1 = val), buttonCheck())"
             ></ComponentTextField>
           </v-col>
@@ -189,7 +189,7 @@ const enabledTest = (e: boolean) => {
               :hideDetails="`auto`"
               messages="例:たろう"
               :value="profile.kana2"
-              :rules="requiredValue(profile.kana2, '名かな')"
+              :rules="[(e) => requiredValue(e, '名かな')]"
               @onBlur="(val) => ((profile.kana2 = val), buttonCheck())"
             ></ComponentTextField>
           </v-col>
@@ -200,7 +200,7 @@ const enabledTest = (e: boolean) => {
           :default="profile.genders"
           :items="genderArray"
           :model="profile.genders"
-          @onChange="(e) => onGender(e)"
+          @onChange="(e) => onGender(Number(e))"
         ></RadioView>
       </ExamProfileForm>
       <ExamProfileForm title="生年月日" v-if="password">

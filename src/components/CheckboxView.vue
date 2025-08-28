@@ -29,6 +29,7 @@ const emit = defineEmits<{
     :label="props.label"
     :hide-details="props.hideDetail"
     :class="props.class"
+    :model-value="!!props.value"
     @update:model-value="
       (val) => {
         const checked = val as boolean

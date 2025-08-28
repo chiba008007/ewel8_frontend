@@ -4,10 +4,20 @@ import TextFieldView from "@/components/TextFieldView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
 import { monthArray, dayArray, timeArray, minuteArray } from "@/plugins/const";
 import { zeroPadding, zeroZapress } from "@/plugins/validate";
+
+type ValidationResult = string | boolean;
+type RuleElement =
+  | string
+  | boolean
+  | PromiseLike<ValidationResult>
+  | ((value: any) => ValidationResult)
+  | ((value: any) => PromiseLike<ValidationResult>)
+  | [string, any, (string | undefined)?];
+
 interface Props {
   title?: string;
   color?: string;
-  rules?: string;
+  rules?: string | RuleElement[];
   tooltipMessage?: string;
   tooltipflag?: boolean;
   defaultyear?: number;

@@ -14,6 +14,9 @@ import pankuzuMain from "@/components/pankuzuMain.vue";
 import ProgressView from "@/components/ProgressView.vue";
 import DateView from "@/components/DateView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
+import CsvDownload from "@/components/csvDownload.vue";
+import ExcelApiService from "@/services/ExcelApiService";
+import { d_Path } from "@/plugins/const";
 
 const user = useStoreUser();
 const move = pageClickMove();
@@ -47,7 +50,8 @@ interface Customer {
   name: string;
 }
 const customerList = ref<Customer[]>([]);
-console.log(user);
+const customerVal = ref(0);
+const examList = ref([]);
 onMounted(() => {
   // 初期ロード時に実行される処理
   getCustomerList();
@@ -71,8 +75,45 @@ const getCustomerList = async () => {
   }
 };
 const onChangeList = () => {
-  // alert(startDate.value);
-  // alert(endtDate.value);
+  getExec();
+};
+
+const getExec = async () => {
+  try {
+    loadingFlag.value = true;
+    const res = await testExecApi.getExec({
+      partner_id: tmpid,
+      customer_id: customerVal.value,
+      startdaytime: startDate.value,
+      enddaytime: endtDate.value,
+    });
+    examList.value = res.data;
+    loadingFlag.value = false;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const headerTable = ref([
+  { title: "検査名", key: "testname" },
+  { title: "受検者数", key: "examCount" },
+  { title: "受検総数", key: "totalCount" },
+]);
+
+const download = async () => {
+  try {
+    const res = await ExcelApiService.testExec({
+      partner_id: tmpid,
+      customer_id: customerVal.value,
+      startdaytime: startDate.value,
+      enddaytime: endtDate.value,
+    });
+
+    location.href = d_Path + "/" + res.data.file_path;
+    loadingFlag.value = false;
+  } catch (e) {
+    console.error(e);
+  }
 };
 </script>
 <template>
@@ -111,10 +152,30 @@ const onChangeList = () => {
           <SelectFieldView
             :items="customerList"
             :text="customer.text"
-            @onChange="(e) => (customer.text = e)"
+            @onChange="
+              (e) => (
+                (customerVal = Number(e)), onChangeList(), (customer.text = e)
+              )
+            "
           ></SelectFieldView>
         </v-col>
       </v-row>
+      <v-row no-gutters v-if="examList.length > 0">
+        <v-col>
+          <ButtonView
+            text="ダウンロード"
+            color="primary"
+            @onClick="download()"
+          ></ButtonView>
+        </v-col>
+      </v-row>
+      <v-data-table
+        :headers="headerTable"
+        :items="examList"
+        class="listable ma-2"
+        fixed-header
+      >
+      </v-data-table>
     </v-container>
   </v-main>
 </template>
