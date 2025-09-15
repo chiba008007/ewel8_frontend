@@ -10,6 +10,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   coded?: string | undefined;
+  starttime?: string | undefined | any;
   endtime?: string | undefined | any;
   id?: number;
   level?: string;
@@ -27,9 +28,10 @@ const onclick = (id: number | undefined) => {
       variant="text"
       density="compact"
       @onClick="onclick(props.id)"
-      v-if="endtime"
+      v-if="props.endtime"
       class="bg-blue"
     ></ButtonView>
+    <p v-else-if="props.starttime">受検中</p>
   </td>
   <td class="text-center">{{ level }}</td>
   <td class="text-center">{{ lv }}</td>

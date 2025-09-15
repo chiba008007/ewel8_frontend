@@ -255,3 +255,9 @@ export const csvHeader = [
 ];
 
 export const textString = { CompanyEdit: "企業情報変更" };
+
+/** 検査ログステータス */
+export const examLogStatus: { [key: string]: string } = {
+  add: "追加",
+  delete: "削除",
+};

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import TestApiService from "@/services/TestApiService";
 import pankuzuMain from "../components/pankuzuMain.vue";
@@ -30,9 +30,26 @@ const headers = ref([
   { title: "ID", sortable: true, key: "email", cols: 1, row: 2, width: "30px" },
   { title: "氏名", sortable: true, key: "name", cols: 1, row: 2 },
   { title: "ふりがな", sortable: false, key: "kana", cols: 1, row: 2 },
-  { title: "生年月日", sortable: false, key: "birth", cols: 1, row: 2 },
+  {
+    title: "生年月日\n(年齢)",
+    sortable: false,
+    key: "birth",
+    cols: 1,
+    row: 2,
+  },
   { title: "合否", sortable: false, key: "passflag", cols: 1, row: 2 },
 ]);
+const subHeaders = ref<Record<string, string[]>>({
+  PFS: ["ステータス", "行動価値適合度", "ストレス共生レベル"],
+  BAJ3: ["ステータス", "行動価値適合度", "ストレス共生レベル"],
+});
+
+const totalCols = computed(() =>
+  headers.value.reduce(
+    (sum, col) => sum + (subHeaders.value[col.key]?.length || 1),
+    0
+  )
+);
 
 const router = useRouter();
 const detail = ref();
@@ -77,7 +94,7 @@ TestApiService.getTestTableTh(tmp)
       throw new Error("データが取得できませんでした");
     }
     testCount.value = rlt.data.length;
-    tableWidth.value = 1600 + 200 * testCount.value + "px";
+    // tableWidth.value = 1600 + 200 * testCount.value + "px";
     rlt.data.forEach((x: typeof typed) => {
       if (x.code === "PFS" || x.code === "BAJ3") {
         headers.value.push({
@@ -90,12 +107,13 @@ TestApiService.getTestTableTh(tmp)
       }
     });
 
-    headers.value.push(
-      { title: "メモ1", sortable: false, key: "no", cols: 1, row: 2 },
-      { title: "メモ2", sortable: false, key: "no", cols: 1, row: 2 },
-      { title: "PDF", sortable: false, key: "no", cols: 1, row: 2 },
-      { title: "機能", sortable: false, key: "no", cols: 1, row: 2 }
-    );
+    headers.value.push({
+      title: "機能",
+      sortable: false,
+      key: "no",
+      cols: 1,
+      row: 2,
+    });
   })
   .catch((e) => {
     console.log("TestMenu ERROR " + e);
@@ -135,7 +153,6 @@ onMounted(async () => {
       }));
       originalExamList.value = exams;
       filteredExamList.value = exams;
-
       loadingFlag.value = false;
     });
   } catch (error) {
@@ -152,7 +169,6 @@ const applyFilter = () => {
 
     const memo1Match =
       !filterText.memo1 || item.memo1?.includes(filterText.memo1);
-    console.log(memo1Match);
     const memo2Match =
       !filterText.memo2 || item.memo2?.includes(filterText.memo2);
 
@@ -368,6 +384,7 @@ const onPdfDownload = () => {
           items-per-page-text="表示数"
           :items-per-page="50"
           :style="`min-width:` + tableWidth"
+          no-data-text=""
         >
           <template v-slot:headers="{ columns }">
             <tr>
@@ -376,36 +393,40 @@ const onPdfDownload = () => {
                   :colspan="column.cols"
                   :rowspan="column.row"
                   class="text-center"
+                  style="white-space: pre-line"
                 >
                   {{ column.title }}
                 </th>
               </template>
             </tr>
             <tr>
-              <template v-if="columns.some((column) => column.key === 'PFS')">
-                <th class="text-center">ステータス</th>
-                <th class="text-center">行動価値適合度</th>
-                <th class="text-center">ストレス強制レベル</th>
-              </template>
-              <template v-if="columns.some((column) => column.key === 'BAJ3')">
-                <th class="text-center">ステータス</th>
-                <th class="text-center">行動価値適合度</th>
-                <th class="text-center">ストレス強制レベル</th>
+              <template v-for="col in columns" :key="col.key">
+                <th
+                  v-for="(sub, idx) in subHeaders[col.key as string] || []"
+                  :key="`${col.key}-${idx}`"
+                  class="text-center"
+                >
+                  {{ sub }}
+                </th>
               </template>
             </tr>
           </template>
-          <template v-slot:item="{ item }">
-            <tr>
-              <td width="40">{{ (item as any).originalIndex }}</td>
+          <template v-slot:item="{ item, index }">
+            <tr :class="index % 2 === 0 ? 'bg-light-gray' : ''">
+              <td width="40" rowspan="2">{{ (item as any).originalIndex }}</td>
               <td width="80">{{ (item as any).email }}</td>
               <td class="text-xs-right">{{ (item as any).name }}</td>
               <td class="text-xs-right">{{ (item as any).kana }}</td>
-              <td class="text-xs-right">{{ (item as any).birth }}</td>
+              <td class="text-center">
+                {{ (item as any).birth }}
+                <div v-if="(item as any).birth">({{ (item as any).age }})</div>
+              </td>
               <td class="text-xs-right text-center">
                 {{ (item as any).passText }}
               </td>
               <ExamPfsView
                 v-if="headers.some((item) => item.title === 'PFS')"
+                :starttime="((item as any)['pfs']).starttime"
                 :endtime="((item as any)['pfs']).endtime"
                 :id="((item as any)['pfs'] ).id"
                 :level="((item as any)['pfs'] ).level"
@@ -416,13 +437,6 @@ const onPdfDownload = () => {
                 v-if="headers.some((item) => item.title === 'BAJ3')"
                 @onClick="(e:any) => baj3Dialog(e)"
               ></ExamBAJ3View>
-              <td class="text-xs-right text-center">
-                {{ (item as any).memo1 }}
-              </td>
-              <td class="text-xs-right text-center">
-                {{ (item as any).memo2 }}
-              </td>
-              <td class="text-xs-right text-center">未出力</td>
               <td class="text-xs-right text-center d-flex pt-3 justify-center">
                 <ButtonView
                   text="更新"
@@ -474,6 +488,16 @@ const onPdfDownload = () => {
                 ></ButtonView>
               </td>
             </tr>
+            <tr :class="index % 2 === 0 ? 'bg-light-gray' : ''">
+              <td :colspan="totalCols - 2" class="text-caption">
+                <div v-if="item.memo1">メモ1: {{ item.memo1 }}</div>
+                <div v-if="item.memo2">メモ2: {{ item.memo2 }}</div>
+              </td>
+              <td class="text-xs-right text-center">
+                <span v-if="item.pdf_histories_count">出力済</span>
+                <span v-else>未出力</span>
+              </td>
+            </tr>
           </template>
         </v-data-table>
         <div class="pa-2">
@@ -503,5 +527,8 @@ const onPdfDownload = () => {
 }
 #divoverflow {
   overflow: hidden;
+}
+.bg-light-gray {
+  background-color: #e7e5e5; /* ごく薄いグレー */
 }
 </style>
