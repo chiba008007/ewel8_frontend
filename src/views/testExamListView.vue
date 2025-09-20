@@ -57,7 +57,9 @@ const user = useStoreUser();
 const loadingFlag = ref(true);
 const today = new Date(); // 今日の日時
 const oneYearAgo = new Date(today); // 今日をコピー
-
+const pdfstartday = ref();
+const pdfendday = ref();
+const pdfuseflag = ref();
 oneYearAgo.setFullYear(today.getFullYear() - 1); // ← ここで1年前にずらす
 
 const yearStr = oneYearAgo
@@ -141,7 +143,9 @@ onMounted(async () => {
       test_id: params.testid,
     });
     pagetitle.value = rlt.data.testname;
-
+    pdfstartday.value = rlt.data.pdfstartday;
+    pdfendday.value = rlt.data.pdfendday;
+    pdfuseflag.value = rlt.data.pdfuseflag;
     TestApiService.getExam(tmp).then(function (rlt) {
       detail.value = rlt;
 
@@ -159,6 +163,37 @@ onMounted(async () => {
     console.error("APIエラー:", error);
   }
 });
+
+const isButtonDisabled = (item: any) => {
+  const endedAt = (item as any).ended_at;
+
+  if (pdfuseflag.value === 0) {
+    // フラグが0のときは ended_at だけで判定
+    return !endedAt; // ended_at がなければ disabled
+  }
+
+  if (pdfuseflag.value === 1) {
+    // フラグが1のときは ended_at + 開始日 + 終了日の全部が必要
+    const startDate = pdfstartday.value;
+    const endDate = pdfendday.value;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(endDate);
+    end.setHours(0, 0, 0, 0);
+
+    const allSatisfied = !!endedAt && today >= start && today <= end;
+
+    return !allSatisfied; // 全部満たしていないときに disabled
+  }
+
+  // 想定外の値ならとりあえず disabled
+  return true;
+};
 
 const applyFilter = () => {
   filteredExamList.value = originalExamList.value.filter((item) => {
@@ -455,7 +490,7 @@ const onPdfDownload = () => {
                   "
                 ></ButtonView>
                 <ButtonView
-                  :disabled="(item as any).ended_at ? false : true"
+                  :disabled="isButtonDisabled(item)"
                   text="PDF"
                   variant="tonal"
                   density="compact"

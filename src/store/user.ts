@@ -26,6 +26,7 @@ export const useStoreUser = defineStore("user", {
     pdfdownload: "PDF一括ダウンロード",
     examSearch: "受検者検索",
     searchExamlog: "検査ログ",
+    searchPdflog: "PDF出力ログ",
     testAdd: "検査登録",
     testDelete: "検査削除",
     customerRegist: "新規顧客登録",

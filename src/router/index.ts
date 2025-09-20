@@ -10,6 +10,7 @@ import testExecView from "../views/testExecView.vue";
 import addPartner from "../views/addPartnerView.vue";
 import searchExam from "../views/searchExam.vue";
 import searchExamlog from "../views/searchExamlog.vue";
+import searchPdflog from "../views/searchPdflog.vue";
 import customerList from "../views/customerListView.vue";
 import customerAdd from "../views/customerAdd.vue";
 import customerEdit from "../views/customerEdit.vue";
@@ -91,6 +92,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/searchExamlog",
     name: "searchExamlog",
     component: searchExamlog,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+  {
+    path: "/searchPdflog",
+    name: "searchPdflog",
+    component: searchPdflog,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
