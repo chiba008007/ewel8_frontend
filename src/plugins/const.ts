@@ -5,8 +5,10 @@ interface NumberCodeOrNullListType {
 /** キー */
 export const SECRET_KEY = "my-secret-key";
 
-/** 画像 */
+/** 消費税 */
+export const TAX_PER = 10;
 
+/** 画像 */
 const uri = new URL(window.location.href);
 const reg = /localhost/;
 let tmp = "";

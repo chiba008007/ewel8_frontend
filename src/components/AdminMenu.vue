@@ -53,12 +53,14 @@ const pageClickMove = (pagename: string) => {
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
+        @onClick="pageClickMove('examRowData')"
       ></ComponentButton>
       <ComponentButton
         text="請求書一覧"
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
+        @onClick="pageClickMove('invoiceView')"
       ></ComponentButton>
       <ComponentButton
         text="ライセンス一覧"

@@ -11,6 +11,9 @@ import addPartner from "../views/addPartnerView.vue";
 import searchExam from "../views/searchExam.vue";
 import searchExamlog from "../views/searchExamlog.vue";
 import searchPdflog from "../views/searchPdflog.vue";
+import examRowData from "../views/examRowData.vue";
+import invoiceView from "../views/invoiceView.vue";
+import invoiceSetView from "../views/invoiceSetView.vue";
 import customerList from "../views/customerListView.vue";
 import customerAdd from "../views/customerAdd.vue";
 import customerEdit from "../views/customerEdit.vue";
@@ -101,6 +104,33 @@ const routes: Array<RouteRecordRaw> = [
     path: "/searchPdflog",
     name: "searchPdflog",
     component: searchPdflog,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+  {
+    path: "/examRowData",
+    name: "examRowData",
+    component: examRowData,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+  {
+    path: "/invoiceView",
+    name: "invoiceView",
+    component: invoiceView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+  {
+    path: "/invoiceView/set/:id?",
+    name: "invoiceSetView",
+    component: invoiceSetView,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ

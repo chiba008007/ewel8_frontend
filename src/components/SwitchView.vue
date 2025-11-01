@@ -19,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
   (e: "onClick", value: any, type: string): void;
+  (e: "onChange", value: string | number | boolean | null): void;
 }>();
 </script>
 <template>
@@ -31,5 +32,6 @@ const emit = defineEmits<{
     hide-details
     inset
     @click="emit('onClick', props.model, props.type ?? '')"
+    @update:modelValue="emit('onChange', $event)"
   ></v-switch>
 </template>
