@@ -7,6 +7,7 @@ const dateAdapter = useDate();
 
 const props = defineProps<{
   value: string;
+  clearable?: boolean;
 }>();
 
 const menu = ref(false);
@@ -16,10 +17,15 @@ const display = ref("");
 
 const emit = defineEmits<{
   (e: "update:value", value: string): void;
+  (e: "onClear"): void;
 }>();
 
 // 選択された日付の表示を日本語にする
 function updateDisplay(date: Date) {
+  if (!date || isNaN(date.getTime())) {
+    display.value = "";
+    return;
+  }
   const dateOnly = date
     .toLocaleDateString("ja-JP", {
       year: "numeric",
@@ -50,14 +56,17 @@ updateDisplay(selected.value);
     transition="scale-transition"
     offset-y
   >
-    <template #activator="{ props }">
+    <template #activator="{ props: menuProps }">
       <v-text-field
-        v-bind="props"
+        v-bind="menuProps"
         v-model="display"
         readonly
         density="compact"
         variant="outlined"
         prepend-icon="mdi-calendar"
+        hide-details
+        :clearable="props.clearable"
+        @click:clear="emit('onClear')"
       />
     </template>
 

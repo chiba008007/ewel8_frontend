@@ -10,6 +10,9 @@ class BillApiService {
   setTest(data: object) {
     return httpAuth.post("/api/bill/set", data);
   }
+  delete(data: object) {
+    return httpAuth.post("/api/bill/delete", data);
+  }
 }
 
 export default new BillApiService();

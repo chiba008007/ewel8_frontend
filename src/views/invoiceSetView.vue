@@ -9,11 +9,15 @@ import TextFieldView from "@/components/TextFieldView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
 import SwitchView from "@/components/SwitchView.vue";
 import imgView from "@/components/imgView.vue";
-import { d_Path, d_Front, TAX_PER } from "@/plugins/const";
+import { d_Path, TAX_PER, BILLSENDFROM } from "@/plugins/const";
 import TextAreaFieldView from "@/components/TextAreaFieldView.vue";
 import { Core as YubinBangoCore } from "yubinbango-core2";
 import BillApiService from "@/services/BillApiService";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import AlertView from "@/components/AlertView.vue";
+
+const route = useRoute();
+const id = route.params.id;
 
 const router = useRouter();
 const user = useStoreUser();
@@ -51,11 +55,12 @@ const dayItems = computed(() => {
 });
 
 const form = ref({
+  id: 0,
   post: "",
   post1: "",
   post2: "",
-  address1: "",
-  address2: "",
+  address_1: "",
+  address_2: "",
   company_name: "",
   busyo: "",
   yakusyoku: "",
@@ -74,14 +79,15 @@ const form = ref({
   bill_date_y: currentYear,
   bill_date_m: currentMonth,
   bill_date_d: currentDay,
-  from_post1: "",
-  from_post2: "",
-  from_address_1: "",
-  from_address_2: "",
-  from_name: "",
-  from_tel: "",
-  company_print_flag: false,
-  tanto_print_flag: false,
+  from_post: "",
+  from_post1: BILLSENDFROM.from_post1,
+  from_post2: BILLSENDFROM.from_post2,
+  from_address_1: BILLSENDFROM.from_address_1,
+  from_address_2: BILLSENDFROM.from_address_2,
+  from_name: BILLSENDFROM.from_name,
+  from_tel: BILLSENDFROM.from_tel,
+  company_print_flag: true,
+  tanto_print_flag: true,
   note: "",
   lists: [{}],
 });
@@ -109,7 +115,11 @@ const forms = ref<FormRow[]>([
 ]);
 const getFormValue = (index: number, key: keyof FormRow) => {
   // forms[index] が未定義なら空文字を返す
-  return forms.value[index]?.[key] ?? "";
+  if (key == "money") {
+    return Number(forms.value[index]?.[key]) ?? 0;
+  } else {
+    return forms.value[index]?.[key] ?? "";
+  }
 };
 
 // フォームに保持するため一度キー毎初期化をする
@@ -151,11 +161,18 @@ const onRegist = () => {
     form.value.pay_date_m +
     "-" +
     form.value.pay_date_d;
+  data.id = Number(id);
   data.post = form.value.post1 + "-" + form.value.post2;
+  data.from_post = form.value.from_post1 + "-" + form.value.from_post2;
   data.lists = forms.value;
   BillApiService.setTest(data).then((rlt) => {
-    sessionStorage.setItem("flashMessage", "保存が完了しました。");
-    router.push({ name: "invoiceView" });
+    if (id) {
+      sessionStorage.setItem("flashMessage", "更新が完了しました。");
+      router.push({ name: "invoiceSetView", params: { id: id } });
+    } else {
+      sessionStorage.setItem("flashMessage", "保存が完了しました。");
+      router.push({ name: "invoiceView" });
+    }
   });
 };
 // リストの数
@@ -189,7 +206,7 @@ const fetchAddress = () => {
     new YubinBangoCore(form.value.post1 + form.value.post2, function (
       addr: any
     ) {
-      form.value.address1 = addr.region + addr.locality + addr.street;
+      form.value.address_1 = addr.region + addr.locality + addr.street;
     });
   } catch (e) {
     console.error("住所取得エラー:", e);
@@ -198,10 +215,51 @@ const fetchAddress = () => {
 
 // 情報取得
 const businessNumber = ref();
+const flashMessage = ref();
 onMounted(async () => {
+  const msg = sessionStorage.getItem("flashMessage");
+  if (msg) {
+    flashMessage.value = msg;
+    sessionStorage.removeItem("flashMessage");
+  }
+
   try {
-    const response = await BillApiService.getData({});
-    console.log(response);
+    const response = await BillApiService.getData({
+      id: id,
+    });
+    // idがあるときは編集用データ
+    if (id) {
+      form.value.post1 = response.data.data.post1;
+      form.value.post2 = response.data.data.post2;
+      form.value.address_1 = response.data.data.address_1;
+      form.value.address_2 = response.data.data.address_2;
+      form.value.company_name = response.data.data.company_name;
+      form.value.busyo = response.data.data.busyo;
+      form.value.yakusyoku = response.data.data.yakusyoku;
+      form.value.name = response.data.data.name;
+      form.value.money = Math.floor(response.data.data.money);
+      form.value.title = response.data.data.title;
+      form.value.pay_date_y = response.data.data.pay_date_y;
+      form.value.pay_date_m = Number(response.data.data.pay_date_m);
+      form.value.pay_date_d = Number(response.data.data.pay_date_d);
+      form.value.pay_bank = response.data.data.pay_bank;
+      form.value.pay_number = response.data.data.pay_number;
+      form.value.pay_name = response.data.data.pay_name;
+      form.value.bill_number = response.data.data.bill_number;
+      form.value.bill_date_y = Number(response.data.data.bill_date_y);
+      form.value.bill_date_m = Number(response.data.data.bill_date_m);
+      form.value.bill_date_d = Number(response.data.data.bill_date_d);
+      form.value.from_post1 = response.data.data.from_post1;
+      form.value.from_post2 = response.data.data.from_post2;
+      form.value.from_address_1 = response.data.data.from_address_1;
+      form.value.from_address_2 = response.data.data.from_address_2;
+      form.value.from_name = response.data.data.from_name;
+      form.value.from_tel = response.data.data.from_tel;
+      form.value.company_print_flag = response.data.data.company_print_flag;
+      form.value.tanto_print_flag = response.data.data.tanto_print_flag;
+      form.value.note = response.data.data.note;
+      forms.value = response.data.data.lists;
+    }
     form.value.bill_number = response.data.nextNumber;
     businessNumber.value = response.data.businessNumber;
   } catch (err) {
@@ -219,6 +277,9 @@ onMounted(async () => {
     :pagehref="`invoiceView`"
     :pageName2="user.billCreate"
   ></pankuzuAdmin>
+  <div v-show="flashMessage">
+    <AlertView :text="flashMessage" type="success"></AlertView>
+  </div>
   <v-container fluid>
     <div class="text-h5">{{ user.billCreate }}</div>
     <v-row class="mt-2">
@@ -231,6 +292,7 @@ onMounted(async () => {
               density="compact"
               name="post1"
               placeholder="000"
+              :value="form.post1"
               @onKeyup="(e) => (form.post1 = e)"
             ></TextFieldView>
             <p class="pa-2">-</p>
@@ -239,6 +301,7 @@ onMounted(async () => {
               density="compact"
               name="post2"
               placeholder="0000"
+              :value="form.post2"
               @onKeyup="(e) => ((form.post2 = e), fetchAddress())"
             ></TextFieldView>
           </v-col>
@@ -248,15 +311,15 @@ onMounted(async () => {
             <TextFieldView
               name="address1"
               text="住所を入力してください。"
-              :value="form.address1"
-              @onKeyup="(e) => (form.address1 = e)"
+              :value="form.address_1"
+              @onKeyup="(e) => (form.address_1 = e)"
             ></TextFieldView>
             <TextFieldView
               name="address2"
               text="番地・建物名を入力してください。"
               class="mt-2"
-              :value="form.address2"
-              @onKeyup="(e) => (form.address2 = e)"
+              :value="form.address_2"
+              @onKeyup="(e) => (form.address_2 = e)"
             ></TextFieldView>
             <TextFieldView
               name="company_name"
@@ -321,19 +384,19 @@ onMounted(async () => {
             <div class="d-flex">
               <SelectFieldView
                 :items="yearItems"
-                :text="form.pay_date_y"
+                :text="form.pay_date_y + '年'"
                 name="pay_date_y"
                 @onChange="(e) => (form.pay_date_y = Number(e))"
               ></SelectFieldView>
               <SelectFieldView
                 :items="monthItems"
-                :text="form.pay_date_m"
+                :text="form.pay_date_m + '月'"
                 name="pay_date_m"
                 @onChange="(e) => (form.pay_date_m = Number(e))"
               ></SelectFieldView>
               <SelectFieldView
                 :items="dayItems"
-                :text="form.pay_date_d"
+                :text="form.pay_date_d + '日'"
                 name="pay_date_d"
                 @onChange="(e) => (form.pay_date_d = Number(e))"
               ></SelectFieldView>
@@ -393,19 +456,19 @@ onMounted(async () => {
                 :items="yearItems"
                 name="bill_date_y"
                 :text="form.bill_date_y"
-                @onKeyup="(e) => (form.bill_date_y = Number(e))"
+                @onChange="(e) => (form.bill_date_y = Number(e))"
               ></SelectFieldView>
               <SelectFieldView
                 :items="monthItems"
                 name="bill_date_m"
                 :text="form.bill_date_m"
-                @onKeyup="(e) => (form.bill_date_m = Number(e))"
+                @onChange="(e) => (form.bill_date_m = Number(e))"
               ></SelectFieldView>
               <SelectFieldView
                 :items="dayItems"
                 name="bill_date_d"
                 :text="form.bill_date_d"
-                @onKeyup="(e) => (form.bill_date_d = Number(e))"
+                @onChange="(e) => (form.bill_date_d = Number(e))"
               ></SelectFieldView>
             </div>
           </v-col>
@@ -451,8 +514,8 @@ onMounted(async () => {
               name="from_address_2"
               text="送付元の番地・建物名を入力してください。"
               class="mt-2"
-              :value="form.from_address_1"
-              @onKeyup="(e) => (form.from_address_1 = e)"
+              :value="form.from_address_2"
+              @onKeyup="(e) => (form.from_address_2 = e)"
             ></TextFieldView>
           </v-col>
           <v-col cols="12">
@@ -478,14 +541,14 @@ onMounted(async () => {
           <v-col cols="6">
             <SwitchView
               :label="form.company_print_flag ? '社販あり' : '社販なし'"
-              :model="form.company_print_flag"
+              :model="form.company_print_flag ? true : false"
               @onChange="(e) => (form.company_print_flag = !!e)"
               name="company_print_flag"
             ></SwitchView>
             <div>
               <imgView
                 v-show="form.company_print_flag"
-                :src="d_Path + '/img/logo/innovation.gif'"
+                :src="d_Path + '/images/logo/innovation.gif'"
                 :width="80"
               ></imgView>
             </div>
@@ -493,14 +556,14 @@ onMounted(async () => {
           <v-col cols="6">
             <SwitchView
               :label="form.tanto_print_flag ? '担当印あり' : '担当印なし'"
-              :model="form.tanto_print_flag"
+              :model="form.tanto_print_flag ? true : false"
               @onChange="(e) => (form.tanto_print_flag = !!e)"
               name="tanto_print_flag"
             ></SwitchView>
             <div>
               <imgView
                 v-show="form.tanto_print_flag"
-                :src="d_Path + '/img/logo/sasaki.gif'"
+                :src="d_Path + '/images/logo/sasaki.gif'"
                 :width="60"
               ></imgView>
             </div>
@@ -579,13 +642,25 @@ onMounted(async () => {
               <td class="ps-2">
                 <TextFieldView
                   density="compact"
-                  :value="getFormValue(index, 'money')"
+                  :value="
+                    Number(getFormValue(index, 'money')) > 0
+                      ? getFormValue(index, 'money')
+                      : ''
+                  "
                   @onKeyup="(e) => (updateForm(index, 'money', e), moneyCalc())"
                 ></TextFieldView>
               </td>
               <td class="ps-2">
-                <p v-show="getFormValue(index, 'totals') != 0">
+                <p v-if="getFormValue(index, 'totals') != 0">
                   {{ getFormValue(index, "totals").toLocaleString() }}
+                </p>
+                <p v-else>
+                  {{
+                    Number(forms[index]?.["money"]) > 0
+                      ? Number(forms[index]?.["money"]) *
+                        Number(forms[index]?.["quantity"])
+                      : ""
+                  }}
                 </p>
               </td>
             </tr>
@@ -605,7 +680,7 @@ onMounted(async () => {
     </v-row>
     <div class="mt-3">
       <ButtonView
-        text="登録"
+        :text="id ? '更新' : '登録'"
         class="bg-primary w-25 mt-2"
         @onClick="onRegist()"
       ></ButtonView>

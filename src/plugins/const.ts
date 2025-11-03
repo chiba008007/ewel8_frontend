@@ -263,3 +263,13 @@ export const examLogStatus: { [key: string]: string } = {
   add: "追加",
   delete: "削除",
 };
+
+/** 請求書送付元 */
+export const BILLSENDFROM = {
+  from_post1: "151",
+  from_post2: "0053",
+  from_address_1: "東京都渋谷区代々木1-25-5",
+  from_address_2: "BIZ SMART 代々木",
+  from_name: "株式会社 イノベーションゲート",
+  from_tel: "03-6868-8391",
+};
