@@ -1,7 +1,10 @@
 import { ref, Ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ExamApiService from "@/services/ExamApiService";
+import ExamLogApiService from "@/services/ExamLogApiService";
 import { AxiosResponse } from "axios";
+import { useStoreUser } from "@/store/user";
+
 export declare type LocationQueryValue = string | null;
 const route = useRoute();
 const questions = ref({
@@ -248,13 +251,28 @@ export default function () {
     testparts_id: string | string[],
     params: LocationQueryValue | LocationQueryValue[],
     page: number | string | string[],
-    selectPoint: object = {}
+    selectPoint: object = {},
+    code: string | undefined | null
   ) => {
-    const tmp = {
+    const user = useStoreUser();
+
+    type TmpType = {
+      testparts_id: string | string[];
+      params: LocationQueryValue | LocationQueryValue[];
+      page: string | number | string[];
+      selectPoint: object;
+      code?: string | null;
+      tokenExam: object;
+      [key: string]: any; // ← 動的プロパティを許可！
+    };
+
+    const tmp: TmpType = {
       testparts_id: testparts_id,
       params: params,
       page: page,
       selectPoint: selectPoint,
+      code: code,
+      tokenExam: user.userTokenExam,
     };
     const name = ref();
     if (parseInt(tmp.page.toString()) > 1) {
@@ -262,8 +280,12 @@ export default function () {
       if (page == 2) name.value = "examPfsTake2";
       if (page == 3) name.value = "examPfsTake3";
       if (page == 4) name.value = "examPfsTake4";
-      if (page == 5) name.value = "ExamPfsTakeFin";
-
+      if (page == 5) {
+        name.value = "ExamPfsTakeFin";
+        // 最後にテストを実施するときにexam_logテーブルにデータを登録しておく(毎回)
+        tmp.status = 2;
+        ExamLogApiService.set(tmp);
+      }
       ExamApiService.editPFS(tmp).then(function (rlt) {
         if (rlt.data == "success") {
           router
@@ -280,6 +302,9 @@ export default function () {
         return false;
       });
     } else {
+      // 最初にテストを実施するときにexam_logテーブルにデータを登録しておく(毎回)
+      tmp.status = 1;
+      ExamLogApiService.set(tmp);
       ExamApiService.setPFS(tmp).then(function (rlt) {
         if (rlt.data == "success") {
           router

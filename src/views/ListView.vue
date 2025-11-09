@@ -23,17 +23,20 @@ const headers = [
 let tmp = {
   type: "partner",
 };
-const desserts = ref<object[]>([]);
+interface PartnerItem {
+  id: number;
+  name: string;
+  total: number;
+  buy: number;
+  jyuken: number;
+  syori: number;
+  zan: number;
+}
+const desserts = ref<PartnerItem[]>([]);
 try {
   UserApiService.getPartner(tmp).then(function (rlt) {
     if (rlt) {
-      const entries = Object.entries(rlt);
-      for (const [key, val] of entries) {
-        if (key == "data") {
-          desserts.value.push(val);
-        }
-      }
-      // console.log(desserts);
+      desserts.value = rlt.data;
       loading.value = false;
     }
   });
@@ -73,7 +76,7 @@ const onSearch = (e: string) => {
   </v-card>
   <v-data-table
     :headers="headers"
-    :items="desserts[0]"
+    :items="desserts"
     class="listable ma-2 dataPartnerTableStyle dataTestList"
     :height="tableHeight"
     :search="``"
@@ -99,14 +102,18 @@ const onSearch = (e: string) => {
             color="success"
             class="ml-2"
             density="compact"
-            @onClick="pages.pageClickMoveLinkParam('editPartner', item.id)"
+            @onClick="
+              pages.pageClickMoveLinkParam('editPartner', String(item.id))
+            "
           />
           <ComponentButton
             text="添付"
             color="success"
             class="ml-2"
             density="compact"
-            @onClick="pages.pageClickMoveLinkParam('uploadView', item.id)"
+            @onClick="
+              pages.pageClickMoveLinkParam('uploadView', String(item.id))
+            "
           />
         </td>
       </tr>

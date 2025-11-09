@@ -4,6 +4,7 @@ import HomeView from "../views/HomeView.vue";
 import BlankView from "../views/BlankView.vue";
 import LoginView from "../views/LoginView.vue";
 import ListView from "../views/ListView.vue";
+import licenseView from "../views/licenseView.vue";
 import partnerRegistView from "../views/partnerRegistView.vue";
 import partnerEditView from "../views/partnerEditView.vue";
 import testExecView from "../views/testExecView.vue";
@@ -131,6 +132,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/invoiceView/set/:id?",
     name: "invoiceSetView",
     component: invoiceSetView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+  {
+    path: "/license/",
+    name: "licenseView",
+    component: licenseView,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { EXAMS } from "@/plugins/const";
 import { useRouter, useRoute } from "vue-router";
 import ExamTitle from "@/components/ExamTitle.vue";
 import ExamParts from "@/components/ExamParts.vue";
@@ -62,7 +63,8 @@ const enabledTest = (e: boolean) => {
           $route.params.testparts_id,
           k,
           parseInt(page.toString()) + 1,
-          selectPoint
+          selectPoint,
+          EXAMS.PFS
         )
       "
     ></ButtonView>

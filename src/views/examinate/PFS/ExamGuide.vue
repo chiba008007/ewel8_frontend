@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { EXAMS } from "@/plugins/const";
 import { useRouter, useRoute } from "vue-router";
 import ExamTitle from "@/components/ExamTitle.vue";
 import ExamParts from "@/components/ExamParts.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import exampfs from "@/plugins/exampfs";
 import { setStartTime } from "@/plugins/examStartTime";
-
 const router = useRouter();
 const k = router.currentRoute.value.query.k;
 const examObj = exampfs();
@@ -74,7 +74,9 @@ const enabledTest = (e: boolean) => {
       text="検査を開始する"
       :color="`blue`"
       :class="`ml-2`"
-      @onClick="examObj.onStart($route.params.testparts_id, k, page)"
+      @onClick="
+        examObj.onStart($route.params.testparts_id, k, page, {}, EXAMS.PFS)
+      "
     ></ButtonView>
   </v-container>
 </template>

@@ -67,6 +67,7 @@ const pageClickMove = (pagename: string) => {
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
+        @onClick="pageClickMove('licenseView')"
       ></ComponentButton>
       <ComponentButton
         text="お知らせ情報"

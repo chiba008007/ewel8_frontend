@@ -273,3 +273,8 @@ export const BILLSENDFROM = {
   from_name: "株式会社 イノベーションゲート",
   from_tel: "03-6868-8391",
 };
+
+// 検査コード
+export const EXAMS = {
+  PFS: "PFS",
+};

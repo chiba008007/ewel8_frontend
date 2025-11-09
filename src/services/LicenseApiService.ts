@@ -1,4 +1,5 @@
 import http from "@/user-common";
+import httpAuth from "@/auth-common";
 import { ref } from "vue";
 class LicenseApiService {
   list = ref();
@@ -24,6 +25,9 @@ class LicenseApiService {
       }
     }
     return tmp;
+  }
+  async getLicenseList() {
+    return httpAuth.post("/api/userlicense/list", []);
   }
 }
 
