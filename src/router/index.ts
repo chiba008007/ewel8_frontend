@@ -49,13 +49,15 @@ import ExamPfsTakeFin from "../views/examinate/PFS/ExamTakeFin.vue";
 const hostname = location.hostname;
 //const isTestSite = hostname === "test.v-gate.jp";
 //const isTestSite = hostname === "localhost";
-//const isTestSite = hostname === "test.v-gate.jp" || hostname === "localhost";
-const isTestSite =
-  hostname === "test.v-gate.jp" ||
-  (hostname === "localhost" && location.pathname.startsWith("/exam"));
+const isTestSite = hostname === "test.v-gate.jp" || hostname === "localhost";
+
 const routes: Array<RouteRecordRaw> = [
   ...(isTestSite
     ? [
+        {
+          path: "/",
+          redirect: "/exam", // ← 追加：トップアクセスでexamに飛ばす
+        },
         {
           path: "/exam",
           name: "exam",
