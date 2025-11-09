@@ -55,6 +55,10 @@ const routes: Array<RouteRecordRaw> = [
   ...(isTestSite
     ? [
         {
+          path: "/",
+          redirect: "/exam",
+        },
+        {
           path: "/exam",
           name: "exam",
           component: ExamView,
