@@ -55,10 +55,6 @@ const routes: Array<RouteRecordRaw> = [
   ...(isTestSite
     ? [
         {
-          path: "/",
-          redirect: "/exam", // ← 追加：トップアクセスでexamに飛ばす
-        },
-        {
           path: "/exam",
           name: "exam",
           component: ExamView,
