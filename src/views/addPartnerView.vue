@@ -281,7 +281,6 @@ const addRegist = () => {
   for (let i = 1; i <= 14; i++) {
     settingData.value[`element${i}`] = elements.value[i - 1]?.note || ""; // noteが無い場合は空文字をセット
   }
-  console.log(tmpid);
   if (tmpid) {
     settingData.value.id = tmpid;
     UserApiService.editPartnerData(settingData.value).then(() => {
