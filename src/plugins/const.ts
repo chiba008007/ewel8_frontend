@@ -278,3 +278,11 @@ export const BILLSENDFROM = {
 export const EXAMS = {
   PFS: "PFS",
 };
+
+// 表示範囲
+export const DISPLAY_TERM = [
+  { id: 1, name: "全体" },
+  { id: 2, name: "代理店" },
+  { id: 3, name: "顧客" },
+  { id: 4, name: "個別" },
+];

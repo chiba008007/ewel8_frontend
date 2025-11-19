@@ -33,6 +33,8 @@ import testListDownloadView from "../views/testListDownloadView.vue";
 import weightMaster from "../views/weightMaster.vue";
 import weightMasterSet from "../views/weightMasterSet.vue";
 import testAddView from "../views/testAddView.vue";
+import informationView from "../views/informationView.vue";
+import informationNewView from "../views/informationNewView.vue";
 import testDeleteView from "../views/testDeleteView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
@@ -145,6 +147,24 @@ const routes: Array<RouteRecordRaw> = [
     path: "/license/",
     name: "licenseView",
     component: licenseView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+  {
+    path: "/information/",
+    name: "information",
+    component: informationView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+  {
+    path: "/information/new",
+    name: "informationNew",
+    component: informationNewView,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ

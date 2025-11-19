@@ -29,6 +29,8 @@ export const useStoreUser = defineStore("user", {
     searchPdflog: "PDF出力ログ",
     examRowData: "検査種別ROWデータ",
     billRowData: "請求書一覧",
+    informationData: "お知らせ情報",
+    informationDataSet: "お知らせ情報登録",
     lisenceList: "ライセンス一覧",
     billCreate: "請求書登録",
     testAdd: "検査登録",
