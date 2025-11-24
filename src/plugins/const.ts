@@ -282,7 +282,10 @@ export const EXAMS = {
 // 表示範囲
 export const DISPLAY_TERM = [
   { id: 1, name: "全体" },
-  { id: 2, name: "代理店" },
-  { id: 3, name: "顧客" },
-  { id: 4, name: "個別" },
+  { id: 2, name: "全代理店" },
+  { id: 3, name: "全顧客" },
+  { id: 4, name: "個別代理店選択" },
 ];
+
+// メッセージ
+export const REQUIRED_MESSAGE = "入力必須です";

@@ -7,10 +7,10 @@ const apiClient: AxiosInstance = axios.create({
   baseURL: d_Path,
   // リクエストヘッダ
   headers: {
-    "content-type": "multipart/form-data",
+    //"content-type": "multipart/form-data",
     "X-Requested-With": "XMLHttpRequest",
-    "Access-Control-Allow-Origin": d_Path,
-    "Access-Control-Allow-Credentials": true,
+    // "Access-Control-Allow-Origin": d_Path,
+    // "Access-Control-Allow-Credentials": true,
     Authorization: "Bearer " + JSON.parse(token)?.userToken,
   },
   withCredentials: true,

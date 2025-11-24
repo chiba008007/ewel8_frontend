@@ -11,6 +11,7 @@ interface Props {
   value?: string;
   type?: string;
   color?: string;
+  rules?: Array<(v: any) => true | string>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   value: "",
   type: "",
   color: "bg-primary",
+  rules: () => [],
 });
 
 const emit = defineEmits<{
@@ -42,6 +44,7 @@ const emit = defineEmits<{
         :hideDetails="props.hideDetails"
         :class="props.class"
         :text="props.value"
+        :rules="props.rules"
         @onBlur="emit('onBlur', $event, props.type ?? '')"
         @onChange="emit('onChange', $event)"
       ></ComponentSelectField>

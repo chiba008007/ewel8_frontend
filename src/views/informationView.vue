@@ -8,12 +8,14 @@ import ButtonView from "@/components/ButtonView.vue";
 import InformationApiService from "@/services/InformationApiService";
 import dayjs from "dayjs";
 import AlertView from "@/components/AlertView.vue";
+import pageClickMove from "../plugins/pagemove";
+import DialogView from "@/components/DialogView.vue";
 
 const user = useStoreUser();
 const flashMessage = ref();
 const error = ref();
 const router = useRouter();
-
+const move = pageClickMove();
 interface Info {
   id: number;
   title: string;
@@ -29,6 +31,8 @@ const headers = [
   { title: "表示範囲", sortable: false, key: "display_labels" },
   { title: "機能", sortable: false, key: "function", width: "200px" },
 ];
+const deleteCheckFlag = ref(false);
+const deleteId = ref();
 
 const searchInfo = async () => {
   try {
@@ -53,7 +57,25 @@ const onResize = () => {
 // チェックした内容を削除
 const deleteAll = () => {
   const ids = selected.value.map((row) => row.id);
-  console.log(ids);
+  InformationApiService.editInfoListDelete({ ids: ids }).then((res: any) => {
+    flashMessage.value = "削除を行いました。";
+    searchInfo();
+  });
+};
+
+// 削除実施
+const onDelete = (id: number) => {
+  deleteId.value = id;
+  deleteCheckFlag.value = true;
+};
+const onOkClick = () => {
+  InformationApiService.editInfoListDelete({ id: deleteId.value }).then(
+    (res: any) => {
+      flashMessage.value = "削除を行いました。";
+      deleteCheckFlag.value = false;
+      searchInfo();
+    }
+  );
 };
 </script>
 <template>
@@ -61,11 +83,16 @@ const deleteAll = () => {
     <AdminMenu />
   </v-row>
   <pankuzuAdmin :pageName="user.informationData"></pankuzuAdmin>
-
   <p class="text-h6 pa-2">{{ user.informationData }}</p>
   <div v-show="flashMessage">
     <AlertView :text="flashMessage" type="success"></AlertView>
   </div>
+  <DialogView
+    v-if="deleteCheckFlag"
+    text="削除します。"
+    message="削除してよろしいですか?"
+    @onOkClick="onOkClick"
+  ></DialogView>
   <div class="ma-2">
     <ButtonView
       text="新規登録"
@@ -103,9 +130,18 @@ const deleteAll = () => {
       </template>
       <!-- eslint-disable-next-line vue/valid-v-slot -->
       <template #item.function="{ item }">
-        <span>{{ item.id }}</span>
-        <ButtonView text="更新" class="bg-primary"></ButtonView>
-        <ButtonView text="削除" class="bg-red ml-2"></ButtonView>
+        <ButtonView
+          text="更新"
+          class="bg-primary"
+          @onClick="
+            move.pageClickMoveLinkParam('informationNew', String(item.id))
+          "
+        ></ButtonView>
+        <ButtonView
+          text="削除"
+          class="bg-red ml-2"
+          @onClick="onDelete(item.id)"
+        ></ButtonView>
       </template>
     </v-data-table>
   </div>

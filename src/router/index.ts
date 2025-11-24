@@ -162,7 +162,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/information/new",
+    path: "/information/new/:id?",
     name: "informationNew",
     component: informationNewView,
     meta: {

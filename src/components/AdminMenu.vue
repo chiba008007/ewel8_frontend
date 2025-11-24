@@ -74,6 +74,7 @@ const pageClickMove = (pagename: string) => {
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
+        @onClick="pageClickMove('information')"
       ></ComponentButton>
       <ComponentButton
         text="受検者ログイン状況"
