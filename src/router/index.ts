@@ -35,6 +35,7 @@ import weightMasterSet from "../views/weightMasterSet.vue";
 import testAddView from "../views/testAddView.vue";
 import informationView from "../views/informationView.vue";
 import informationNewView from "../views/informationNewView.vue";
+import examloginhistoryView from "../views/examloginhistoryView.vue";
 import testDeleteView from "../views/testDeleteView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
@@ -170,6 +171,16 @@ const routes: Array<RouteRecordRaw> = [
       allowedRoles: ["admin"], // 管理者のみ
     },
   },
+  {
+    path: "/examloginhistory/",
+    name: "examloginhistory",
+    component: examloginhistoryView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+
   {
     path: "/partnerEdit/:id",
     name: "partnerEdit",

@@ -81,6 +81,7 @@ const pageClickMove = (pagename: string) => {
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
+        @onClick="pageClickMove('examloginhistory')"
       ></ComponentButton>
     </div>
     <div class="d-flex flex-row justify-center mt-1">
