@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { useRouter, useRoute } from "vue-router";
 import { textString, SECRET_KEY } from "@/plugins/const";
 import * as CryptoJS from "crypto-js";
+import axios from "axios";
 
 export const useStoreUser = defineStore("user", {
   state: () => ({
@@ -10,13 +11,14 @@ export const useStoreUser = defineStore("user", {
     isLogin: false,
     isExamLogin: false,
     userdata: {} as { id: string; type: "admin" | "partner" | "user" },
-    userToken: {},
-    userTokenExam: {},
+    userToken: "" as string,
+    userTokenExam: "" as string,
     userExam: {},
     home: "HOME",
     customerInfoList: "顧客企業一覧",
     download: "ダウンロード",
     upload: "添付",
+    ListView: "パートナー一覧",
     testList: "検査一覧",
     testExamList: "検査結果一覧",
     testExamEdit: "受検者情報更新",
@@ -52,6 +54,11 @@ export const useStoreUser = defineStore("user", {
   // computed と同じ
   getters: {
     doubleCount: (state) => state.count * 2,
+    getTitle: (state) => {
+      return (key: string) => {
+        return (state as any)[key] ?? null;
+      };
+    },
   },
   actions: {
     setSession(key: string, id: string | string[] | number) {
@@ -74,6 +81,8 @@ export const useStoreUser = defineStore("user", {
     setUserDataToken(data: string) {
       this.userToken = data;
       this.isLogin = true;
+
+      axios.defaults.headers.common["Authorization"] = `Bearer ${data}`;
     },
     setUserData(data: { id: string; type: "admin" | "partner" | "user" }) {
       this.userdata = data;

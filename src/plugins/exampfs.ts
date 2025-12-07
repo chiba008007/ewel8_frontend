@@ -262,7 +262,7 @@ export default function () {
       page: string | number | string[];
       selectPoint: object;
       code?: string | null;
-      tokenExam: object;
+      tokenExam: string;
       [key: string]: any; // ← 動的プロパティを許可！
     };
 

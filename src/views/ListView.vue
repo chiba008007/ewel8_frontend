@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import ComponentButton from "../components/ButtonView.vue";
 import ComponentTextField from "../components/TextFieldView.vue";
 import AdminMenu from "../components/AdminMenu.vue";
@@ -7,7 +7,7 @@ import UserApiService from "@/services/UserApiService";
 import pagemove from "@/plugins/pagemove";
 import { pageAdmin } from "@/plugins/pageEnable";
 
-pageAdmin();
+//pageAdmin();
 const loading = ref(true);
 const pages = pagemove();
 const headers = [
@@ -33,16 +33,17 @@ interface PartnerItem {
   zan: number;
 }
 const desserts = ref<PartnerItem[]>([]);
-try {
-  UserApiService.getPartner(tmp).then(function (rlt) {
-    if (rlt) {
-      desserts.value = rlt.data;
-      loading.value = false;
-    }
-  });
-} catch (e) {
-  console.log(e);
-}
+onMounted(() => {
+  // token が復元されるまで少し待つ
+  setTimeout(() => {
+    UserApiService.getPartner(tmp).then(function (rlt) {
+      if (rlt) {
+        desserts.value = rlt.data;
+        loading.value = false;
+      }
+    });
+  }, 50);
+});
 const tableHeight = ref(100);
 const onResize = () => {
   const wHeight = window.innerHeight;

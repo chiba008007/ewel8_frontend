@@ -1,20 +1,25 @@
 import axios, { AxiosInstance } from "axios";
 import { d_Path } from "./plugins/const";
-const token = localStorage.getItem("user") as string;
+import { useStoreUser } from "@/store/user";
 
 const apiClient: AxiosInstance = axios.create({
-  // APIのURI
   baseURL: d_Path,
-  // リクエストヘッダ
   headers: {
-    //"content-type": "multipart/form-data",
     "X-Requested-With": "XMLHttpRequest",
-    // "Access-Control-Allow-Origin": d_Path,
-    // "Access-Control-Allow-Credentials": true,
-    Authorization: "Bearer " + JSON.parse(token)?.userToken,
   },
   withCredentials: true,
   withXSRFToken: true,
+});
+
+// 🔥 API 呼び出し直前に毎回 token を注入する
+apiClient.interceptors.request.use((config) => {
+  const store = useStoreUser();
+
+  if (store.userToken) {
+    config.headers.Authorization = `Bearer ${store.userToken}`;
+  }
+
+  return config;
 });
 
 export default apiClient;

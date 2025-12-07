@@ -3,6 +3,7 @@ import httpAuth from "@/auth-common";
 import httpUpload from "@/upload-common";
 import httpAuthUpload from "@/auth-upload-common";
 import { ref } from "vue";
+import { useStoreUser } from "@/store/user";
 
 import axios, { AxiosInstance } from "axios";
 import { d_Path } from "@/plugins/const";
@@ -30,23 +31,10 @@ class UserApiService {
   getAdmin(data: object): Promise<object> {
     return httpAuth.post("/api/user/admin", data);
   }
-  async getPartner(data: object) {
-    //return await httpAuth.post("/api/user/getPartner", data);
-    try {
-      const res = await axios.post(d_Path + "/api/user/getPartner", data, {
-        headers: {
-          "Content-type": "application/json",
-          "X-Requested-With": "XMLHttpRequest",
-          "Access-Control-Allow-Origin": d_Path,
-          "Access-Control-Allow-Credentials": true,
-          Authorization: "Bearer " + JSON.parse(token)?.userToken,
-        },
-      });
-      return res;
-    } catch (e) {
-      console.log(e);
-    }
+  getPartner(data: object) {
+    return httpAuth.post("/api/user/getPartner", data);
   }
+
   getPartnerDetail(data: object) {
     try {
       return httpAuth.post("/api/user/getPartnerDetail", data);

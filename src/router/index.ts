@@ -36,6 +36,7 @@ import testAddView from "../views/testAddView.vue";
 import informationView from "../views/informationView.vue";
 import informationNewView from "../views/informationNewView.vue";
 import examloginhistoryView from "../views/examloginhistoryView.vue";
+import adminloginhistoryView from "../views/adminloginhistoryView.vue";
 import testDeleteView from "../views/testDeleteView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
@@ -48,6 +49,8 @@ import ExamPfsTake2 from "../views/examinate/PFS/ExamTake2.vue";
 import ExamPfsTake3 from "../views/examinate/PFS/ExamTake3.vue";
 import ExamPfsTake4 from "../views/examinate/PFS/ExamTake4.vue";
 import ExamPfsTakeFin from "../views/examinate/PFS/ExamTakeFin.vue";
+import axios from "axios";
+import AdminPageLogService from "@/services/AdminPageLogService";
 
 const hostname = location.hostname;
 //const isTestSite = hostname === "test.v-gate.jp";
@@ -88,6 +91,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "ListView",
     },
   },
   {
@@ -97,6 +101,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "addPartner",
     },
   },
   {
@@ -175,6 +180,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/examloginhistory/",
     name: "examloginhistory",
     component: examloginhistoryView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+  {
+    path: "/adminloginhistory/",
+    name: "adminloginhistory",
+    component: adminloginhistoryView,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
@@ -495,6 +509,20 @@ const router = createRouter({
   scrollBehavior: function (to, from, savedPosition) {
     document.getElementById("app")?.scrollIntoView();
   },
+});
+
+router.afterEach((to, from) => {
+  const store = useStoreUser();
+  const key = to.meta.titleKey as string;
+  const title = store.getTitle(key);
+
+  const data = {
+    path: to.fullPath,
+    route_name: to.name,
+    title: title,
+    params: to.params,
+  };
+  AdminPageLogService.setPageLog(data);
 });
 
 router.beforeEach((to, from, next) => {

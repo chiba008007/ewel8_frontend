@@ -1,20 +1,24 @@
 import axios, { AxiosInstance } from "axios";
 import { d_Path } from "./plugins/const";
-const token = localStorage.getItem("user") as string;
+import { useStoreUser } from "@/store/user";
+
 const apiClient: AxiosInstance = axios.create({
-  // APIのURI
   baseURL: d_Path,
-  //baseURL: "https://api.uh-oh.jp",
-  // リクエストヘッダ
   headers: {
     "Content-type": "application/json",
     "X-Requested-With": "XMLHttpRequest",
-    "Access-Control-Allow-Origin": d_Path,
-    "Access-Control-Allow-Credentials": true,
-    Authorization: "Bearer " + JSON.parse(token)?.userTokenExam,
   },
   withCredentials: true,
   withXSRFToken: true,
+});
+
+// ★ ここが重要 ｜毎回最新の tokenExam を追加する
+apiClient.interceptors.request.use((config) => {
+  const store = useStoreUser();
+  if (store.userTokenExam) {
+    config.headers.Authorization = `Bearer ${store.userTokenExam}`;
+  }
+  return config;
 });
 
 export default apiClient;
