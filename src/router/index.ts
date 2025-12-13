@@ -513,6 +513,9 @@ const router = createRouter({
 
 router.afterEach((to, from) => {
   const store = useStoreUser();
+  // ログインしていないときはログを送らない
+  if (!store.isLogin) return;
+
   const key = to.meta.titleKey as string;
   const title = store.getTitle(key);
 

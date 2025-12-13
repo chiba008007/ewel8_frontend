@@ -14,8 +14,8 @@ const flashMessage = ref();
 const error = ref();
 const router = useRouter();
 const move = pageClickMove();
-const offset = ref(0);
-const ceil = ref(0);
+const page = ref(1);
+const ceil = ref(1);
 interface Info {
   logged_in_at: string;
   partner_name: string;
@@ -52,7 +52,7 @@ const headers = [
 const searchAdminLogin = async () => {
   try {
     const response = await AdminPageLogService.getPageLog({
-      offset: offset.value,
+      page: page.value,
     });
 
     items.value = response.data.list;
@@ -78,24 +78,24 @@ const onResize = () => {
   <v-row justify="center" v-resize="onResize">
     <AdminMenu />
   </v-row>
-  <pankuzuAdmin :pageName="user.examLiginHistory"></pankuzuAdmin>
-  <p class="text-h6 pa-2">{{ user.examLiginHistory }}</p>
+  <pankuzuAdmin :pageName="user.adminLoginHistory"></pankuzuAdmin>
+  <p class="text-h6 pa-2">{{ user.adminLoginHistory }}</p>
   <div class="d-flex ma-2">
     <ButtonView
       text="前のページ"
       class="bg-primary"
-      :disabled="offset <= 0 ? true : false"
+      :disabled="page <= 1 ? true : false"
       @onClick="
-        offset -= 1;
+        page -= 1;
         searchAdminLogin();
       "
     ></ButtonView>
     <ButtonView
       text="次のページ"
-      :disabled="offset >= ceil ? true : false"
+      :disabled="page >= ceil ? true : false"
       class="ml-2 bg-primary"
       @onClick="
-        offset += 1;
+        page += 1;
         searchAdminLogin();
       "
     ></ButtonView>

@@ -34,6 +34,7 @@ export const useStoreUser = defineStore("user", {
     informationData: "お知らせ情報",
     informationDataSet: "お知らせ情報登録",
     examLiginHistory: "受検者ログイン情報",
+    adminLoginHistory: "管理者ログイン情報",
     lisenceList: "ライセンス一覧",
     billCreate: "請求書登録",
     testAdd: "検査登録",

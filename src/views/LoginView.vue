@@ -12,15 +12,15 @@ if (user.isLogin) {
   UserLogout.logout();
   user.IsLogout();
 }
-UserApiService.checkTest()
-  .then((response: any) => {
-    console.log(response);
-  })
-  .catch((e) => {
-    console.log("satus error");
-    console.log(e);
-    // alert("status ERROR");
-  });
+// UserApiService.checkTest()
+//   .then((response: any) => {
+//     console.log(response);
+//   })
+//   .catch((e) => {
+//     console.log("satus error");
+//     console.log(e);
+//     // alert("status ERROR");
+//   });
 const onLoginID = (e: Event) => {
   let target = e.target as HTMLInputElement;
   userId.value = target?.value;
