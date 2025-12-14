@@ -1,11 +1,23 @@
 <script setup lang="ts">
 import ComponentButton from "../components/ButtonView.vue";
 import { useRouter } from "vue-router";
-import { textString } from "@/plugins/const";
+import { textString, d_Path } from "@/plugins/const";
+import CompanyDownloadApiService from "@/services/CompanyDownloadApiService";
+
 const router = useRouter();
 
 const pageClickMove = (pagename: string) => {
   router.push(router.resolve({ name: pagename }).href);
+};
+const onCompanyDownload = async () => {
+  try {
+    await CompanyDownloadApiService.getExamLoginList({}).then(function (rlt) {
+      console.log(rlt);
+      window.location.href = d_Path + "/company/downloadFile/" + rlt.data;
+    });
+  } catch (err) {
+    console.error("ダウンロード失敗:", err);
+  }
 };
 </script>
 <template>
@@ -97,6 +109,7 @@ const pageClickMove = (pagename: string) => {
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
+        @onClick="onCompanyDownload()"
       ></ComponentButton>
       <ComponentButton
         text="PDF一覧"
