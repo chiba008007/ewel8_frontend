@@ -115,6 +115,7 @@ const onCompanyDownload = async () => {
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
+        @onClick="pageClickMove('pdfoutputlog')"
       ></ComponentButton>
       <ComponentButton
         text="セキュリティログ"
