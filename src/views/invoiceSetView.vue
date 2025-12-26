@@ -588,16 +588,18 @@ onMounted(async () => {
           ></ButtonView>
         </div>
         <table class="w-100 bordered-table mt-2">
-          <tr>
-            <th class="bg-primary pa-2">No</th>
-            <th class="bg-primary pa-2">品名</th>
-            <th class="bg-primary pa-2">銘柄</th>
-            <th class="bg-primary pa-2">規格</th>
-            <th class="bg-primary pa-2">数量</th>
-            <th class="bg-primary pa-2">単位</th>
-            <th class="bg-primary pa-2">単価</th>
-            <th class="bg-primary pa-2">金額</th>
-          </tr>
+          <thead>
+            <tr>
+              <th class="bg-primary pa-2">No</th>
+              <th class="bg-primary pa-2">品名</th>
+              <th class="bg-primary pa-2">銘柄</th>
+              <th class="bg-primary pa-2">規格</th>
+              <th class="bg-primary pa-2">数量</th>
+              <th class="bg-primary pa-2">単位</th>
+              <th class="bg-primary pa-2">単価</th>
+              <th class="bg-primary pa-2">金額</th>
+            </tr>
+          </thead>
           <tbody>
             <tr v-for="(n, index) in loopCnt" :key="index">
               <td class="ps-2">{{ n }}</td>

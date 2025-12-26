@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import pankuzuMain from "@/components/pankuzuMain.vue";

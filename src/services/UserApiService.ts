@@ -85,7 +85,7 @@ class UserApiService {
   getLisencesList(data: object): Promise<object> {
     return httpAuth.post("/api/user/getLisencesList", data);
   }
-  getCustomerList(data: object): Promise<object> {
+  getCustomerList(data: object) {
     return httpAuth.post("/api/user/getCustomerList", data);
   }
   editUserPdfLogo(data: object): Promise<object> {

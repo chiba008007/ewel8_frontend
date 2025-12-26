@@ -37,6 +37,7 @@ import informationView from "../views/informationView.vue";
 import informationNewView from "../views/informationNewView.vue";
 import examloginhistoryView from "../views/examloginhistoryView.vue";
 import adminloginhistoryView from "../views/adminloginhistoryView.vue";
+import pdfoutputlogView from "../views/pdfoutputlogView.vue";
 import testDeleteView from "../views/testDeleteView.vue";
 import testQrView from "../views/testQrView.vue";
 import testExamListView from "../views/testExamListView.vue";
@@ -189,6 +190,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/adminloginhistory/",
     name: "adminloginhistory",
     component: adminloginhistoryView,
+    meta: {
+      requiresAuth: true, // ログインしないと入れないページ
+      allowedRoles: ["admin"], // 管理者のみ
+    },
+  },
+  {
+    path: "/pdfoutputlog/",
+    name: "pdfoutputlog",
+    component: pdfoutputlogView,
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from "vue";
+import {} from "vue";
 import type { VBtn } from "vuetify/components";
 
 const emit = defineEmits<{

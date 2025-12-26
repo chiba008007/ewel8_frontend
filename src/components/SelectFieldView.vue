@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, withDefaults, defineEmits, useAttrs } from "vue";
+import { useAttrs } from "vue";
 import type { VTextField } from "vuetify/components";
 import { removeTabKey } from "../plugins/validate";
 type TVariant = VTextField["$props"]["variant"];
@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: "onKeyup", value: string): void;
   (e: "onBlur", value: string): void;
-  (e: "onChange", value: string): void;
+  (e: "onChange", value: string | number | null): void;
 }>();
 const attrs = useAttrs();
 </script>

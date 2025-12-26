@@ -12,7 +12,6 @@ const pageClickMove = (pagename: string) => {
 const onCompanyDownload = async () => {
   try {
     await CompanyDownloadApiService.getExamLoginList({}).then(function (rlt) {
-      console.log(rlt);
       window.location.href = d_Path + "/company/downloadFile/" + rlt.data;
     });
   } catch (err) {

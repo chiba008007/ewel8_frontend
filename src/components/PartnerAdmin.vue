@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps } from "vue";
+import { ref } from "vue";
 import UserApiService from "@/services/UserApiService";
 import { useRouter } from "vue-router";
 
@@ -15,12 +15,13 @@ const tmp = {
 };
 
 const partnerDetail = ref();
-UserApiService.getPartnerDetail(tmp).then((res) => {
-  if (res) {
-    const entries = (res as any).data.user;
+const result = UserApiService.getPartnerDetail(tmp);
+if (result !== false) {
+  result.then((res) => {
+    const entries = res.data.user;
     partnerDetail.value = entries;
-  }
-});
+  });
+}
 </script>
 <template>
   <h3 class="ma-4">{{ partnerDetail?.system_name }} 管理画面</h3>

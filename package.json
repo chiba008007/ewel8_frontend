@@ -40,6 +40,7 @@
     "@types/crypto-js": "^4.2.2",
     "@types/html-to-pdfmake": "^2.4.4",
     "@types/jest": "^27.0.1",
+    "@types/papaparse": "^5.5.2",
     "@types/pdfmake": "^0.2.11",
     "@types/webfontloader": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
@@ -70,7 +71,8 @@
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "vue/setup-compiler-macros": true
     },
     "extends": [
       "plugin:vue/vue3-essential",
