@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
+import { PDF_TYPE } from "@/plugins/const";
 import AdminMenu from "../components/AdminMenu.vue";
 import { useStoreUser } from "@/store/user";
 import pankuzuAdmin from "@/components/pankuzuAdmin.vue";
@@ -9,8 +10,9 @@ import SelectFieldView from "@/components/SelectFieldView.vue";
 import UserApiService from "@/services/UserApiService";
 import { format, parseISO } from "date-fns";
 import TestApiService from "@/services/TestApiService";
-import PdfOutputCronLogApiService from "@/services/PdfOutputCronLogApiService";
+import PdfDownloadApiService from "@/services/PdfDownloadApiService";
 import AlertView from "@/components/AlertView.vue";
+import { d_Path } from "@/plugins/const";
 
 const tab = ref<string>("tab-1");
 const user = useStoreUser();
@@ -91,10 +93,12 @@ const onPdfDownload = () => {
   const customer_id = form.value.customer;
   const test_id = form.value.test;
   // PDFテーブル登録
-  PdfOutputCronLogApiService.set({
+  PdfDownloadApiService.setOutPutLog({
     partner_id: partner_id,
     customer_id: customer_id,
     test_id: test_id,
+    type: 1,
+    code: 2, // zip化
   }).then((res) => {
     if (res.status) {
       messageFlag.value = true;
@@ -111,21 +115,38 @@ const testheaders = ref([
   { title: "検査名", align: undefined, key: "test.testname" },
   { title: "パートナー名", align: undefined, key: "partner.name" },
   { title: "企業名", align: undefined, key: "customer.name" },
-  { title: "合計数", align: undefined, key: "total_count" },
-  { title: "現在の作成数", align: undefined, key: "processed_count" },
-  { title: "作成時間", align: undefined, key: "created_at_formatted" },
+  { title: "状態", align: undefined, key: "type_string" },
+  { title: "作成開始時間", align: undefined, key: "created_at_formatted" },
+  { title: "作成完了時間", align: undefined, key: "updated_at_formatted" },
+  {
+    title: "ダウンロードファイル",
+    align: undefined,
+    key: "admin_cronfile_path_text",
+  },
 ]);
-const pdfList = ref();
+const pdfList = ref<any[]>([]);
 // PDF出力状態一覧
 const loadPdfLog = () => {
-  PdfOutputCronLogApiService.getList({}).then((res) => {
-    console.log(res);
+  PdfDownloadApiService.getOutPutLog({}).then((res) => {
+    console.log(res.data);
     pdfList.value = res.data.map((row: any) => ({
       ...row,
       created_at_formatted: formatDate(row.created_at),
+      updated_at_formatted: formatDate(row.updated_at),
+      type_string: PDF_TYPE[row.type as keyof typeof PDF_TYPE],
     }));
   });
 };
+
+const pdfListView = computed(() => {
+  return pdfList.value.map((row: any) => ({
+    ...row,
+    admin_cronfile_path_text: Array.isArray(row.admin_cronfile_path)
+      ? row.admin_cronfile_path[0]
+      : "",
+  }));
+});
+
 const formatDate = (iso: string) => {
   return format(parseISO(iso), "yyyy/MM/dd HH:mm");
 };
@@ -133,6 +154,11 @@ onMounted(async () => {
   loadPartner();
   loadPdfLog();
 });
+
+const downloadFile = (link: string) => {
+  location.href = d_Path + "/storage/uploads/" + link;
+  return;
+};
 </script>
 <template>
   <v-row justify="center">
@@ -153,11 +179,35 @@ onMounted(async () => {
       <v-window-item value="tab-1" v-resize="onResize">
         <v-data-table
           :headers="testheaders"
-          :items="pdfList"
+          :items="pdfListView"
           :height="tableHeight"
           fixed-header
           color="green"
         >
+          <!-- ダウンロードファイル列 -->
+          <template #item="{ item }">
+            <tr>
+              <td>{{ item.test.testname }}</td>
+              <td>{{ item.partner.name }}</td>
+              <td>{{ item.customer.name }}</td>
+              <td>{{ item.type_string }}</td>
+              <td>{{ item.created_at_formatted }}</td>
+              <td>{{ item.updated_at_formatted }}</td>
+
+              <!-- ダウンロードファイル列 -->
+              <td>
+                <v-btn
+                  v-if="item.admin_cronfile_path_text"
+                  variant="text"
+                  color="primary"
+                  @click="downloadFile(item.admin_cronfile_path_text)"
+                >
+                  ダウンロード
+                </v-btn>
+                <span v-else class="text-grey">なし</span>
+              </td>
+            </tr>
+          </template>
         </v-data-table>
       </v-window-item>
       <v-window-item value="tab-2">
@@ -169,7 +219,7 @@ onMounted(async () => {
         <p>
           パートナー名 / 企業名 /
           テスト名を選択してPDF一括ダウンロードを選択してください。<br />
-          ダウンロードファイルが準備でき次第、通知されます。
+          準備完了後「ダウンロードファイル」欄のファイル名をクリックしてください。
         </p>
         <p class="text-h6 pa-2">{{ user.pdfoutputlog }}</p>
         <p class="text-h5">パートナー名選択</p>

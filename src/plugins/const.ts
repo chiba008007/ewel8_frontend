@@ -31,6 +31,7 @@ export const d_Front = frontpath;
 /** 画像 */
 export const imagePath = d_Path + "/storage/app/myImage/";
 export const d_filePath = d_Path + "/storage/";
+export const d_fileUpload = d_Path + "/storage/uploads/";
 
 /** 性別 */
 export const gender: NumberCodeOrNullListType = {
@@ -289,3 +290,10 @@ export const DISPLAY_TERM = [
 
 // メッセージ
 export const REQUIRED_MESSAGE = "入力必須です";
+
+// pdf一括
+export const PDF_TYPE = {
+  1: "実行前",
+  2: "実行中",
+  3: "実行後",
+};

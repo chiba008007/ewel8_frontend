@@ -27,7 +27,8 @@ const onBack = () => {
   });
 };
 
-const statusString: { [key: number]: string } = {
+// 後ほどconstから持ってくる
+const typeString: { [key: number]: string } = {
   1: "実行前",
   2: "実行中",
   3: "実行後",
@@ -96,7 +97,7 @@ const reading = () => {
       }) => ({
         start: item.start ?? "",
         end: item.type == 3 ? item.end : "",
-        type: statusString[item.type] ?? "", // 必要に応じて整形
+        type: typeString[item.type] ?? "", // 必要に応じて整形
         code: codeString[item.code - 1].label, // 必要に応じて整形
         updated_at: item.updated_at ?? "",
         typeStatus: item.type ?? "",
