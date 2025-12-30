@@ -104,7 +104,6 @@ const reading = () => {
     );
     // 配列の最後をで確認
     let last = dataList.value[dataList.value.length - 1];
-
     if (!last) {
       checkButtonDisableFlag.value = false;
     } else {

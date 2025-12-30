@@ -7,12 +7,12 @@ import pankuzuAdmin from "@/components/pankuzuAdmin.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
 import UserApiService from "@/services/UserApiService";
-import { fromUnixTime } from "date-fns";
-import { customer } from "@/plugins/const";
+import { format, parseISO } from "date-fns";
 import TestApiService from "@/services/TestApiService";
 import PdfOutputCronLogApiService from "@/services/PdfOutputCronLogApiService";
 import AlertView from "@/components/AlertView.vue";
 
+const tab = ref<string>("tab-1");
 const user = useStoreUser();
 const form = ref({
   partner: null as number | null,
@@ -102,8 +102,36 @@ const onPdfDownload = () => {
   });
 };
 
+const tableHeight = ref(100);
+const onResize = () => {
+  const wHeight = window.innerHeight;
+  tableHeight.value = wHeight - 300;
+};
+const testheaders = ref([
+  { title: "検査名", align: undefined, key: "test.testname" },
+  { title: "パートナー名", align: undefined, key: "partner.name" },
+  { title: "企業名", align: undefined, key: "customer.name" },
+  { title: "合計数", align: undefined, key: "total_count" },
+  { title: "現在の作成数", align: undefined, key: "processed_count" },
+  { title: "作成時間", align: undefined, key: "created_at_formatted" },
+]);
+const pdfList = ref();
+// PDF出力状態一覧
+const loadPdfLog = () => {
+  PdfOutputCronLogApiService.getList({}).then((res) => {
+    console.log(res);
+    pdfList.value = res.data.map((row: any) => ({
+      ...row,
+      created_at_formatted: formatDate(row.created_at),
+    }));
+  });
+};
+const formatDate = (iso: string) => {
+  return format(parseISO(iso), "yyyy/MM/dd HH:mm");
+};
 onMounted(async () => {
   loadPartner();
+  loadPdfLog();
 });
 </script>
 <template>
@@ -112,49 +140,72 @@ onMounted(async () => {
   </v-row>
   <pankuzuAdmin :pageName="user.pdfoutputlog"></pankuzuAdmin>
   <section class="ma-2">
-    <AlertView
-      text="PDF一括ダウンロードの出力準備を行いました。ダウンロード実行迄お待ちください。"
-      class="bg-red"
-      v-show="messageFlag"
-    ></AlertView>
-    <p>
-      パートナー名 / 企業名 /
-      テスト名を選択してPDF一括ダウンロードを選択してください。<br />
-      ダウンロードファイルが準備でき次第、通知されます。
-    </p>
-    <p class="text-h6 pa-2">{{ user.pdfoutputlog }}</p>
-    <p class="text-h5">パートナー名選択</p>
-    <SelectFieldView
-      class="mt-1"
-      label="パートナー名を選択してください"
-      :items="partnerLists"
-      :text="form.partner"
-      @onChange="(e) => onChange(e, 'partner')"
-    ></SelectFieldView>
-    <p class="text-h5 mt-3">企業名選択</p>
-    <SelectFieldView
-      class="mt-1"
-      label="企業名を選択してください"
-      :items="customerLists"
-      :text="form.customer"
-      @onChange="(e) => onChange(e, 'customer')"
-      :disabled="customerDisabled"
-    ></SelectFieldView>
-    <p class="text-h5 mt-3">テスト名選択</p>
-    <SelectFieldView
-      class="mt-1"
-      label="テスト名を選択してください"
-      :items="testLists"
-      :text="form.test"
-      @onChange="(e) => onChange(e, 'test')"
-      :disabled="testDisabled"
-    ></SelectFieldView>
-    <ButtonView
-      text="PDF一括ダウンロード"
-      class="bg-primary mt-3"
-      @onClick="onPdfDownload()"
-      :disabled="form.customer && form.partner && form.test ? false : true"
-    ></ButtonView>
+    <v-tabs v-model="tab">
+      <v-tab value="tab-1">出力確認一覧</v-tab>
+      <v-tab value="tab-2">PDF出力フォーム</v-tab>
+    </v-tabs>
+    <v-window
+      v-model="tab"
+      class="mt-3"
+      transition="none"
+      reverse-transition="none"
+    >
+      <v-window-item value="tab-1" v-resize="onResize">
+        <v-data-table
+          :headers="testheaders"
+          :items="pdfList"
+          :height="tableHeight"
+          fixed-header
+          color="green"
+        >
+        </v-data-table>
+      </v-window-item>
+      <v-window-item value="tab-2">
+        <AlertView
+          text="PDF一括ダウンロードの出力準備を行いました。ダウンロード実行迄お待ちください。"
+          class="bg-red"
+          v-show="messageFlag"
+        ></AlertView>
+        <p>
+          パートナー名 / 企業名 /
+          テスト名を選択してPDF一括ダウンロードを選択してください。<br />
+          ダウンロードファイルが準備でき次第、通知されます。
+        </p>
+        <p class="text-h6 pa-2">{{ user.pdfoutputlog }}</p>
+        <p class="text-h5">パートナー名選択</p>
+        <SelectFieldView
+          class="mt-1"
+          label="パートナー名を選択してください"
+          :items="partnerLists"
+          :text="form.partner"
+          @onChange="(e) => onChange(e, 'partner')"
+        ></SelectFieldView>
+        <p class="text-h5 mt-3">企業名選択</p>
+        <SelectFieldView
+          class="mt-1"
+          label="企業名を選択してください"
+          :items="customerLists"
+          :text="form.customer"
+          @onChange="(e) => onChange(e, 'customer')"
+          :disabled="customerDisabled"
+        ></SelectFieldView>
+        <p class="text-h5 mt-3">テスト名選択</p>
+        <SelectFieldView
+          class="mt-1"
+          label="テスト名を選択してください"
+          :items="testLists"
+          :text="form.test"
+          @onChange="(e) => onChange(e, 'test')"
+          :disabled="testDisabled"
+        ></SelectFieldView>
+        <ButtonView
+          text="PDF一括ダウンロード"
+          class="bg-primary mt-3"
+          @onClick="onPdfDownload()"
+          :disabled="form.customer && form.partner && form.test ? false : true"
+        ></ButtonView>
+      </v-window-item>
+    </v-window>
   </section>
 </template>
 <style scoped lang="scss"></style>
