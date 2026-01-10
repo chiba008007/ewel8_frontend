@@ -112,6 +112,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "searchExamlog",
     },
   },
   {
@@ -121,6 +122,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "searchPdflog",
     },
   },
   {
@@ -130,6 +132,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "examRowData",
     },
   },
   {
@@ -139,6 +142,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "billRowData",
     },
   },
   {
@@ -148,6 +152,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "invoiceSetView",
     },
   },
   {
@@ -157,6 +162,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "licenseView",
     },
   },
   {
@@ -166,6 +172,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "informationData",
     },
   },
   {
@@ -175,6 +182,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "informationData",
     },
   },
   {
@@ -184,6 +192,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "examLiginHistory",
     },
   },
   {
@@ -193,6 +202,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "adminLoginHistory",
     },
   },
   {
@@ -202,6 +212,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin"], // 管理者のみ
+      titleKey: "pdfoutputlog",
     },
   },
 
@@ -213,6 +224,7 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true, // ログインしないと入れないページ
       allowedRoles: ["admin", "partner"], // 管理者のみ
       partnercheck: true,
+      titleKey: "partnerEdit",
     },
   },
   {

@@ -5,8 +5,14 @@ import { useStoreUser } from "../store/user";
 //import SampleApiService from "@/services/SampleApiService";
 import UserApiService from "@/services/UserApiService";
 import UserLogout from "@/services/UserLogout";
+import TwoFactorView from "@/components/TwoFactorView.vue";
+import ProgressView from "@/components/ProgressView.vue";
+
 const userId = ref<string>();
 const password = ref<string>();
+const twoFactorCode = ref<string>();
+const twoFactorShow = ref<boolean>(false);
+const progressFlag = ref<boolean>(false);
 const user = useStoreUser();
 if (user.isLogin) {
   UserLogout.logout();
@@ -33,23 +39,32 @@ const onClick = () => {
   let data = {
     login_id: userId.value,
     password: password.value,
+    two_factor: twoFactorCode.value,
   };
+  progressFlag.value = true;
 
   UserApiService.getPost(data)
     .then((response: any) => {
-      user.setUserDataToken(response.data.token);
-      user.setUserData(response.data.user);
-      if (response.data.user.type === "partner") {
-        router.push({
-          name: "customerList",
-          params: { id: response.data.user.id },
-        });
+      // 2段階認証表示用モーダルの表示
+      if (response.data.two_factor_required && !twoFactorCode.value) {
+        twoFactorShow.value = true;
       } else {
-        // 管理者用ログイン画面
-        router.push("/list");
+        user.setUserDataToken(response.data.token);
+        user.setUserData(response.data.user);
+        if (response.data.user.type === "partner") {
+          router.push({
+            name: "customerList",
+            params: { id: response.data.user.id },
+          });
+        } else {
+          // 管理者用ログイン画面
+          router.push("/list");
+        }
       }
+      progressFlag.value = false;
     })
     .catch((e) => {
+      progressFlag.value = false;
       console.log(e);
       alert("LOGIN ERROR");
     });
@@ -96,6 +111,12 @@ const onClick = () => {
           </v-col>
         </v-card-actions>
       </v-card>
+      <progress-view v-if="progressFlag"></progress-view>
+      <two-factor-view
+        v-model="twoFactorShow"
+        @onKeyup="(e) => (twoFactorCode = e)"
+        @onClick="onClick"
+      ></two-factor-view>
     </v-sheet>
   </v-container>
 </template>

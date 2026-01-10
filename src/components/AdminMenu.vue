@@ -104,7 +104,7 @@ const onCompanyDownload = async () => {
         @onClick="pageClickMove('adminloginhistory')"
       ></ComponentButton>
       <ComponentButton
-        text="企業一覧"
+        text="企業一覧(DL)"
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
@@ -118,10 +118,11 @@ const onCompanyDownload = async () => {
         @onClick="pageClickMove('pdfoutputlog')"
       ></ComponentButton>
       <ComponentButton
-        text="セキュリティログ"
-        variant="outlined"
+        text=""
         density="compact"
         class="ml-1 w-25"
+        color="default"
+        :disabled="true"
       ></ComponentButton>
       <ComponentButton
         text=""
