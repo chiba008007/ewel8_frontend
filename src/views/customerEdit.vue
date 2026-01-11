@@ -21,7 +21,7 @@ import {
 } from "../plugins/validate";
 import UserApiService from "@/services/UserApiService";
 import UserApiGetCustomerEdit from "@/services/UserApiGetCustomerEdit";
-import { imagePath, displayStatus } from "@/plugins/const";
+import { imagePath, displayStatus, settingStatus } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import pankuzuMain from "@/components/pankuzuMain.vue";
@@ -73,6 +73,7 @@ const inputData = ref({
     privacyText: user.privacyText,
   },
   customerDisplayFlag: false,
+  two_factor_enabled: false,
   tanto_name: "",
   tanto_address: "",
   tanto_busyo: "",
@@ -171,6 +172,7 @@ const editData = () => {
     weightFlag: inputData.value.displayWeightFlag ? 1 : 0,
     excelFlag: inputData.value.displayExcelFlag ? 1 : 0,
     customFlag: inputData.value.customerDisplayFlag ? 1 : 0,
+    two_factor_enabled: inputData.value.two_factor_enabled ? 1 : 0,
     sslFlag: inputData.value.displaySslFlag ? 1 : 0,
     logoImagePath: inputData.value.logoImagePath,
     privacy: inputData.value.privacy.checked ? 1 : 0,
@@ -216,6 +218,7 @@ UserApiGetCustomerEdit.getCustomerEdit(editTmp)
     inputData.value.displayWeightFlag = rst?.data.weightFlag;
     inputData.value.displayExcelFlag = rst?.data.excelFlag;
     inputData.value.displayCustomFlag = rst?.data.customFlag;
+    inputData.value.two_factor_enabled = rst?.data.two_factor_enabled;
     inputData.value.displaySslFlag = rst?.data.sslFlag;
     myimage_path.value = rst?.data.logoImagePath;
     inputData.value.logoImagePath = rst?.data.logoImagePath;
@@ -237,6 +240,9 @@ UserApiGetCustomerEdit.getCustomerEdit(editTmp)
 
 const displayString = (type: boolean) => {
   return type ? displayStatus[1] : displayStatus[0];
+};
+const settingString = (type: boolean) => {
+  return type ? settingStatus[1] : settingStatus[0];
 };
 const backColor = () => {
   return typeString == "test" ? "bg-lime" : "bg-primary";
@@ -538,6 +544,22 @@ const backColor = () => {
         @onClick="
           (e) =>
             (inputData.customerDisplayFlag = inputData.customerDisplayFlag
+              ? false
+              : true)
+        "
+      ></addSwitchForm>
+      <addSwitchForm
+        :color="backColor()"
+        title="2段階認証有効可否"
+        :label="settingString(inputData.two_factor_enabled)"
+        density="compact"
+        type="two_factor_enabled"
+        :tooltipflag="true"
+        tooltipMessage="2段階認証有効可否を設定します。"
+        :model="inputData.two_factor_enabled ? true : false"
+        @onClick="
+          (e) =>
+            (inputData.two_factor_enabled = inputData.two_factor_enabled
               ? false
               : true)
         "

@@ -21,7 +21,7 @@ import {
   checkEmailRequired,
 } from "../plugins/validate";
 import UserApiService from "@/services/UserApiService";
-import { imagePath, customer } from "@/plugins/const";
+import { imagePath, customer, settingStatus } from "@/plugins/const";
 import ComponentAlert from "../components/AlertView.vue";
 import pankuzuMain from "@/components/pankuzuMain.vue";
 import ProgressView from "@/components/ProgressView.vue";
@@ -57,6 +57,7 @@ const inputData = ref({
     privacyText: user.privacyText,
   },
   customerDisplayFlag: false,
+  two_factor_enabled: false,
   tanto_name: "",
   tanto_address: "",
   tanto_busyo: "",
@@ -164,6 +165,7 @@ const addRegist = () => {
     weightFlag: inputData.value.displayWeightFlag ? 1 : 0,
     excelFlag: inputData.value.displayExcelFlag ? 1 : 0,
     customFlag: inputData.value.customerDisplayFlag ? 1 : 0,
+    two_factor_enabled: inputData.value.two_factor_enabled ? 1 : 0,
     sslFlag: inputData.value.displaySslFlag ? 1 : 0,
     logoImagePath: inputData.value.logoImagePath,
     privacy: inputData.value.privacy.checked ? 1 : 0,
@@ -177,7 +179,7 @@ const addRegist = () => {
     tanto_name2: inputData.value.tanto_name,
     tanto_address2: inputData.value.tanto_address2,
   };
-
+  console.log(tmp);
   UserApiService.setCustomerAdd(tmp)
     .then((res) => {
       successAlertFlag.value = true;
@@ -191,6 +193,9 @@ const addRegist = () => {
 
 const displayString = (type: boolean) => {
   return type ? displayStatus[1] : displayStatus[0];
+};
+const settingString = (type: boolean) => {
+  return type ? settingStatus[1] : settingStatus[0];
 };
 const pagemove = () => {
   router.push({ name: "customerList", params: { id: tmpid } });
@@ -458,6 +463,21 @@ const pagemove = () => {
         @onClick="
           (e) =>
             (inputData.customerDisplayFlag = inputData.customerDisplayFlag
+              ? false
+              : true)
+        "
+      ></addSwitchForm>
+      <addSwitchForm
+        title="2段階認証有効可否"
+        :label="settingString(inputData.two_factor_enabled)"
+        density="compact"
+        type="two_factor_enabled"
+        :tooltipflag="true"
+        tooltipMessage="2段階認証有効可否を設定します。"
+        :model="inputData.two_factor_enabled ? true : false"
+        @onClick="
+          (e) =>
+            (inputData.two_factor_enabled = inputData.two_factor_enabled
               ? false
               : true)
         "

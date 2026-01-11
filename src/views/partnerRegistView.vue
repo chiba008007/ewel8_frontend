@@ -22,7 +22,11 @@ UserApiService.getAdmin(data).then((response) => {
 });
 
 const onBlur = (val: string | boolean, type: string, key: number) => {
-  settingData.value.data.user[key][type] = val;
+  if (type === "two_factor_enabled") {
+    settingData.value.data.user[key][type] = Boolean(val);
+  } else {
+    settingData.value.data.user[key][type] = val;
+  }
 };
 const alertFlag = ref<boolean>(false);
 const onClick = () => {

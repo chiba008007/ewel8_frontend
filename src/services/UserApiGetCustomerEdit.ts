@@ -16,6 +16,7 @@ interface GetCustomerEditResponse {
     weightFlag: boolean;
     excelFlag: boolean;
     customFlag: boolean;
+    two_factor_enabled: boolean;
     sslFlag: boolean;
     logoImagePath: string;
     privacy: boolean;

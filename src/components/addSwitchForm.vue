@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, withDefaults } from "vue";
 import ComponentSwitch from "../components/SwitchView.vue";
 import type { VTextField } from "vuetify/components";
 type TVDensity = VTextField["$props"]["density"];
@@ -45,7 +44,7 @@ const emit = defineEmits<{
         :title="props.title"
         :label="props.label"
         :density="props.density"
-        :model="props.model"
+        :model="props.model ? true : false"
         :type="props.type"
         @onClick="(e:any, type:any) =>  emit('onClick', e, type ?? '')"
       ></ComponentSwitch>

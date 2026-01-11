@@ -22,7 +22,7 @@ import {
   checkLoginID,
   checkEmailRequired,
 } from "../plugins/validate";
-import { displayStatus } from "@/plugins/const";
+import { displayStatus, settingStatus } from "@/plugins/const";
 import pankuzuAdmin from "@/components/pankuzuAdmin.vue";
 const user = useStoreUser();
 const router = useRouter();
@@ -106,6 +106,7 @@ if (tmpid) {
         tel: string;
         fax: string;
         requestFlag: boolean;
+        two_factor_enabled: boolean;
         system_name: string;
         person: string;
         person_address: string;
@@ -141,6 +142,7 @@ if (tmpid) {
     tel.value = objWithData.data.tel;
     fax.value = objWithData.data.fax;
     requestFlag.value = objWithData.data.requestFlag;
+    two_factor_enabled.value = objWithData.data.two_factor_enabled;
     system_name.value = objWithData.data.system_name;
     person.value = objWithData.data.person;
     person_address.value = objWithData.data.person_address;
@@ -243,6 +245,7 @@ const onBlur = async (e: string | boolean, type: string) => {
 };
 
 const requestFlag = ref(true);
+const two_factor_enabled = ref(false);
 const registAlert = ref(false);
 
 const addRegist = () => {
@@ -267,6 +270,7 @@ const addRegist = () => {
     tel: tel.value,
     fax: fax.value,
     requestFlag: requestFlag.value,
+    two_factor_enabled: two_factor_enabled.value,
     system_name: system_name.value,
     person: person.value,
     person_address: person_address.value,
@@ -299,6 +303,9 @@ const addRegist = () => {
 
 const displayString = (type: boolean) => {
   return type ? displayStatus[1] : displayStatus[0];
+};
+const settingString = (type: boolean) => {
+  return type ? settingStatus[1] : settingStatus[0];
 };
 </script>
 <template>
@@ -457,6 +464,15 @@ const displayString = (type: boolean) => {
             :tooltipflag="true"
             tooltipMessage="顧客が検査を申込むボタンの表示可否を選択します。"
             @onClick="(e) => (requestFlag = e ? false : true)"
+          ></addSwitchForm>
+          <addSwitchForm
+            title="2段階認証有効可否"
+            :label="settingString(two_factor_enabled)"
+            density="compact"
+            :model="two_factor_enabled"
+            :tooltipflag="true"
+            tooltipMessage="2段階認証有効可否を設定します。"
+            @onClick="(e) => (two_factor_enabled = e ? false : true)"
           ></addSwitchForm>
           <addPartnerForm
             title="管理システム名"
