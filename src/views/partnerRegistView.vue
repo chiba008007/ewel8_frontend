@@ -21,7 +21,7 @@ UserApiService.getAdmin(data).then((response) => {
   settingData.value = user.value;
 });
 
-const onBlur = (val: string, type: string, key: number) => {
+const onBlur = (val: string | boolean, type: string, key: number) => {
   settingData.value.data.user[key][type] = val;
 };
 const alertFlag = ref<boolean>(false);
@@ -42,6 +42,7 @@ const onClick = () => {
       :login_id="user?.data?.user[0].login_id"
       :person="user?.data?.user[0].person"
       :personAddress="user?.data?.user[0].person_address"
+      :twoFactorEnabled="user?.data?.user[0].two_factor_enabled"
       @onBlur="(ev, type) => onBlur(ev, type, 0)"
     />
     <hr />
@@ -49,6 +50,7 @@ const onClick = () => {
       :login_id="user?.data?.user[1]?.login_id"
       :person="user?.data?.user[1]?.person"
       :personAddress="user?.data?.user[1]?.person_address"
+      :twoFactorEnabled="user?.data?.user[1].two_factor_enabled"
       @onBlur="(ev, type) => onBlur(ev, type, 1)"
     />
     <hr />
@@ -56,6 +58,7 @@ const onClick = () => {
       :login_id="user?.data?.user[2]?.login_id"
       :person="user?.data?.user[2]?.person"
       :personAddress="user?.data?.user[2]?.person_address"
+      :twoFactorEnabled="user?.data?.user[2].two_factor_enabled"
       @onBlur="(ev, type) => onBlur(ev, type, 2)"
     />
     <hr />
@@ -64,6 +67,7 @@ const onClick = () => {
       :login_id="user?.data?.user[3]?.login_id"
       :person="user?.data?.user[3]?.person"
       :personAddress="user?.data?.user[3]?.person_address"
+      :twoFactorEnabled="user?.data?.user[3].two_factor_enabled"
       @onBlur="(ev, type) => onBlur(ev, type, 3)"
     />
     <hr />

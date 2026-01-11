@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from "vue";
 import ComponentTextField from "../components/TextFieldView.vue";
+import CheckboxView from "./CheckboxView.vue";
 
 const props = defineProps<{
   login_id?: string;
   person?: string;
   personAddress?: string;
+  twoFactorEnabled?: boolean;
 }>();
 const emit = defineEmits<{
-  (e: "onBlur", value: string, type: string): void;
+  (e: "onBlur", value: string | boolean, type: string): void;
 }>();
+const onChange = (value: boolean, key: string) => {
+  emit("onBlur", value, key);
+};
 </script>
 <template>
   <v-container>
@@ -75,6 +79,16 @@ const emit = defineEmits<{
             @onBlur="emit('onBlur', $event, 'person_address')"
           />
         </v-sheet>
+      </v-col>
+      <v-col sm="3">
+        <v-sheet class="mt-4">2段階認証利用有無</v-sheet>
+      </v-col>
+      <v-col sm="9">
+        <CheckboxView
+          label="2段階認証"
+          :value="props.twoFactorEnabled"
+          @update:modelValue="(val) => onChange(val, 'two_factor_enabled')"
+        ></CheckboxView>
       </v-col>
     </v-row>
   </v-container>
