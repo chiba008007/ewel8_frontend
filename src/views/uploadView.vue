@@ -132,7 +132,7 @@ const commaSeparated = (value: number) => {
       ></fileUpload>
     </v-col>
   </v-row>
-  <v-row v-show="desserts.length > 0">
+  <v-row v-if="desserts.length > 0">
     <v-col cols="10" class="ml-2 mr-2">
       <AlertView
         v-if="alertDeleteflag"

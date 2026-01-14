@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref, defineProps, withDefaults } from "vue";
-import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useStoreUser } from "@/store/user";
 
 const router = useRouter();
-
+const route = useRoute();
+const customer_id = Number(route.params.editid);
 interface Props {
   type?: string;
   partnerid?: string | string[];
+  customerid?: string | string[];
   pageName?: string;
   href?: { pageName?: string; href?: string };
   adminhref?: { pageName?: string; href?: string; params?: object };
@@ -28,6 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
   adminhref2: undefined,
   partnerhref: undefined,
   partnerhref2: undefined,
+  customerid: undefined,
 });
 
 const user = useStoreUser();
@@ -41,17 +44,21 @@ if (user.userdata.type == "admin") {
     href: router.resolve({ name: "List" }).href,
   });
 }
-
-// 常に表示する顧客情報一覧パンくず
-pankuzu.value.push({
-  title: user.customerInfoList,
-  href: router.resolve({
-    name: "customerList",
-    params: {
-      id: props.partnerid ?? user.getSession("partner_id"),
-    },
-  }).href,
-});
+if (
+  (route.name == "uploadView" && customer_id != 0) ||
+  (route.name != "uploadView" && customer_id != 0)
+) {
+  // 常に表示する顧客情報一覧パンくず
+  pankuzu.value.push({
+    title: user.customerInfoList,
+    href: router.resolve({
+      name: "customerList",
+      params: {
+        id: props.partnerid ?? user.getSession("partner_id"),
+      },
+    }).href,
+  });
+}
 
 // adminhref（動的パンくず）
 if (props.adminhref?.pageName) {

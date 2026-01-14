@@ -94,23 +94,22 @@ const commaSeparated = (value: number) => {
     <CustomerMenu v-if="route.name === 'customerDown'" />
     <TestMenu v-else />
   </v-row>
-  <pankuzuMain
-    v-if="route.name === 'customerDown'"
-    :adminhref="{ pageName: 'testListsDownload' }"
-  ></pankuzuMain>
-  <pankuzuMain
-    v-else
-    :adminhref="{
-      pageName: 'testList',
-      href: 'testLists',
-      params: { id: params.id },
-    }"
-    :adminhref2="{ pageName: 'testListsDownload' }"
-  ></pankuzuMain>
 
-  <div class="mx-3">
-    <h4 class="mt-2">{{ user["testListsDownload"] }}</h4>
-    <p>ダウンロードしたいファイル名を選択してください。</p>
+  <div class="mt-2 pt-2">
+    <pankuzuMain
+      v-if="route.name === 'customerDown'"
+      :adminhref="{ pageName: 'testListsDownload' }"
+    ></pankuzuMain>
+    <pankuzuMain
+      v-else
+      :adminhref="{
+        pageName: 'testList',
+        href: 'testLists',
+        params: { id: params.id },
+      }"
+      :adminhref2="{ pageName: 'testListsDownload' }"
+    ></pankuzuMain>
+
     <v-row v-resize="onResize">
       <v-col>
         <v-data-table
