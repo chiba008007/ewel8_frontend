@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, withDefaults, computed } from "vue";
+import { computed } from "vue";
 import ComponentTextField from "../components/TextFieldView.vue";
 
 type Rule = (value: string) => true | string | Promise<true | string>;

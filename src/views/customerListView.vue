@@ -24,6 +24,7 @@ const customerheaders = ref([
   { title: "残数", key: "zanCount" },
   { title: "機能", key: "method" },
 ]);
+
 const headers = ref([
   { title: "検査種別", key: "examType" },
   { title: "購入ライセンス", key: "buyLisence" },
@@ -76,6 +77,7 @@ UserApiService.getLisencesList(tmp)
 let ctmp = { partner_id: tmpid };
 UserApiService.getCustomerList(ctmp)
   .then(function (res: any) {
+    console.log(res);
     customerList.value = [];
     res.data.map(function (value: any) {
       customerList.value.push({
@@ -89,7 +91,8 @@ UserApiService.getCustomerList(ctmp)
     });
   })
   .catch((e) => {
-    location.href = "/error";
+    console.log(e);
+    //location.href = "/error";
   });
 
 const tab = ref(0);
@@ -154,6 +157,13 @@ const onMove = (param: string, key: number) => {
                     color="red"
                     size="small"
                     class="ml-1"
+                    @click="
+                      move.pageClickMoveParamCodeList(
+                        'customerDelete',
+                        tmpid,
+                        item.id
+                      )
+                    "
                   ></ButtonView>
                   <ButtonView
                     text="添付"

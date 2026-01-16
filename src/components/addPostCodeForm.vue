@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, withDefaults } from "vue";
 import ComponentTextField from "../components/TextFieldView.vue";
 
 interface Props {

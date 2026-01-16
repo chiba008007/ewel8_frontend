@@ -91,6 +91,9 @@ class UserApiService {
   editUserPdfLogo(data: object): Promise<object> {
     return httpAuth.post("/api/user/editUserPdfLogo", data);
   }
+  editUserDeleteDate(data: object): Promise<object> {
+    return httpAuth.post("/api/user/editUserDeleteDate", data);
+  }
   getUserPdfLogo(data: object): Promise<string> {
     return httpAuth.post("/api/user/getUserPdfLogo", data).then((res) => {
       return res.data.pdfImagePath;

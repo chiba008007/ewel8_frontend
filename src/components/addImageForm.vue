@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, withDefaults } from "vue";
 import type { VTextField } from "vuetify/components";
 type TVDensity = VTextField["$props"]["density"];
 

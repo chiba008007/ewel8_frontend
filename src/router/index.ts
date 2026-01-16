@@ -18,6 +18,7 @@ import invoiceSetView from "../views/invoiceSetView.vue";
 import customerList from "../views/customerListView.vue";
 import customerAdd from "../views/customerAdd.vue";
 import customerEdit from "../views/customerEdit.vue";
+import customerDelete from "../views/customerDelete.vue";
 import pdflogoView from "../views/pdflogoView.vue";
 import uploadView from "../views/uploadView.vue";
 import ErrorView from "../views/errorView.vue";
@@ -327,6 +328,16 @@ const routes: Array<RouteRecordRaw> = [
     path: "/customerEdit/edit/:id/:editid?/:typeString?",
     name: "customerEdit",
     component: customerEdit,
+    meta: {
+      requiresAuth: true,
+      allowedRoles: ["admin", "partner"],
+      partnercheck: true,
+    },
+  },
+  {
+    path: "/customerDelete/delete/:id/:editid?/:typeString?",
+    name: "customerDelete",
+    component: customerDelete,
     meta: {
       requiresAuth: true,
       allowedRoles: ["admin", "partner"],
