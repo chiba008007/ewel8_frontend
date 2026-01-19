@@ -9,6 +9,7 @@ interface Props {
   label?: string;
   model?: boolean | string | number;
   type?: string;
+  modelValue?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -17,13 +18,14 @@ const props = withDefaults(defineProps<Props>(), {
   model: true,
 });
 const emit = defineEmits<{
+  (e: "update:modelValue", v: boolean | null): void;
   (e: "onKeyup", value: string): void;
   (e: "onClick", value: any, type: string): void;
   (e: "onChange", value: string | number | boolean | null): void;
 }>();
 </script>
 <template>
-  <v-switch
+  <!-- <v-switch
     class="ml-2"
     :v-model="props.model"
     :model-value="props.model"
@@ -33,5 +35,19 @@ const emit = defineEmits<{
     inset
     @click="emit('onClick', props.model, props.type ?? '')"
     @update:modelValue="emit('onChange', $event)"
-  ></v-switch>
+  ></v-switch> -->
+  <v-switch
+    class="ml-2"
+    :density="props.density"
+    :label="props.label"
+    hide-details
+    inset
+    :model-value="props.modelValue ?? Boolean(props.model)"
+    @update:modelValue="
+      (v) => {
+        emit('update:modelValue', v);
+        emit('onClick', v, props.type ?? '');
+      }
+    "
+  />
 </template>

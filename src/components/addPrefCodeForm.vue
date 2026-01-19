@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, withDefaults } from "vue";
 import ComponentSelectField from "@/components/SelectFieldView.vue";
 
 interface Props {
@@ -8,7 +7,7 @@ interface Props {
   items?: object[];
   hideDetails?: boolean | "auto";
   class?: string;
-  value?: string;
+  value?: string | number;
   type?: string;
   color?: string;
   rules?: Array<(v: any) => true | string>;
@@ -26,7 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
-  (e: "onChange", value: string): void;
+  (e: "onChange", value: string | number): void;
 }>();
 </script>
 <template>
@@ -43,10 +42,10 @@ const emit = defineEmits<{
         :label="props.label"
         :hideDetails="props.hideDetails"
         :class="props.class"
-        :text="props.value"
+        :value="props.value"
         :rules="props.rules"
-        @onBlur="emit('onBlur', $event, props.type ?? '')"
-        @onChange="emit('onChange', $event)"
+        @onChange="emit('onChange', String($event ?? ''))"
+        @onBlur="emit('onBlur', String($event ?? ''), props.type ?? '')"
       ></ComponentSelectField>
     </v-col>
   </v-row>

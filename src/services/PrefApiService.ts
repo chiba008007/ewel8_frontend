@@ -1,18 +1,12 @@
 import http from "@/user-common";
-
+import { Pref } from "@/types/pref";
 class PrefApiService {
-  async getPrefData() {
-    const tmp: Array<object> = [];
-    await this.getData().then((response) => {
-      const leng = response.data.pref.length;
-      for (let i = 0; i < leng; i++) {
-        tmp.push({
-          id: response.data.pref[i].id,
-          name: response.data.pref[i].name,
-        });
-      }
-    });
-    return tmp;
+  async getPrefData(): Promise<Pref[]> {
+    const response = await this.getData();
+    return response.data.pref.map((p: Pref) => ({
+      id: p.id,
+      name: p.name,
+    }));
   }
   getData() {
     return http.get("/api/pref");

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import ComponentSwitch from "../components/SwitchView.vue";
 import type { VTextField } from "vuetify/components";
 type TVDensity = VTextField["$props"]["density"];
@@ -19,11 +20,17 @@ const props = withDefaults(defineProps<Props>(), {
   color: "bg-primary",
   class: "",
 });
-//const model = ref<boolean>(true);
 
 const emit = defineEmits<{
   (e: "onClick", value: boolean, type: string): void;
 }>();
+
+const switchValue = computed({
+  get: () => Boolean(props.model),
+  set: (v) => {
+    emit("onClick", v, props.type ?? "");
+  },
+});
 </script>
 <template>
   <v-row no-gutters>
@@ -44,9 +51,9 @@ const emit = defineEmits<{
         :title="props.title"
         :label="props.label"
         :density="props.density"
-        :model="props.model ? true : false"
+        :model="props.model"
         :type="props.type"
-        @onClick="(e:any, type:any) =>  emit('onClick', e, type ?? '')"
+        v-model="switchValue"
       ></ComponentSwitch>
     </v-col>
   </v-row>

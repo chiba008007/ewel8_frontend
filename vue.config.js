@@ -12,4 +12,16 @@ module.exports = defineConfig({
       // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vuetify-loader
     },
   },
+  chainWebpack: (config) => {
+    config.plugin("fork-ts-checker").tap((args) => {
+      args[0].typescript = {
+        ...args[0].typescript,
+        diagnosticOptions: {
+          semantic: false,
+          syntactic: false,
+        },
+      };
+      return args;
+    });
+  },
 });

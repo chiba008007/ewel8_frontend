@@ -1,8 +1,9 @@
 import http from "@/user-common";
+import type { Element } from "@/types/element";
 
 class ElementApiService {
   async getElementData() {
-    const tmp: Array<object> = [];
+    const tmp: Element[] = [];
     await this.getData().then((response) => {
       const leng = response.data.element.length;
       for (let i = 0; i < leng; i++) {

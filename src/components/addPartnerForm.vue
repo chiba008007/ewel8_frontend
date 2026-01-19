@@ -15,10 +15,8 @@ type RuleElement =
 
 const adaptedRules = computed<RuleElement[]>(() => {
   const r = props.rules as unknown;
-  if (r == null) return []; // ★ 常に配列で返す
-  return Array.isArray(r)
-    ? (r as RuleElement[]) // ★ 配列ならそのまま
-    : [r as RuleElement]; // ★ 文字列/関数などは配列化
+  if (r == null) return [];
+  return Array.isArray(r) ? (r as RuleElement[]) : [r as RuleElement];
 });
 
 interface Props {
@@ -42,6 +40,7 @@ interface Props {
   explaintext?: string;
   tooltipMessage?: string;
   tooltipflag?: boolean;
+  modelValue?: string | number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -52,6 +51,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: "onBlur", value: string, type: string): void;
   (e: "onKeyup", value: string, type: string): void;
+  (e: "update:modelValue", value: string | number): void;
 }>();
 </script>
 <template>

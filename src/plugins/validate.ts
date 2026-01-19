@@ -54,33 +54,44 @@ export const numberValue = (
   return true;
 };
 
-export const checkLoginID = (
-  value: string,
-  flag = true,
-  editid: string | string[] = "0"
-): true | string | Promise<true | string> => {
+export const checkLoginIDSync = (value: string): true | string => {
   if (!value) {
     return "ログインIDは必須です。";
   }
+
   const pattern = /^[a-zA-Z0-9]{4,8}$/;
-  if (value && !pattern.test(value)) {
+  if (!pattern.test(value)) {
     return "ログインIDは半角英数4文字以上8文字以下で入力してください。";
   }
-  if (flag) {
-    const tmp = UserApiService.checkLoginID(value, editid as string);
 
-    return tmp
-      .then<true | string>(function (rlt) {
-        console.log(rlt.data);
-        if (rlt.data === "success") {
-          return "ログインIDが重複しています。";
-        }
-        return true;
-      })
-      .catch(function () {
-        return true;
-      });
-  } else {
+  return true;
+};
+
+export const checkLoginID = async (
+  value: string,
+  flag = true,
+  editid: string | string[] = "0"
+): Promise<true | string> => {
+  if (!value) {
+    return "ログインIDは必須です。";
+  }
+
+  const pattern = /^[a-zA-Z0-9]{4,8}$/;
+  if (!pattern.test(value)) {
+    return "ログインIDは半角英数4文字以上8文字以下で入力してください。";
+  }
+
+  if (!flag) {
+    return true;
+  }
+
+  try {
+    const rlt = await UserApiService.checkLoginID(value, editid as string);
+    if (rlt.data === "success") {
+      return "ログインIDが重複しています。";
+    }
+    return true;
+  } catch {
     return true;
   }
 };
@@ -101,7 +112,7 @@ export const checkEmailRequired = (value: string) => {
   return true;
 };
 export const checkPassword = (value: string, type = "", tmpid: any = "") => {
-  if (tmpid && !value) return "";
+  if (tmpid && !value) return true;
   if (type == "edit" && !value) return "";
   if (!value) return "パスワードは必須です";
   const emailPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,15}$/;

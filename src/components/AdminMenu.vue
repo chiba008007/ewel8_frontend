@@ -9,6 +9,10 @@ const router = useRouter();
 const pageClickMove = (pagename: string) => {
   router.push(router.resolve({ name: pagename }).href);
 };
+const pageClickLoad = (pagename: string) => {
+  window.location.href = router.resolve({ name: pagename }).href;
+};
+
 const onCompanyDownload = async () => {
   try {
     await CompanyDownloadApiService.getExamLoginList({}).then(function (rlt) {
@@ -34,7 +38,7 @@ const onCompanyDownload = async () => {
         variant="outlined"
         density="compact"
         class="ml-1 w-25"
-        @onClick="pageClickMove('addPartner')"
+        @onClick="pageClickLoad('addPartner')"
       ></ComponentButton>
       <ComponentButton
         text="受検者検索"

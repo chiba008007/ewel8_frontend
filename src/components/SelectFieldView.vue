@@ -13,7 +13,7 @@ interface Props {
   placeholder?: string;
   variant?: TVariant;
   density?: TVDensity;
-  value?: string;
+  value?: string | number;
   hideDetails?: boolean | "auto";
   messages?: string;
   person?: string;
@@ -48,15 +48,15 @@ const attrs = useAttrs();
     :items="props.items"
     item-value="id"
     item-title="name"
+    :model-value="props.value ?? props.text"
     :hide-details="props.hideDetails"
     :variant="props.variant"
     :density="props.density"
-    :model-value="props.text"
     :clearable="props.clearable"
     @keydown="removeTabKey($event)"
     @blur="emit('onBlur', $event.target.value)"
     @update:modelValue="emit('onChange', $event)"
-  ></v-select>
+  />
 </template>
 <style lang="scss" scoped>
 @import "@/assets/styles/util.scss";

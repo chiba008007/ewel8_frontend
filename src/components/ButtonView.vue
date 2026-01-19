@@ -24,7 +24,7 @@ const props = defineProps<{
     :variant="props.variant"
     :density="props.density"
     :color="props.color"
-    :disabled="props.disabled"
+    :disabled="props.disabled === true"
     :class="props.class"
     @click="emit('onClick')"
   >

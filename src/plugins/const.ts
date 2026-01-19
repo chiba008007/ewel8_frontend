@@ -73,8 +73,15 @@ export const genderArray = [
 
 /** 表示可否ステータス*/
 export const displayStatus = ["表示しない", "表示する"];
+export const displayString = (type: boolean) => {
+  return type ? displayStatus[1] : displayStatus[0];
+};
+
 /**設定可否ステータス */
 export const settingStatus = ["設定しない", "設定する"];
+export const settingString = (type: boolean) => {
+  return type ? settingStatus[1] : settingStatus[0];
+};
 /**編集可否ステータス */
 export const edittingStatus = ["編集しない", "編集する"];
 /**開封ステータス */
