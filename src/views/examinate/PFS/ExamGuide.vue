@@ -8,9 +8,9 @@ import ButtonView from "@/components/ButtonView.vue";
 import exampfs from "@/plugins/exampfs";
 import { setStartTime } from "@/plugins/examStartTime";
 const router = useRouter();
-const k = router.currentRoute.value.query.k;
-const examObj = exampfs();
 const route = useRoute();
+const k = route.query.k;
+const examObj = exampfs();
 const testparts_id = route.params.testparts_id;
 
 const page = ref(1);
@@ -30,6 +30,16 @@ setStartTime();
 const enabledFlag = ref(false);
 const enabledTest = (e: boolean) => {
   enabledFlag.value = e;
+};
+
+const handleStart = () => {
+  examObj.onStart({
+    testparts_id,
+    params: k,
+    page: page.value,
+    selectPoint: {},
+    code: EXAMS.PFS,
+  });
 };
 </script>
 
@@ -67,16 +77,14 @@ const enabledTest = (e: boolean) => {
       class="mt-3"
       text="メニューに戻る"
       :color="`red`"
-      @onClick="onMenuBack()"
+      @onClick="onMenuBack"
     ></ButtonView>
     <ButtonView
       class="mt-3"
       text="検査を開始する"
       :color="`blue`"
       :class="`ml-2`"
-      @onClick="
-        examObj.onStart($route.params.testparts_id, k, page, {}, EXAMS.PFS)
-      "
+      @onClick="handleStart"
     ></ButtonView>
   </v-container>
 </template>

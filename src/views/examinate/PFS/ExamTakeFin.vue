@@ -8,6 +8,7 @@ import ButtonView from "@/components/ButtonView.vue";
 import AlertView from "@/components/AlertView.vue";
 import CardView from "@/components/CardView.vue";
 import exampfs from "@/plugins/exampfs";
+import ExamApiService from "@/services/ExamApiService";
 const router = useRouter();
 const route = useRoute();
 const examObj = exampfs();
@@ -21,13 +22,17 @@ const result = ref({
   text4: "",
   image: "",
 });
-examObj.getPFS(k, testparts_id).then((res) => {
-  console.log(res);
-  result.value.text1 = res.result[0];
-  result.value.text2 = res.result[1];
-  result.value.text3 = res.result[2];
-  result.value.text4 = res.result[4];
-  result.value.image = res.result[3];
+ExamApiService.getPFS({
+  params: k,
+  testparts_id,
+}).then((res) => {
+  if (!res) return;
+  const data = res.data;
+  result.value.text1 = data.result[0];
+  result.value.text2 = data.result[1];
+  result.value.text3 = data.result[2];
+  result.value.text4 = data.result[4];
+  result.value.image = data.result[3];
 });
 
 const resultFlag = ref();

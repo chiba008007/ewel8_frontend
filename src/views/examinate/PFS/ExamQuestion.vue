@@ -1,35 +1,25 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from "vue";
 import exampfs from "@/plugins/exampfs";
-import ProgressView from "@/components/ProgressView.vue";
-
-const loadingFlag = ref(true);
 const examObj = exampfs();
-const heads = examObj.heads.value;
+const heads = examObj.heads;
+
+type Question = {
+  key: number;
+  question1: string;
+  question2: string;
+};
+
 const props = defineProps<{
-  questions?: object;
-  params?: string | undefined | any;
-  testparts_id?: number | any;
+  questions?: Question[];
+  selectPoint: Record<number, number>;
 }>();
 
 const emit = defineEmits<{
   (e: "onClick", key: number, value: number): void;
   (e: "onSelected", value: object): void;
 }>();
-
-const selected = ref([{}]);
-const select = examObj.getPFS(props.params, props.testparts_id);
-select.then((value) => {
-  for (let i = 1; i <= 36; i++) {
-    let q = "q" + i;
-    selected.value.push(value[q]);
-  }
-  loadingFlag.value = false;
-  emit("onSelected", selected);
-});
 </script>
 <template>
-  <ProgressView v-if="loadingFlag"></ProgressView>
   <div class="table-display">
     <div class="table-row hques bg-blue pc">
       <div class="table-col w10 vertical-middle text-center">No</div>
@@ -39,14 +29,18 @@ select.then((value) => {
       </div>
       <div class="table-col text-center vertical-middle">B</div>
     </div>
-    <div class="table-row" v-for="question in props.questions" :key="question">
+    <div
+      class="table-row"
+      v-for="question in props.questions"
+      :key="question.key"
+    >
       <div class="table-col border-sm pl-2 bg-sp-blue">
-        {{ question["key"] }}
+        {{ question.key }}
       </div>
       <div class="table-col border-sm pl-1">
         <div class="d-flex">
           <p class="sp mr-1">A</p>
-          {{ question["question1"] }}
+          {{ question.question1 }}
         </div>
       </div>
       <div
@@ -57,9 +51,9 @@ select.then((value) => {
         <div class="d-flex">
           <input
             type="radio"
-            :name="question['key']"
-            :checked="head.value == selected[question['key']] ? true : false"
-            @click="emit('onClick', question['key'], head.value)"
+            :name="String(question.key)"
+            :checked="props.selectPoint[question.key] === head.value"
+            @click="emit('onClick', question.key, head.value)"
           />
           <p class="sp">{{ heads[head.value - 1]?.label }}</p>
         </div>
@@ -67,7 +61,7 @@ select.then((value) => {
       <div class="table-col border-sm pa-2">
         <div class="d-flex">
           <p class="sp mr-1">B</p>
-          {{ question["question2"] }}
+          {{ question.question2 }}
         </div>
       </div>
     </div>

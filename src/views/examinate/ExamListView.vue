@@ -29,15 +29,38 @@ const testLengthFlag = ref(false);
 
 const movietype = ref(0);
 const moviedisplayurl = ref();
-ExamApiService.getTestExamMenu(params).then(function (rlt) {
-  examList.value = rlt?.data;
-  movietype.value = rlt?.data[0].movietype;
-  moviedisplayurl.value = rlt?.data[0].moviedisplayurl;
+// ExamApiService.getTestExamMenu(params).then(function (rlt) {
+//   examList.value = rlt?.data;
+//   movietype.value = rlt?.data[0].movietype;
+//   moviedisplayurl.value = rlt?.data[0].moviedisplayurl;
+//   let done = 0;
+//   rlt?.data.map(function (val: object | any) {
+//     if (val.examstatus == 1) done += 1;
+//   });
+//   testLength.value = rlt?.data.length - done;
+//   testLengthFlag.value = true;
+// });
+
+ExamApiService.getTestExamMenu(params).then((rlt) => {
+  if (!Array.isArray(rlt?.data)) {
+    return;
+  }
+
+  const list = rlt.data;
+
+  examList.value = list;
+
+  if (list.length > 0) {
+    movietype.value = list[0].movietype;
+    moviedisplayurl.value = list[0].moviedisplayurl;
+  }
+
   let done = 0;
-  rlt?.data.map(function (val: object | any) {
-    if (val.examstatus == 1) done += 1;
+  list.forEach((val: any) => {
+    if (val.examstatus === 1) done += 1;
   });
-  testLength.value = rlt?.data.length - done;
+
+  testLength.value = list.length - done;
   testLengthFlag.value = true;
 });
 
