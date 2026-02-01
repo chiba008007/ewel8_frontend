@@ -11,12 +11,7 @@ class UserApiService {
     return httpAuth.post("/api/fileupload/deleteStatus", data);
   }
   async getList(data: object) {
-    try {
-      return await httpAuth.post("/api/fileupload/list", data);
-    } catch (e) {
-      console.log(e);
-      location.reload();
-    }
+    return await httpAuth.post("/api/fileupload/list", data);
   }
 }
 

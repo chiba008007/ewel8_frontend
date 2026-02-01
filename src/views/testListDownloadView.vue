@@ -63,25 +63,30 @@ const reading = () => {
     tmp.customer_id = Number(params.id);
   }
 
-  FileuploadApiService.getList(tmp).then((res) => {
-    console.log(res);
-    desserts.value = [];
-    let i = 0;
-    res?.data.map((val: any) => {
-      desserts.value.push({
-        key: i,
-        registdate: val.date,
-        filename: val.filename,
-        filepath: d_filePath + "" + val.filepath,
-        size: commaSeparated(val.size),
-        openflag: openStatus[val.openflag],
-        checked: false,
-        id: val.id,
+  FileuploadApiService.getList(tmp)
+    .then((res) => {
+      desserts.value = [];
+
+      res?.data.forEach((val: any) => {
+        desserts.value.push({
+          key: val.id,
+          registdate: val.date,
+          filename: val.filename,
+          filepath: `${d_filePath}${val.filepath}`,
+          size: commaSeparated(val.size),
+          openflag: openStatus[val.openflag],
+          checked: false,
+          id: val.id,
+        });
       });
-      i++;
+    })
+    .catch((e) => {
+      console.error("file list load failed", e);
+      desserts.value = [];
+    })
+    .finally(() => {
+      loadingFlag.value = false;
     });
-    loadingFlag.value = false;
-  });
 };
 const commaSeparated = (value: number) => {
   return new Intl.NumberFormat().format(value);
