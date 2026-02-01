@@ -49,6 +49,7 @@ type userAny = {
   syori: number;
 };
 const type = (user.userdata as userType).type;
+
 TestApiService.getTestList({
   user_id: route.params.id,
   partner_id: partner_id,
@@ -58,7 +59,7 @@ TestApiService.getTestList({
     testList.value = res.data;
   })
   .catch(function (e) {
-    console.log(e);
+    alert("param error" + e);
   });
 
 const tableHeight = ref(100);

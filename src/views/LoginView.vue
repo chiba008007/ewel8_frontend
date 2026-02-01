@@ -51,7 +51,12 @@ const onClick = () => {
       } else {
         user.setUserDataToken(response.data.token);
         user.setUserData(response.data.user);
-        if (response.data.user.type === "partner") {
+        if (response.data.user.type === "customer") {
+          router.push({
+            name: "testLists",
+            params: { id: response.data.user.id },
+          });
+        } else if (response.data.user.type === "partner") {
           router.push({
             name: "customerList",
             params: { id: response.data.user.id },

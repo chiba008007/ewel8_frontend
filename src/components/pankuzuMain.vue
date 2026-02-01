@@ -44,20 +44,23 @@ if (user.userdata.type == "admin") {
     href: router.resolve({ name: "List" }).href,
   });
 }
-if (
-  (route.name == "uploadView" && customer_id != 0) ||
-  (route.name != "uploadView" && customer_id != 0)
-) {
-  // 常に表示する顧客情報一覧パンくず
-  pankuzu.value.push({
-    title: user.customerInfoList,
-    href: router.resolve({
-      name: "customerList",
-      params: {
-        id: props.partnerid ?? user.getSession("partner_id"),
-      },
-    }).href,
-  });
+console.log(user.userdata.type);
+if (user.userdata.type != "customer") {
+  if (
+    (route.name == "uploadView" && customer_id != 0) ||
+    (route.name != "uploadView" && customer_id != 0)
+  ) {
+    // 常に表示する顧客情報一覧パンくず
+    pankuzu.value.push({
+      title: user.customerInfoList,
+      href: router.resolve({
+        name: "customerList",
+        params: {
+          id: props.partnerid ?? user.getSession("partner_id"),
+        },
+      }).href,
+    });
+  }
 }
 
 // adminhref（動的パンくず）

@@ -326,7 +326,7 @@ const routes: Array<RouteRecordRaw> = [
     component: customerEdit,
     meta: {
       requiresAuth: true,
-      allowedRoles: ["admin", "partner"],
+      allowedRoles: ["admin", "partner", "customer"],
       partnercheck: true,
     },
   },
@@ -346,6 +346,7 @@ const routes: Array<RouteRecordRaw> = [
     component: uploadView,
     meta: {
       requiresAuth: true,
+      partnercheck: true,
       allowedRoles: ["admin", "partner"],
     },
   },
@@ -356,6 +357,7 @@ const routes: Array<RouteRecordRaw> = [
     component: testListView,
     meta: {
       requiresAuth: true,
+      allowedRoles: ["admin", "partner", "customer"],
     },
   },
   // 検査一覧用ダウンロード
@@ -365,6 +367,7 @@ const routes: Array<RouteRecordRaw> = [
     component: testListDownloadView,
     meta: {
       requiresAuth: true,
+      allowedRoles: ["admin", "partner", "customer"],
     },
   },
   // 重み付けマスタ

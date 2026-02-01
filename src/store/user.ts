@@ -10,7 +10,7 @@ export const useStoreUser = defineStore("user", {
     count2: 2,
     isLogin: false,
     isExamLogin: false,
-    userdata: {} as { id: string; type: "admin" | "partner" | "user" },
+    userdata: {} as { id: string; type: "admin" | "partner" | "customer" },
     userToken: "" as string,
     userTokenExam: "" as string,
     userExam: {},
@@ -88,7 +88,7 @@ export const useStoreUser = defineStore("user", {
 
       axios.defaults.headers.common["Authorization"] = `Bearer ${data}`;
     },
-    setUserData(data: { id: string; type: "admin" | "partner" | "user" }) {
+    setUserData(data: { id: string; type: "admin" | "partner" | "customer" }) {
       this.userdata = data;
     },
     setUserExamData(data: object) {
