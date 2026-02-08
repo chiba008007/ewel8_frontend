@@ -1,6 +1,5 @@
 <script setup lang="ts">
-//import { defineProps, withDefaults, defineEmits, ref } from "vue";
-import { defineProps, defineEmits, ref } from "vue";
+import { ref, watch } from "vue";
 import TextFieldView from "./TextFieldView.vue";
 import ComponentSwitch from "@/components/SwitchView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
@@ -42,24 +41,16 @@ const datePDFEnd = ref(dayjs((props.inputData as inputDataType).pdfendday));
 
 const today = new Date();
 const startdate = ref({
-  startyear: props.editid
-    ? datePDFStart.value.year()
-    : today.getFullYear().toString(),
-  startmonth: props.editid
-    ? datePDFStart.value.month()
-    : zeroPadding(today.getMonth() + 1),
-  startday: props.editid
-    ? datePDFStart.value.date()
-    : zeroPadding(today.getDate()),
+  startyear: props.editid ? datePDFStart.value.year() : today.getFullYear(),
+  startmonth: props.editid ? datePDFStart.value.month() : today.getMonth(), // ← 0始まり
+  startday: props.editid ? datePDFStart.value.date() : today.getDate(),
 });
 const enddate = ref({
-  endyear: props.editid
-    ? datePDFEnd.value.year()
-    : today.getFullYear().toString(),
+  endyear: props.editid ? datePDFEnd.value.year() : today.getFullYear(),
   endmonth: props.editid
-    ? datePDFEnd.value.month()
-    : zeroPadding(today.getMonth() + 1),
-  endday: props.editid ? datePDFEnd.value.date() : zeroPadding(today.getDate()),
+    ? datePDFEnd.value.month() // 0始まり
+    : today.getMonth(), // 0始まり
+  endday: props.editid ? datePDFEnd.value.date() : today.getDate(),
 });
 const requestDateTime = () => {
   let year = startdate.value.startyear
@@ -91,6 +82,56 @@ const requestDateTimeEND = () => {
 };
 
 const pdfCount = ref(props.inputData?.pdflimitcount);
+
+const onChangeStartYear = (e: string | number) => {
+  startdate.value.startyear = Number(e);
+  requestDateTime();
+};
+
+const onChangeStartMonth = (e: string | number | null) => {
+  if (e == null) return;
+
+  startdate.value.startmonth = Number(e) - 1;
+  requestDateTime();
+};
+
+const onChangeStartDay = (e: string | number | null) => {
+  if (e == null) return;
+
+  startdate.value.startday = Number(e);
+  requestDateTime();
+};
+
+const onChangeEndYear = (e: string | number | null) => {
+  if (e == null) return;
+
+  enddate.value.endyear = Number(e);
+  requestDateTimeEND();
+};
+
+const onChangeEndMonth = (e: string | number | null) => {
+  if (e == null) return;
+
+  enddate.value.endmonth = Number(e) - 1; // 0始まり
+  requestDateTimeEND();
+};
+
+const onChangeEndDay = (e: string | number | null) => {
+  if (e == null) return;
+
+  enddate.value.endday = Number(e);
+  requestDateTimeEND();
+};
+const pdfPeriodEnabled = ref<boolean>(Boolean(props.value));
+const pdfCountEnabled = ref<boolean>(Boolean(props.valuePDF));
+
+watch(pdfPeriodEnabled, (v) => {
+  emit("onClick", v);
+});
+
+watch(pdfCountEnabled, (v) => {
+  emit("PDFCountFlag", v);
+});
 </script>
 <template>
   <v-row no-gutters>
@@ -105,12 +146,11 @@ const pdfCount = ref(props.inputData?.pdflimitcount);
       <p>PDF出力に制限を設ける場合は下記を選択してください。</p>
       <div class="mt-6">
         <p>PDF出力期間を設定する</p>
+
         <ComponentSwitch
-          :label="settingString(props.value ? true : false)"
-          :title="props.title"
-          :model="props.value"
-          @onClick="emit('onClick', props.value ? false : true)"
-        ></ComponentSwitch>
+          v-model="pdfPeriodEnabled"
+          :label="settingString(pdfPeriodEnabled)"
+        />
       </div>
       <div class="mt-6">
         <p>PDF出力可能期間</p>
@@ -122,38 +162,23 @@ const pdfCount = ref(props.inputData?.pdflimitcount);
                 class="w-25"
                 :value="editid ? datePDFStart.year() : props.defaultyear"
                 :maxlength="4"
-                @onKeyup="(e) => ((startdate.startyear = e), requestDateTime())"
+                @onKeyup="onChangeStartYear"
               />
               <span class="mt-3 text-caption">年</span>
               <SelectFieldView
                 :items="monthArray"
-                :text="
-                  editid || datePDFStart
-                    ? datePDFStart.month() + 1
-                    : props.defaultmonth
-                "
+                :text="startdate.startmonth + 1"
                 class="w-25"
-                @onChange="
-                  (e) => (
-                    (startdate.startmonth = Number(parseInt(e) - 1)),
-                    requestDateTime()
-                  )
-                "
-              /><span class="mt-3 text-caption">月</span>
+                @onChange="onChangeStartMonth"
+              />
+              <span class="mt-3 text-caption">月</span>
               <SelectFieldView
                 :items="dayArray"
                 class="w-25"
-                :text="
-                  editid || datePDFStart
-                    ? datePDFStart.date()
-                    : props.defaultday
-                "
-                @onChange="
-                  (e) => (
-                    (startdate.startday = zeroPadding(e)), requestDateTime()
-                  )
-                "
-              /><span class="mt-3 text-caption">日</span>
+                :text="startdate.startday"
+                @onChange="onChangeStartDay"
+              />
+              <span class="mt-3 text-caption">日</span>
             </div>
           </v-col>
           <v-col cols="8">
@@ -161,36 +186,27 @@ const pdfCount = ref(props.inputData?.pdflimitcount);
             <div class="d-flex">
               <TextFieldView
                 class="w-25"
-                :value="editid ? datePDFEnd.year() : props.defaultyear"
+                :value="enddate.endyear"
                 :maxlength="4"
-                @onKeyup="(e) => ((enddate.endyear = e), requestDateTimeEND())"
+                @onKeyup="onChangeEndYear"
               />
               <span class="mt-3 text-caption">年</span>
+
               <SelectFieldView
                 :items="monthArray"
-                :text="
-                  editid
-                    ? datePDFEnd.month() + 1
-                    : zeroZapress(enddate.endmonth)
-                "
+                :text="enddate.endmonth + 1"
                 class="w-25"
-                @onChange="
-                  (e) => (
-                    (enddate.endmonth = Number(parseInt(e) - 1)),
-                    requestDateTimeEND()
-                  )
-                "
-              /><span class="mt-3 text-caption">月</span>
+                @onChange="onChangeEndMonth"
+              />
+              <span class="mt-3 text-caption">月</span>
+
               <SelectFieldView
                 :items="dayArray"
                 class="w-25"
-                :text="editid ? datePDFEnd.date() : zeroZapress(enddate.endday)"
-                @onChange="
-                  (e) => (
-                    (enddate.endday = zeroPadding(e)), requestDateTimeEND()
-                  )
-                "
-              /><span class="mt-3 text-caption">日</span>
+                :text="enddate.endday"
+                @onChange="onChangeEndDay"
+              />
+              <span class="mt-3 text-caption">日</span>
             </div>
           </v-col>
         </v-row>
@@ -202,11 +218,10 @@ const pdfCount = ref(props.inputData?.pdflimitcount);
       <div class="mt-6">
         <p>PDF出力人数を設定する</p>
         <ComponentSwitch
-          :label="settingString(props.valuePDF ? true : false)"
-          :title="props.title"
-          :model="props.valuePDF"
-          @onClick="emit('PDFCountFlag', props.valuePDF ? false : true)"
-        ></ComponentSwitch>
+          v-model="pdfCountEnabled"
+          :label="settingString(pdfCountEnabled)"
+          @update:modelValue="emit('PDFCountFlag', pdfCountEnabled)"
+        />
         <p>PDF出力制限数</p>
         <TextFieldView
           class="w-50"

@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import type { VTextField } from "vuetify/components";
 type TVDensity = VTextField["$props"]["density"];
 
-const model = ref<boolean>(true);
 interface Props {
   density?: TVDensity;
   label?: string;
@@ -17,6 +15,7 @@ const props = withDefaults(defineProps<Props>(), {
   label: "利用する",
   model: true,
 });
+
 const emit = defineEmits<{
   (e: "update:modelValue", v: boolean | null): void;
   (e: "onKeyup", value: string): void;
@@ -25,17 +24,6 @@ const emit = defineEmits<{
 }>();
 </script>
 <template>
-  <!-- <v-switch
-    class="ml-2"
-    :v-model="props.model"
-    :model-value="props.model"
-    :density="props.density"
-    :label="props.label"
-    hide-details
-    inset
-    @click="emit('onClick', props.model, props.type ?? '')"
-    @update:modelValue="emit('onChange', $event)"
-  ></v-switch> -->
   <v-switch
     class="ml-2"
     :density="props.density"

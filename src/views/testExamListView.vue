@@ -130,7 +130,7 @@ const filterText = reactive({
   email: "",
   name: "",
   kana: "",
-  examStatus: "",
+  examStatus: "" as string | number | null,
   started_at: "",
   memo1: "",
   memo2: "",

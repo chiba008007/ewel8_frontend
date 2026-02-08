@@ -33,9 +33,10 @@ const setLoop = () => {
   disabledFlag.value = false;
 
   const start = (page.value - 1) * 10 + 1;
-  const end = page.value == 4 ? questions.value?.length : page.value * 10;
+  const end =
+    page.value == 4 ? start + questions.value?.length - 1 : page.value * 10;
   for (let i = start; i <= end; i++) {
-    if (!(i in selectPoint)) {
+    if (selectPoint[i] == null) {
       disabledFlag.value = true;
       break;
     }
