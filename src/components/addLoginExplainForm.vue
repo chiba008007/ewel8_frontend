@@ -1,6 +1,5 @@
 <script setup lang="ts">
-//import { defineProps, withDefaults, defineEmits, ref } from "vue";
-import { defineProps, defineEmits, ref } from "vue";
+import { ref } from "vue";
 import TextAreaField from "../components/TextAreaFieldView.vue";
 import type { VTextField } from "vuetify/components";
 type TVariant = VTextField["$props"]["variant"];
@@ -18,13 +17,12 @@ const props = defineProps<{
   height?: number;
   value?: string;
   disabled?: boolean;
-  loginModel?: boolean;
+  modelValue: boolean;
   color?: string;
 }>();
 
 const emit = defineEmits<{
-  (e: "onUpdate", value: boolean, type: string): void;
-  (e: "onClick", value: boolean): void;
+  (e: "update:modelValue", value: boolean | null): void;
   (e: "onBlur", value: string): void;
 }>();
 </script>
@@ -39,11 +37,11 @@ const emit = defineEmits<{
     </v-col>
     <v-col sm="9" class="pa-1 border-sm">
       <ComponentSwitch
+        :modelValue="props.modelValue"
+        @update:modelValue="(v) => emit('update:modelValue', v)"
         :label="props.label"
         :type="props.type"
-        :model="props.loginModel"
-        @onClick="(e) => emit('onClick', e)"
-      ></ComponentSwitch>
+      />
       <TextAreaField
         :name="props.name"
         :variant="props.variant"

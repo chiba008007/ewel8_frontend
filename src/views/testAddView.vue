@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useStoreUser } from "@/store/user";
 import { getTodayDateTime, getTodayDate } from "@/plugins/date";
 import {
@@ -40,7 +40,9 @@ import testPartsAdd from "@/plugins/testPartsAdd";
 import testAdd from "@/plugins/testAdd";
 import { inputDataPartsType, inputDataType, testpdfType } from "@/types";
 import ProgressView from "@/components/ProgressView.vue";
+import { useTestParts } from "@/composables/useTestParts";
 
+const { applyTestParts } = useTestParts();
 const router = useRouter();
 const route = useRoute();
 const user = useStoreUser();
@@ -58,7 +60,8 @@ const errorTab2 = ref(1);
 const isLoading = ref(true);
 const tab = ref(0);
 const loadingFlag = ref(true);
-
+const inputWeightMasterString = ref<Record<string, string>>({});
+const partner_id = user.getSession("partner_id");
 const inputData = ref({
   testname: "",
   testcount: 0,
@@ -123,18 +126,6 @@ const inputTestPart = ref<{
 
 // 重み付けマスタ取得
 const inputWeight = ref();
-try {
-  WeightApiService.getWeightMaster({ id: tmpid })
-    .then((res) => {
-      inputWeight.value = res.data;
-    })
-    .catch((e) => {
-      alert("error" + e);
-    });
-} catch (e) {
-  console.log(e);
-}
-
 const lisenceView = ref(pl.getUserLisence(tmpid));
 const lisenceViewCalc = ref(pl.getUserLisenceCalc(tmpid));
 
@@ -150,43 +141,55 @@ pdfLists.value.forEach(function (val) {
 });
 const registButton = ref<boolean>(true);
 const done = ref(0);
-// 編集用データ取得
-if (editid) {
-  let tmp = {
-    id: editid,
-    user_id: tmpid,
-  };
-  errorTab1.value = 0;
-  errorTab2.value = 0;
-  registButton.value = false;
-  try {
-    TestApiService.getTestEditData(tmp).then((res) => {
-      done.value = res.data.done;
-      (inputData.value as inputDataType) = testAdd().testEdit(
-        inputData.value,
-        res
-      );
-      res.data.testpdf.forEach(function (val: testpdfType) {
-        inputPDf.value[val.pdf_id] = {
-          key: val.pdf_id,
-          text: "",
-          value: true,
-        };
+
+onMounted(async () => {
+  // 編集用データ取得
+  if (editid) {
+    let tmp = {
+      id: editid,
+      user_id: tmpid,
+    };
+    errorTab1.value = 0;
+    errorTab2.value = 0;
+    registButton.value = false;
+    try {
+      TestApiService.getTestEditData(tmp).then((res) => {
+        done.value = res.data.done;
+        (inputData.value as inputDataType) = testAdd().testEdit(
+          inputData.value,
+          res
+        );
+        res.data.testpdf.forEach(function (val: testpdfType) {
+          inputPDf.value[val.pdf_id] = {
+            key: val.pdf_id,
+            text: "",
+            value: true,
+          };
+        });
+        // 各パーツ
+        applyTestParts(inputTestPart, res.data.testparts);
       });
-      if (res.data.testparts.PFS != undefined) {
-        (inputTestPart.value.PFS as inputDataPartsType) =
-          testPartsAdd().testPartsEdit(inputTestPart.value.PFS, res, "PFS");
-      }
-    });
-  } catch (e) {
-    alert("editdata error");
-  } finally {
+    } catch (e) {
+      alert("editdata error");
+    } finally {
+      isLoading.value = false;
+    }
+  } else {
     isLoading.value = false;
   }
-} else {
-  isLoading.value = false;
-}
 
+  try {
+    WeightApiService.getWeightMaster({ id: tmpid, partner_id: partner_id })
+      .then((res) => {
+        inputWeight.value = res.data;
+      })
+      .catch((e) => {
+        alert("error" + e);
+      });
+  } catch (e) {
+    console.log(e);
+  }
+});
 watch(tab, (newTab) => {
   if (newTab === 0) {
     onBlurButton();
@@ -231,7 +234,7 @@ const onBlurButton = () => {
 };
 
 // パートナー・顧客企業の取得
-const partner_id = user.getSession("partner_id");
+
 const partnerDetail = ref();
 const customerDetail = ref();
 pl.getPartnerDetail(partner_id, "partner").then((res) => {
@@ -288,7 +291,6 @@ const alertFlag = ref(false);
  */
 const onClick = () => {
   alertFlag.value = false;
-  console.log(inputData.value);
   let tmp = {
     partner_id: partner_id,
     customer_id: tmpid,
@@ -332,7 +334,7 @@ const onClick = () => {
 
 const onEditClick = () => {
   alertFlag.value = false;
-  console.log(inputPDf.value);
+  //  console.log(inputPDf.value);
   let tmp = {
     partner_id: partner_id,
     customer_id: tmpid,
@@ -394,14 +396,14 @@ const edittingString = (type: boolean) => {
 const pagemove = () => {
   router.push({ name: "testLists", params: { id: tmpid } });
 };
-const inputWeightMasterString = ref();
-const setInputWeight = (e: string, type: string) => {
+
+const setInputWeight = (e: string | number | null, type: string) => {
   const result = inputWeight.value.find(
     (item: { id: number; name: string; created_at: string; date: string }) =>
       item.id === Number(e)
   );
 
-  inputWeightMasterString.value = result && result.name ? result.name : "";
+  //inputWeightMasterString.value = result && result.name ? result.name : "";
   if (result && result?.id) {
     WeightApiService.getWeightMasterDetail({
       weightid: result.id,
@@ -417,6 +419,17 @@ const setInputWeight = (e: string, type: string) => {
           (inputTestPart.value.PFS as any)["weight" + i] = data;
         }
       }
+      if (type === "BA-J3") {
+        inputTestPart.value.BAJ3.weight = [];
+        for (let i = 1; i <= 14; i++) {
+          let data = res.data[`wt${i}`];
+          if (i == 13) data = res.data.ave;
+          if (i == 14) data = res.data.hensa;
+          (inputTestPart.value.BAJ3.weight as any)[i] = data;
+          (inputTestPart.value.BAJ3 as any)["weight" + i] = data;
+        }
+      }
+      inputWeightMasterString.value[type] = result.name;
     });
   }
 };
@@ -706,20 +719,17 @@ const setInputWeight = (e: string, type: string) => {
             "
           ></addSwitchForm>
           <addLoginForm
+            v-model="inputData.loginflag"
             title="ログイン説明文"
             :label="edittingString(inputData.loginflag)"
             color="bg-lime"
             variant="outlined"
-            :loginModel="inputData.loginflag"
             :value="inputData.logintext"
-            :hideDetails="`auto`"
-            :disabled="inputData.loginflag ? false : true"
+            hideDetails="auto"
+            :disabled="!inputData.loginflag"
             :height="15"
-            @onClick="
-              (e) => (inputData.loginflag = inputData.loginflag ? false : true)
-            "
             @onBlur="(e) => (inputData.logintext = e)"
-          ></addLoginForm>
+          />
           <addMovieForm
             title="動画サムネイルの表示"
             color="bg-lime"
@@ -748,14 +758,10 @@ const setInputWeight = (e: string, type: string) => {
                   :weightModel="inputTestPart.PFS.weightFlag"
                   :dataDetail="inputTestPart.PFS"
                   :inputWeight="inputWeight"
-                  :inputWeightMasterString="inputWeightMasterString"
+                  :inputWeightMasterString="inputWeightMasterString[val.code]"
                   :element="elements"
-                  @onThree="
-                    (e) => (inputTestPart.PFS.threeflag = e ? false : true)
-                  "
-                  @onWeightFlag="
-                    (e) => (inputTestPart.PFS.weightFlag = e ? false : true)
-                  "
+                  @onThree="(e) => (inputTestPart.PFS.threeflag = e)"
+                  @onWeightFlag="(e) => (inputTestPart.PFS.weightFlag = e)"
                   @onWeight="(e) => (inputTestPart.PFS.weight = e)"
                   @onStatus="
                     (e) => ((inputTestPart.PFS.status = e), onBlurButton1())
@@ -763,7 +769,8 @@ const setInputWeight = (e: string, type: string) => {
                   @setInputWeight="(e) => setInputWeight(e, val.code)"
                 ></CardViewPFS>
                 <CardViewBAJ3
-                  v-show="(inputData.testparts as any)[val.code]?.id && editid || editid === 0 ? true:false"
+                  :pagename="route.name"
+                  :editid="editid"
                   class="mt-3"
                   v-if="val.code == 'BA-J3'"
                   :title="val.jp"
@@ -771,17 +778,16 @@ const setInputWeight = (e: string, type: string) => {
                   :model="inputTestPart.BAJ3.threeflag"
                   :weightModel="inputTestPart.BAJ3.weightFlag"
                   :dataDetail="inputTestPart.BAJ3"
+                  :inputWeight="inputWeight"
+                  :inputWeightMasterString="inputWeightMasterString[val.code]"
                   :element="elements"
-                  @onThree="
-                    (e) => (inputTestPart.BAJ3.threeflag = e ? false : true)
-                  "
-                  @onWeightFlag="
-                    (e) => (inputTestPart.BAJ3.weightFlag = e ? false : true)
-                  "
+                  @onThree="(e) => (inputTestPart.BAJ3.threeflag = e)"
+                  @onWeightFlag="(e) => (inputTestPart.BAJ3.weightFlag = e)"
                   @onWeight="(e) => (inputTestPart.BAJ3.weight = e)"
                   @onStatus="
                     (e) => ((inputTestPart.BAJ3.status = e), onBlurButton1())
                   "
+                  @setInputWeight="(e) => setInputWeight(e, val.code)"
                 ></CardViewBAJ3>
               </div>
             </v-col>

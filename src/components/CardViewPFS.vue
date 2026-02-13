@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { defineProps, withDefaults, defineEmits, ref } from "vue";
-import AddSwitchForm from "./addSwitchForm.vue";
+import { ref } from "vue";
+import AddSwitchForm from "@/components/addSwitchForm.vue";
 import TextField from "@/components/TextFieldView.vue";
 import ButtonView from "./ButtonView.vue";
 import { settingStatus } from "@/plugins/const";
@@ -37,7 +37,7 @@ const emit = defineEmits<{
   (e: "onWeightFlag", value: boolean): void;
   (e: "onWeight", value: object): void;
   (e: "onStatus", value: boolean): void;
-  (e: "setInputWeight", value: string): void;
+  (e: "setInputWeight", value: string | number | null): void;
 }>();
 
 const inputData: inputObj = {};
@@ -65,7 +65,7 @@ const onClick = (status: number) => {
 if (props.editid) {
   onClick(1);
 }
-const setInputWeight = (ev: string) => {
+const setInputWeight = (ev: string | number | null) => {
   emit("setInputWeight", ev);
 };
 </script>

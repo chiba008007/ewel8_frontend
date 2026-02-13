@@ -22,13 +22,12 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: "onClick", value: boolean, type: string): void;
+  (e: "onClick", value: boolean): void;
 }>();
-
 const switchValue = computed({
   get: () => Boolean(props.model),
   set: (v) => {
-    emit("onClick", v, props.type ?? "");
+    emit("onClick", v);
   },
 });
 </script>
@@ -51,7 +50,6 @@ const switchValue = computed({
         :title="props.title"
         :label="props.label"
         :density="props.density"
-        :model="props.model"
         :type="props.type"
         v-model="switchValue"
       ></ComponentSwitch>

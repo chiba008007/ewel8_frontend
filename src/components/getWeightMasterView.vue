@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from "vue";
 import SelectFieldView from "./SelectFieldView.vue";
 const emit = defineEmits<{
-  (e: "onChange", value: string): void;
-  // (e: "update", value: string): void;
+  (e: "onChange", value: string | number | null): void;
 }>();
 
 const props = defineProps<{

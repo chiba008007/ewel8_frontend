@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, withDefaults, defineEmits, ref } from "vue";
+import { ref, computed } from "vue";
 import AddSwitchForm from "./addSwitchForm.vue";
 import TextField from "@/components/TextFieldView.vue";
 import ButtonView from "./ButtonView.vue";
@@ -10,6 +10,7 @@ const settingString = (type: boolean) => {
 };
 
 interface Props {
+  pagename?: string | symbol | undefined;
   title?: string;
   editid?: number | string | string[];
   testcount?: number | string;
@@ -36,6 +37,7 @@ const emit = defineEmits<{
   (e: "onWeightFlag", value: boolean): void;
   (e: "onWeight", value: object): void;
   (e: "onStatus", value: boolean): void;
+  (e: "setInputWeight", value: string | number | null): void;
 }>();
 
 const inputData: inputObj = {};
@@ -44,27 +46,24 @@ const onkeyup = (e: string, i: number) => {
   inputData[n] = e;
   emit("onWeight", inputData);
 };
-const bgcolor = ref({
-  0: "bg-success",
-  1: "",
+
+const bgcolor = computed(() => {
+  const status = props.dataDetail?.status;
+
+  return {
+    0: status ? "" : "bg-success",
+    1: status ? "bg-success" : "",
+  };
 });
 const onClick = (status: number) => {
-  if (status === 0) {
-    bgcolor.value[0] = "bg-success";
-    bgcolor.value[1] = "";
-  }
-  if (status === 1) {
-    bgcolor.value[0] = "";
-    bgcolor.value[1] = "bg-success";
-  }
-  let bool = status ? true : false;
-  emit("onStatus", bool);
+  emit("onStatus", Boolean(status));
 };
+
 if (props.editid) {
   onClick(1);
 }
-const setInputWeight = (ev: string) => {
-  alert(ev);
+const setInputWeight = (ev: string | number | null) => {
+  emit("setInputWeight", ev);
 };
 </script>
 <template>
@@ -76,16 +75,19 @@ const setInputWeight = (ev: string) => {
         :variant="`outlined`"
         :class="bgcolor[0]"
         @onClick="onClick(0)"
-        :readonly="props.editid ? true : false"
+        :readonly="pagename != 'testCopy' && props.editid ? true : false"
       ></ButtonView>
       <ButtonView
         text="利用する"
         :class="bgcolor[1]"
         :variant="`outlined`"
         @onClick="onClick(1)"
-        :readonly="props.editid ? true : false"
+        :readonly="pagename != 'testCopy' && props.editid ? true : false"
       ></ButtonView>
-      <p v-show="props.editid ? true : false" class="text-red">
+      <p
+        v-show="pagename != 'testCopy' && props.editid ? true : false"
+        class="text-red"
+      >
         ※ データ更新時は変更不可となります。
       </p>
     </v-card-actions>
@@ -120,7 +122,7 @@ const setInputWeight = (ev: string) => {
         </v-col>
       </v-row>
 
-      <v-row no-gutters>
+      <v-row no-gutters v-show="props.editid === 0">
         <v-col cols="12">
           重みマスタからデータ取得<br />
           <getWeightMasterView
