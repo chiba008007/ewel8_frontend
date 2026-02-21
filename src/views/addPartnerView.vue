@@ -16,7 +16,12 @@ import { usePrefs } from "@/plugins/usePrefs";
 const { prefs } = usePrefs();
 // ライセンス名
 import { useLicenses } from "@/plugins/useLicenses";
-const { licenses } = useLicenses();
+const { licenses, fetchLicenses } = useLicenses();
+
+onMounted(async () => {
+  await fetchLicenses();
+});
+
 // 要素名
 import { useElements } from "@/plugins/useElements";
 const { elements } = useElements();
