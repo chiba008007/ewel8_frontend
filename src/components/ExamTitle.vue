@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, withDefaults } from "vue";
-import { defineProps } from "vue";
+import { ref } from "vue";
 import ComponentImg from "@/components/imgView.vue";
 import ExamApiService from "@/services/ExamApiService";
 import { useRouter } from "vue-router";

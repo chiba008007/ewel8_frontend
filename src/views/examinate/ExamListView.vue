@@ -5,6 +5,7 @@ import ExamTitle from "@/components/ExamTitle.vue";
 import ExamApiService from "@/services/ExamApiService";
 import { useRouter } from "vue-router";
 import { pdfDownload } from "@/plugins/pdf";
+import { openTest } from "@/composables/useOpenTest";
 
 const tab = ref("one");
 const examList = ref();
@@ -79,20 +80,6 @@ const setExamData = (e: object | any) => {
   examlistdownloadflag.value = e.examlistdownloadflag;
   enqflag.value = e.enqflag;
 };
-const openTest = (code: string, testparts_id: number) => {
-  let name = "";
-  if (code == "PFS") name = "examPfsGuide";
-  if (name == "") alert("error");
-  router
-    .push({
-      name: name,
-      params: { testparts_id: testparts_id },
-      query: { k: k },
-    })
-    .then(() => {
-      window.location.reload();
-    });
-};
 
 const onDownload = () => {
   ExamApiService.downloadExam({}).then(function (rlt) {
@@ -140,7 +127,7 @@ const enabledTest = (e: boolean) => {
             class="w-100 mb-2"
             :status="exam.examstatus ? 1 : ''"
             :disabled="exam.examstatus ? true : false"
-            @onClick="openTest(exam.code, exam.testparts_id)"
+            @onClick="openTest(router, exam.code, exam.testparts_id, k)"
           ></ComponentButton>
         </div>
 

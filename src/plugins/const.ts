@@ -285,6 +285,7 @@ export const BILLSENDFROM = {
 // 検査コード
 export const EXAMS = {
   PFS: "PFS",
+  BAJ3: "BAJ3",
 };
 
 // 表示範囲

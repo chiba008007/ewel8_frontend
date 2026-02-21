@@ -45,6 +45,9 @@ import testExamListView from "../views/testExamListView.vue";
 import testExamEditView from "../views/testExamEditView.vue";
 import csvuploadView from "../views/csvuploadView.vue";
 import pdfdownloadView from "../views/pdfdownloadView.vue";
+import ExamBaj3Guide from "../views/examinate/BAJ3/ExamGuide.vue";
+import ExamBaj3Take from "../views/examinate/BAJ3/ExamTake.vue";
+import ExamBaj3TakeFin from "../views/examinate/BAJ3/ExamTakeFin.vue";
 import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
 import ExamPfsTake from "../views/examinate/PFS/ExamTake.vue";
 import ExamPfsTakeFin from "../views/examinate/PFS/ExamTakeFin.vue";
@@ -496,6 +499,22 @@ const routes: Array<RouteRecordRaw> = [
     path: "/exam/list",
     name: "examList",
     component: ExamListView,
+  },
+  // BAJ3検査
+  {
+    path: "/exam/baj3/:testparts_id/guide",
+    name: "examBaj3Guide",
+    component: ExamBaj3Guide,
+  },
+  {
+    path: "/exam/baj3/:testparts_id/page/:page/take",
+    name: "examBaj3Take",
+    component: ExamBaj3Take,
+  },
+  {
+    path: "/exam/baj3/:testparts_id/page/fin/take",
+    name: "ExamBaj3TakeFin",
+    component: ExamBaj3TakeFin,
   },
   // PFS検査
   {

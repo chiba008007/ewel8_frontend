@@ -3,20 +3,20 @@ import httpAuth from "@/authExam-common";
 import axios, { AxiosInstance } from "axios";
 import { d_Path } from "@/plugins/const";
 
-class ExamApiService {
-  async getPFS(data: object) {
+class ExamBAJ3ApiService {
+  async getBAJ3(data: object) {
     try {
-      return await httpAuth.post("/api/exam/getPFS", data);
+      return await httpAuth.post("/api/exam/getBAJ3", data);
     } catch (e) {
       return false;
       //location.href = "/exam/error";
     }
   }
-  setPFS(data: object) {
-    return httpAuth.post("/api/exam/setPFS", data);
+  setBAJ3(data: object) {
+    return httpAuth.post("/api/exam/setBAJ3", data);
   }
-  editPFS(data: object) {
-    return httpAuth.post("/api/exam/editPFS", data);
+  editBAJ3(data: object) {
+    return httpAuth.post("/api/exam/editBAJ3", data);
   }
   getExam(editData: object) {
     return http.post("/api/exam/getExam", editData);
@@ -71,4 +71,4 @@ class ExamApiService {
   }
 }
 
-export default new ExamApiService();
+export default new ExamBAJ3ApiService();

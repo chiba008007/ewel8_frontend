@@ -62,6 +62,15 @@ const tab = ref(0);
 const loadingFlag = ref(true);
 const inputWeightMasterString = ref<Record<string, string>>({});
 const partner_id = user.getSession("partner_id");
+
+interface TestPart {
+  id?: number;
+  test_id?: number;
+  code?: string;
+  threeflag?: number;
+  weightflag?: number;
+  status?: number;
+}
 const inputData = ref({
   testname: "",
   testcount: 0,
@@ -91,7 +100,7 @@ const inputData = ref({
   create_start_day: 0,
   create_start_time: 0,
   create_start_minute: 0,
-  testparts: { PDF: {}, BAJ3: {} },
+  testparts: {} as Record<string, TestPart>,
 });
 
 const initialPartStatus: inputDataPartsType = {
@@ -749,9 +758,13 @@ const setInputWeight = (e: string | number | null, type: string) => {
                 <CardViewPFS
                   :pagename="route.name"
                   :editid="editid"
-                  v-show="(inputData.testparts as any)[val.code]?.id && editid || editid === 0 ? true:false"
                   class="mt-3"
-                  v-if="val.code == 'PFS'"
+                  v-if="
+                    val.code === 'PFS' &&
+                    (!editid ||
+                      inputData.testparts?.[val.code.replace('-', '')]?.id !=
+                        null)
+                  "
                   :title="val.jp"
                   :testcount="inputData.testcount"
                   :model="inputTestPart.PFS.threeflag"
@@ -772,7 +785,12 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   :pagename="route.name"
                   :editid="editid"
                   class="mt-3"
-                  v-if="val.code == 'BA-J3'"
+                  v-if="
+                    val.code === 'BA-J3' &&
+                    (!editid ||
+                      inputData.testparts?.[val.code.replace('-', '')]?.id !=
+                        null)
+                  "
                   :title="val.jp"
                   :testcount="inputData.testcount"
                   :model="inputTestPart.BAJ3.threeflag"

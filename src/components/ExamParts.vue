@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, withDefaults } from "vue";
-import { defineProps } from "vue";
+import { ref } from "vue";
 
 import ExamApiService from "@/services/ExamApiService";
 import { useRoute, useRouter } from "vue-router";
