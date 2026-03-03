@@ -87,7 +87,6 @@ const onBlurButton = async () => {
 
   // 共通: true または "" を OK とみなす
   const isValid = (r: unknown) => r === true || r === "";
-  console.log(inputData.value);
   // それぞれの結果を取得（非同期含む）
   const results = await Promise.all([
     checkLoginID(inputData.value.login_id, false), // true | string | Promise
@@ -179,7 +178,6 @@ const addRegist = () => {
     tanto_name2: inputData.value.tanto_name,
     tanto_address2: inputData.value.tanto_address2,
   };
-  console.log(tmp);
   UserApiService.setCustomerAdd(tmp)
     .then((res) => {
       successAlertFlag.value = true;
@@ -290,7 +288,7 @@ const pagemove = () => {
         :items="prefs"
         :value="inputData.preftext ?? ``"
         type="pref"
-        @onChange="(e) => (inputData.preftext = e)"
+        @onChange="(e) => (inputData.preftext = String(e))"
       ></addPrefCodeForm>
       <addPartnerForm
         title="住所"

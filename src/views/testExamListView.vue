@@ -147,6 +147,7 @@ onMounted(async () => {
     pdfendday.value = rlt.data.pdfendday;
     pdfuseflag.value = rlt.data.pdfuseflag;
     TestApiService.getExam(tmp).then(function (rlt) {
+      console.log(rlt);
       detail.value = rlt;
 
       // パスフラグを変換してからリストに設定
@@ -470,6 +471,11 @@ const onPdfDownload = () => {
               ></ExamPfsView>
               <ExamBAJ3View
                 v-if="headers.some((item) => item.title === 'BAJ3')"
+                :starttime="((item as any)['pfs']).starttime"
+                :endtime="((item as any)['pfs']).endtime"
+                :id="((item as any)['pfs'] ).id"
+                :level="((item as any)['pfs'] ).level"
+                :lv="((item as any)['pfs'] ).lv"
                 @onClick="(e:any) => baj3Dialog(e)"
               ></ExamBAJ3View>
               <td class="text-xs-right text-center d-flex pt-3 justify-center">

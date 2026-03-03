@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { withDefaults, defineProps, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import ComponentButton from "@/components/ButtonView.vue";
 import ExcelApiService from "@/services/ExcelApiService";

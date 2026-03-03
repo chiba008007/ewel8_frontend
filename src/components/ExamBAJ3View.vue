@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from "vue";
-import UserApiService from "@/services/UserApiService";
-import { useRouter } from "vue-router";
 import ButtonView from "./ButtonView.vue";
 
 const emit = defineEmits<{
