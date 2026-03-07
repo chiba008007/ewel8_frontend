@@ -18,6 +18,7 @@ import AlertView from "@/components/AlertView.vue";
 import TextFieldView from "@/components/TextFieldView.vue";
 import DateView from "@/components/DateView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
+import { usePfsDialog } from "@/plugins/examListDialog";
 
 const pdfcode = ref();
 const onPDfOutput = (id: number, code: string, birth: string) => {
@@ -243,45 +244,25 @@ const applyFilter = () => {
   });
 };
 const tableHeight = ref(100);
-const dialogFlag = ref(false);
-const pfsDialogText = ref({
-  text1: "",
-  text2: "",
-  text3: "",
-  text4: "",
-  text5: "",
-});
-const pfsDialog = (e: number) => {
-  let tmp = {
-    exam_id: e,
-    testparts_id: params.testid,
-  };
-  TestApiService.getPFSTestDetail(tmp).then((rlt) => {
-    pfsDialogText.value.text1 = rlt.data[0];
-    pfsDialogText.value.text2 = rlt.data[1];
-    pfsDialogText.value.text3 = rlt.data[2];
-    pfsDialogText.value.text4 = rlt.data[3];
-    pfsDialogText.value.text5 = rlt.data[4];
-  });
-  dialogFlag.value = true;
-};
-const baj3Dialog = (e: number) => {
-  alert("BAJ3");
-  /*
-  let tmp = {
-    exam_id: e,
-    testparts_id: params.testid,
-  };
-  TestApiService.getPFSTestDetail(tmp).then((rlt) => {
-    pfsDialogText.value.text1 = rlt.data[0];
-    pfsDialogText.value.text2 = rlt.data[1];
-    pfsDialogText.value.text3 = rlt.data[2];
-    pfsDialogText.value.text4 = rlt.data[3];
-    pfsDialogText.value.text5 = rlt.data[4];
-  });
-  dialogFlag.value = true;
-  */
-};
+const { pfsDialog, baj3Dialog, dialogFlag, pfsDialogText } = usePfsDialog();
+
+// const baj3Dialog = (e: number) => {
+//   alert("BAJ3");
+//   /*
+//   let tmp = {
+//     exam_id: e,
+//     testparts_id: params.testid,
+//   };
+//   TestApiService.getPFSTestDetail(tmp).then((rlt) => {
+//     pfsDialogText.value.text1 = rlt.data[0];
+//     pfsDialogText.value.text2 = rlt.data[1];
+//     pfsDialogText.value.text3 = rlt.data[2];
+//     pfsDialogText.value.text4 = rlt.data[3];
+//     pfsDialogText.value.text5 = rlt.data[4];
+//   });
+//   dialogFlag.value = true;
+//   */
+// };
 
 const onResize = () => {
   const wHeight = window.innerHeight;
@@ -476,7 +457,7 @@ const onPdfDownload = () => {
                 :id="((item as any)['pfs'] ).id"
                 :level="((item as any)['pfs'] ).level"
                 :lv="((item as any)['pfs'] ).lv"
-                @onClick="(e:any) => baj3Dialog(e)"
+                @onClick="baj3Dialog((item as any)['id'])"
               ></ExamBAJ3View>
               <td class="text-xs-right text-center d-flex pt-3 justify-center">
                 <ButtonView
