@@ -452,11 +452,11 @@ const onPdfDownload = () => {
               ></ExamPfsView>
               <ExamBAJ3View
                 v-if="headers.some((item) => item.title === 'BAJ3')"
-                :starttime="((item as any)['pfs']).starttime"
-                :endtime="((item as any)['pfs']).endtime"
-                :id="((item as any)['pfs'] ).id"
-                :level="((item as any)['pfs'] ).level"
-                :lv="((item as any)['pfs'] ).lv"
+                :starttime="((item as any)['baj3']).starttime"
+                :endtime="((item as any)['baj3']).endtime"
+                :id="((item as any)['baj3'] ).id"
+                :level="((item as any)['baj3'] ).level"
+                :lv="((item as any)['baj3'] ).lv"
                 @onClick="baj3Dialog((item as any)['id'])"
               ></ExamBAJ3View>
               <td class="text-xs-right text-center d-flex pt-3 justify-center">
