@@ -17,6 +17,7 @@ export const useTestParts = () => {
         ...part,
         threeflag: Boolean(part.threeflag),
         weightFlag: Boolean(part.weightflag),
+        examPersonName: part.examPersonName,
         status: Boolean(part.status),
       };
     });

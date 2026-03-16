@@ -18,4 +18,5 @@ export interface inputDataPartsType {
   weight13: string | undefined | null;
   weight14: string | undefined | null;
   weight: number | string | null | undefined | object;
+  examPersonName: string | null;
 }

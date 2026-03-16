@@ -1,7 +1,6 @@
 import { inputDataType } from "@/types";
 export default function () {
   const testEdit = (inputData: inputDataType, res: any) => {
-    console.log(res);
     inputData.testname = res.data.test.testname;
     inputData.testcount = res.data.test.testcount;
     inputData.nameuseflag = res.data.test.nameuseflag ? true : false;

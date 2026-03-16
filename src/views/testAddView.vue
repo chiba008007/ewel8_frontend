@@ -31,12 +31,12 @@ import {
 } from "../plugins/validate";
 import CardViewPFS from "@/components/CardViewPFS.vue";
 import CardViewBAJ3 from "@/components/CardViewBAJ3.vue";
+import CardViewVFJ from "@/components/CardViewVFJ.vue";
 import ElementApiService from "@/services/ElementApiService";
 import AlertView from "@/components/AlertView.vue";
 import pankuzuMain from "@/components/pankuzuMain.vue";
 import pageLicense from "@/plugins/pageLicense";
 import dateChecked from "@/plugins/dateChecked";
-import testPartsAdd from "@/plugins/testPartsAdd";
 import testAdd from "@/plugins/testAdd";
 import { inputDataPartsType, inputDataType, testpdfType } from "@/types";
 import ProgressView from "@/components/ProgressView.vue";
@@ -100,6 +100,7 @@ const inputData = ref({
   create_start_day: 0,
   create_start_time: 0,
   create_start_minute: 0,
+  examPersonName: "",
   testparts: {} as Record<string, TestPart>,
 });
 
@@ -123,14 +124,17 @@ const initialPartStatus: inputDataPartsType = {
   weight13: null,
   weight14: null,
   weight: null,
+  examPersonName: null,
 };
 
 const inputTestPart = ref<{
   PFS: inputDataPartsType;
   BAJ3: inputDataPartsType;
+  VFJ: inputDataPartsType;
 }>({
   PFS: { ...initialPartStatus },
   BAJ3: { ...initialPartStatus },
+  VFJ: { ...initialPartStatus },
 });
 
 // 重み付けマスタ取得
@@ -807,6 +811,24 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   "
                   @setInputWeight="(e) => setInputWeight(e, val.code)"
                 ></CardViewBAJ3>
+                <CardViewVFJ
+                  :pagename="route.name"
+                  :editid="editid"
+                  :examPersonName="inputTestPart.VFJ?.examPersonName ?? ''"
+                  class="mt-3"
+                  v-if="
+                    val.code === 'VF-J' &&
+                    (!editid ||
+                      inputData.testparts?.[val.code.replace('-', '')]?.id !=
+                        null)
+                  "
+                  :title="val.jp"
+                  :testcount="inputData.testcount"
+                  @onStatus="
+                    (e) => ((inputTestPart.VFJ.status = e), onBlurButton1())
+                  "
+                  @onKeyup="(e) => (inputTestPart.VFJ.examPersonName = e)"
+                ></CardViewVFJ>
               </div>
             </v-col>
           </v-row>

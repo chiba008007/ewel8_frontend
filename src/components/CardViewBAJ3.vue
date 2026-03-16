@@ -2,9 +2,9 @@
 import { ref, computed } from "vue";
 import AddSwitchForm from "./addSwitchForm.vue";
 import TextField from "@/components/TextFieldView.vue";
-import ButtonView from "./ButtonView.vue";
 import { settingStatus } from "@/plugins/const";
 import getWeightMasterView from "./getWeightMasterView.vue";
+import CardViewHeader from "./CardViewHeader.vue";
 const settingString = (type: boolean) => {
   return type ? settingStatus[1] : settingStatus[0];
 };
@@ -68,29 +68,13 @@ const setInputWeight = (ev: string | number | null) => {
 </script>
 <template>
   <v-card class="w-100" elevation="4" variant="outlined">
-    <v-card-title class="text-h6">{{ props.title }}</v-card-title>
-    <v-card-actions>
-      <ButtonView
-        text="利用しない"
-        :variant="`outlined`"
-        :class="bgcolor[0]"
-        @onClick="onClick(0)"
-        :readonly="pagename != 'testCopy' && props.editid ? true : false"
-      ></ButtonView>
-      <ButtonView
-        text="利用する"
-        :class="bgcolor[1]"
-        :variant="`outlined`"
-        @onClick="onClick(1)"
-        :readonly="pagename != 'testCopy' && props.editid ? true : false"
-      ></ButtonView>
-      <p
-        v-show="pagename != 'testCopy' && props.editid ? true : false"
-        class="text-red"
-      >
-        ※ データ更新時は変更不可となります。
-      </p>
-    </v-card-actions>
+    <CardViewHeader
+      :title="props.title"
+      :pagename="pagename"
+      :editid="props.editid"
+      :bgcolor="bgcolor"
+      @onClick="onClick"
+    ></CardViewHeader>
     <v-card-text>
       <v-row no-gutters>
         <v-col

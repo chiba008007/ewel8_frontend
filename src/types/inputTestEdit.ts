@@ -23,4 +23,5 @@ export interface inputDataType {
   pdfendday: string;
   pdfcountflag: boolean;
   pdflimitcount: number;
+  examPersonName: string;
 }
