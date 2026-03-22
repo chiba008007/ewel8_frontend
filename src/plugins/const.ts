@@ -286,8 +286,11 @@ export const BILLSENDFROM = {
 export const EXAMS = {
   PFS: "PFS",
   BAJ3: "BAJ3",
+  VFJ: "VFJ",
 };
 
+//
+export const VFJName = "社員（または契約社員等）";
 // 表示範囲
 export const DISPLAY_TERM = [
   { id: 1, name: "全体" },

@@ -45,6 +45,9 @@ import testExamListView from "../views/testExamListView.vue";
 import testExamEditView from "../views/testExamEditView.vue";
 import csvuploadView from "../views/csvuploadView.vue";
 import pdfdownloadView from "../views/pdfdownloadView.vue";
+import ExamVfjGuide from "../views/examinate/VFJ/ExamGuide.vue";
+import ExamVFJTake from "../views/examinate/VFJ/ExamTake.vue";
+import ExamVFJTakeFin from "../views/examinate/VFJ/ExamTakeFin.vue";
 import ExamBaj3Guide from "../views/examinate/BAJ3/ExamGuide.vue";
 import ExamBaj3Take from "../views/examinate/BAJ3/ExamTake.vue";
 import ExamBaj3TakeFin from "../views/examinate/BAJ3/ExamTakeFin.vue";
@@ -499,6 +502,22 @@ const routes: Array<RouteRecordRaw> = [
     path: "/exam/list",
     name: "examList",
     component: ExamListView,
+  },
+  // VFJ検査
+  {
+    path: "/exam/vfj/:testparts_id/guide",
+    name: "examVfjGuide",
+    component: ExamVfjGuide,
+  },
+  {
+    path: "/exam/vfj/:testparts_id/page/:page/take",
+    name: "examVFJTake",
+    component: ExamVFJTake,
+  },
+  {
+    path: "/exam/vfj/:testparts_id/page/fin/take",
+    name: "ExamVFJTakeFin",
+    component: ExamVFJTakeFin,
   },
   // BAJ3検査
   {

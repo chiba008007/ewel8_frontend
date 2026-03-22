@@ -8,6 +8,7 @@ import {
   displayStatus,
   settingStatus,
   edittingStatus,
+  VFJName,
 } from "@/plugins/const";
 
 import TestMenu from "../components/TestMenu.vue";
@@ -100,7 +101,7 @@ const inputData = ref({
   create_start_day: 0,
   create_start_time: 0,
   create_start_minute: 0,
-  examPersonName: "",
+  examPersonName: VFJName,
   testparts: {} as Record<string, TestPart>,
 });
 
@@ -335,7 +336,9 @@ const onClick = () => {
     parts: [inputTestPart.value],
     status: 1,
   };
-
+  if (!inputTestPart.value.VFJ.examPersonName) {
+    inputTestPart.value.VFJ.examPersonName = VFJName;
+  }
   try {
     TestApiService.setTest(tmp).then((res) => {
       alertFlag.value = true;
@@ -379,6 +382,9 @@ const onEditClick = () => {
     pdf: inputPDf.value,
     parts: [inputTestPart.value],
   };
+  if (!inputTestPart.value.VFJ.examPersonName) {
+    inputTestPart.value.VFJ.examPersonName = VFJName;
+  }
   try {
     TestApiService.editTest(tmp).then((res) => {
       alertFlag.value = true;
@@ -814,7 +820,7 @@ const setInputWeight = (e: string | number | null, type: string) => {
                 <CardViewVFJ
                   :pagename="route.name"
                   :editid="editid"
-                  :examPersonName="inputTestPart.VFJ?.examPersonName ?? ''"
+                  :examPersonName="inputTestPart.VFJ?.examPersonName ?? VFJName"
                   class="mt-3"
                   v-if="
                     val.code === 'VF-J' &&
@@ -827,7 +833,9 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   @onStatus="
                     (e) => ((inputTestPart.VFJ.status = e), onBlurButton1())
                   "
-                  @onKeyup="(e) => (inputTestPart.VFJ.examPersonName = e)"
+                  @onKeyup="
+                    (e) => (inputTestPart.VFJ.examPersonName = e ?? VFJName)
+                  "
                 ></CardViewVFJ>
               </div>
             </v-col>

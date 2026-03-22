@@ -1,12 +1,12 @@
 import { useRouter } from "vue-router";
 import { useStoreUser } from "@/store/user";
-import { startExam } from "@/services/examPfsService";
+import { startExam } from "@/services/VFJ/examVFJService";
 import { recordExamLog } from "@/services/examLogService";
-import { ExamBasePayload } from "@/types/examPfs";
-import ExamApiService from "@/services/ExamApiService";
+import { ExamBasePayload } from "@/types/examVFJ";
+import ExamVFJApiService from "@/services/VFJ/ExamVFJApiService";
 import type { LocationQueryValue } from "vue-router";
 
-export const useExamPfs = () => {
+export const useExamVFJ = () => {
   const router = useRouter();
   const user = useStoreUser();
 
@@ -17,7 +17,7 @@ export const useExamPfs = () => {
       ...payload,
       tokenExam: user.userTokenExam,
     };
-    if (payload.page === 1 || payload.page === 5) {
+    if (payload.page === 1 || payload.page === 7) {
       await recordExamLog({
         ...fullPayload,
         status: payload.page === 1 ? 1 : 2,
@@ -28,7 +28,7 @@ export const useExamPfs = () => {
     if (rlt.data !== "success") return false;
 
     await router.replace({
-      name: payload.page == 5 ? "ExamPfsTakeFin" : "examPfsTake",
+      name: payload.page == 8 ? "ExamVFJTakeFin" : "examVFJTake",
       params: {
         testparts_id: payload.testparts_id,
         page: payload.page,
@@ -43,7 +43,7 @@ export const useExamPfs = () => {
     testparts_id: number | string[] | string,
     k: string | LocationQueryValue | LocationQueryValue[]
   ): Promise<void> => {
-    const rlt = await ExamApiService.checkStatus({ testparts_id });
+    const rlt = await ExamVFJApiService.checkStatus({ testparts_id });
 
     if (rlt.data) {
       await router.push({
