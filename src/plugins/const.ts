@@ -287,6 +287,7 @@ export const EXAMS = {
   PFS: "PFS",
   BAJ3: "BAJ3",
   VFJ: "VFJ",
+  BEA: "BEA",
 };
 
 //
@@ -308,3 +309,6 @@ export const PDF_TYPE = {
   2: "実行中",
   3: "実行後",
 };
+
+// テスト設定時間
+export const TIMELIMITLINE = [10, 20, 30, 40, 50, 60, 70, 80, 90];

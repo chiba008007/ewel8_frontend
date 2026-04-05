@@ -8,6 +8,7 @@ import csvDownload from "@/components/csvDownload.vue";
 import excelDownload from "@/components/excelDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
 import ExamBAJ3View from "@/components/ExamBAJ3View.vue";
+import ExamBEAView from "@/components/ExamBEAView.vue";
 import { passArray, examStatusArray } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
@@ -97,7 +98,7 @@ TestApiService.getTestTableTh(tmp)
       throw new Error("データが取得できませんでした");
     }
     testCount.value = rlt.data.length;
-    // tableWidth.value = 1600 + 200 * testCount.value + "px";
+
     rlt.data.forEach((x: typeof typed) => {
       if (x.code === "PFS" || x.code === "BAJ3") {
         headers.value.push({
@@ -106,6 +107,15 @@ TestApiService.getTestTableTh(tmp)
           key: x.code,
           cols: 3, //pfs用
           row: 1, //pfs用
+        });
+      }
+      if (x.code === "BEA") {
+        headers.value.push({
+          title: x.code,
+          sortable: false,
+          key: x.code,
+          cols: 1,
+          row: 1,
         });
       }
     });
@@ -459,6 +469,12 @@ const onPdfDownload = () => {
                 :lv="((item as any)['baj3'] ).lv"
                 @onClick="baj3Dialog((item as any)['id'])"
               ></ExamBAJ3View>
+              <ExamBEAView
+                v-if="headers.some((item) => item.title === 'BEA')"
+                :starttime="((item as any)['bea']).starttime"
+                :endtime="((item as any)['bea']).endtime"
+                :id="((item as any)['bea'] ).id"
+              ></ExamBEAView>
               <td class="text-xs-right text-center d-flex pt-3 justify-center">
                 <ButtonView
                   text="更新"

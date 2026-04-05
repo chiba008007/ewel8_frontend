@@ -33,6 +33,7 @@ import {
 import CardViewPFS from "@/components/CardViewPFS.vue";
 import CardViewBAJ3 from "@/components/CardViewBAJ3.vue";
 import CardViewVFJ from "@/components/CardViewVFJ.vue";
+import CardViewBEA from "@/components/CardViewBEA.vue";
 import ElementApiService from "@/services/ElementApiService";
 import AlertView from "@/components/AlertView.vue";
 import pankuzuMain from "@/components/pankuzuMain.vue";
@@ -108,8 +109,8 @@ const inputData = ref({
 const initialPartStatus: inputDataPartsType = {
   threeflag: false,
   weightFlag: false,
+  timelimit: 60,
   status: false,
-  timelimit: null,
   weight1: null,
   weight2: null,
   weight3: null,
@@ -132,10 +133,12 @@ const inputTestPart = ref<{
   PFS: inputDataPartsType;
   BAJ3: inputDataPartsType;
   VFJ: inputDataPartsType;
+  BEA: inputDataPartsType;
 }>({
   PFS: { ...initialPartStatus },
   BAJ3: { ...initialPartStatus },
   VFJ: { ...initialPartStatus },
+  BEA: { ...initialPartStatus },
 });
 
 // 重み付けマスタ取得
@@ -341,6 +344,7 @@ const onClick = () => {
   }
   try {
     TestApiService.setTest(tmp).then((res) => {
+      console.log(res);
       alertFlag.value = true;
     });
   } catch (e) {
@@ -385,6 +389,7 @@ const onEditClick = () => {
   if (!inputTestPart.value.VFJ.examPersonName) {
     inputTestPart.value.VFJ.examPersonName = VFJName;
   }
+
   try {
     TestApiService.editTest(tmp).then((res) => {
       alertFlag.value = true;
@@ -837,6 +842,29 @@ const setInputWeight = (e: string | number | null, type: string) => {
                     (e) => (inputTestPart.VFJ.examPersonName = e ?? VFJName)
                   "
                 ></CardViewVFJ>
+                <CardViewBEA
+                  :pagename="route.name"
+                  :editid="editid"
+                  class="mt-3"
+                  v-if="
+                    val.code === 'bea' &&
+                    (!editid ||
+                      inputData.testparts?.[
+                        val.code.replace('-', '').toUpperCase()
+                      ]?.id != null)
+                  "
+                  :title="val.jp"
+                  :testcount="inputData.testcount"
+                  :selectedTime="
+                    inputTestPart.BEA.timelimit != null
+                      ? Number(inputTestPart.BEA.timelimit)
+                      : undefined
+                  "
+                  @onStatus="
+                    (e) => ((inputTestPart.BEA.status = e), onBlurButton1())
+                  "
+                  @onTimeLimit="(val) => (inputTestPart.BEA.timelimit = val)"
+                ></CardViewBEA>
               </div>
             </v-col>
           </v-row>

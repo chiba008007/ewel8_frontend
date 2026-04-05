@@ -2,7 +2,7 @@ export interface inputDataPartsType {
   threeflag: boolean;
   weightFlag: boolean;
   status: boolean;
-  timelimit: string | undefined | null;
+  timelimit: string | number | undefined | null;
   weight1: string | undefined | null;
   weight2: string | undefined | null;
   weight3: string | undefined | null;

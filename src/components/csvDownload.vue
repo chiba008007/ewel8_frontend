@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ComponentButton from "@/components/ButtonView.vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import TestApiService from "@/services/TestApiService";
 import ButtonView from "@/components/ButtonView.vue";
 import { pfsCsv } from "@/plugins/csv";
 import { BAJ3csv } from "@/plugins/BAJ3csv";
+import { VFJcsv } from "@/plugins/VFJcsv";
 import { useStoreUser } from "@/store/user";
 
 const router = useRouter();
@@ -55,6 +56,9 @@ const onCsvDownLoad = (code: string) => {
       break;
     case "BAJ3":
       BAJ3csv(params);
+      break;
+    case "VFJ":
+      VFJcsv(params);
       break;
   }
 };

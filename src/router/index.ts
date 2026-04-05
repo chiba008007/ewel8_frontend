@@ -54,6 +54,9 @@ import ExamBaj3TakeFin from "../views/examinate/BAJ3/ExamTakeFin.vue";
 import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
 import ExamPfsTake from "../views/examinate/PFS/ExamTake.vue";
 import ExamPfsTakeFin from "../views/examinate/PFS/ExamTakeFin.vue";
+import ExamBEAGuide from "../views/examinate/BEA/ExamGuide.vue";
+import ExamBEATake from "../views/examinate/BEA/ExamTake.vue";
+import ExamBEATakeFin from "../views/examinate/BEA/ExamTakeFin.vue";
 import AdminPageLogService from "@/services/AdminPageLogService";
 
 const hostname = location.hostname;
@@ -550,6 +553,22 @@ const routes: Array<RouteRecordRaw> = [
     path: "/exam/pfs/:testparts_id/page/fin/take",
     name: "ExamPfsTakeFin",
     component: ExamPfsTakeFin,
+  },
+  // BEA検査
+  {
+    path: "/exam/bea/:testparts_id/guide",
+    name: "examBEAGuide",
+    component: ExamBEAGuide,
+  },
+  {
+    path: "/exam/bea/:testparts_id/page/:page/take",
+    name: "examBEATake",
+    component: ExamBEATake,
+  },
+  {
+    path: "/exam/bea/:testparts_id/page/fin/take",
+    name: "ExamBEATakeFin",
+    component: ExamBEATakeFin,
   },
   {
     path: "/:pathMatch(.*)*",
