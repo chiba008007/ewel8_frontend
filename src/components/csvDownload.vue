@@ -7,6 +7,7 @@ import ButtonView from "@/components/ButtonView.vue";
 import { pfsCsv } from "@/plugins/csv";
 import { BAJ3csv } from "@/plugins/BAJ3csv";
 import { VFJcsv } from "@/plugins/VFJcsv";
+import { BEAcsv } from "@/plugins/BEAcsv";
 import { useStoreUser } from "@/store/user";
 
 const router = useRouter();
@@ -59,6 +60,9 @@ const onCsvDownLoad = (code: string) => {
       break;
     case "VFJ":
       VFJcsv(params);
+      break;
+    case "BEA":
+      BEAcsv(params);
       break;
   }
 };

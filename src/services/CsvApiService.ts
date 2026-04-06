@@ -10,6 +10,9 @@ class CsvApiService {
   getVFJ(data: object) {
     return httpAuth.post("/api/csv/getVFJ", data);
   }
+  getBEA(data: object) {
+    return httpAuth.post("/api/csv/getBEA", data);
+  }
 }
 
 export default new CsvApiService();
