@@ -62,6 +62,7 @@ const oneYearAgo = new Date(today); // 今日をコピー
 const pdfstartday = ref();
 const pdfendday = ref();
 const pdfuseflag = ref();
+const testpdf_count = ref();
 oneYearAgo.setFullYear(today.getFullYear() - 1); // ← ここで1年前にずらす
 
 const yearStr = oneYearAgo
@@ -153,12 +154,13 @@ onMounted(async () => {
       user_id: params.id,
       test_id: params.testid,
     });
+    console.log(rlt);
     pagetitle.value = rlt.data.testname;
     pdfstartday.value = rlt.data.pdfstartday;
     pdfendday.value = rlt.data.pdfendday;
     pdfuseflag.value = rlt.data.pdfuseflag;
+    testpdf_count.value = rlt.data.testpdf_count;
     TestApiService.getExam(tmp).then(function (rlt) {
-      console.log(rlt);
       detail.value = rlt;
 
       // パスフラグを変換してからリストに設定
@@ -178,10 +180,10 @@ onMounted(async () => {
 
 const isButtonDisabled = (item: any) => {
   const endedAt = (item as any).ended_at;
-
-  if (pdfuseflag.value === 0) {
+  if (testpdf_count.value == 0) return true;
+  if (pdfuseflag.value == 0) {
     // フラグが0のときは ended_at だけで判定
-    return !endedAt; // ended_at がなければ disabled
+    return endedAt == null ? true : false; // ended_at がなければ disabled
   }
 
   if (pdfuseflag.value === 1) {
