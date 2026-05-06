@@ -91,7 +91,6 @@ const submit = async () => {
     router.push("/list");
     //registAlert.value = true;
   } catch (error) {
-    console.log(error);
     registAlert.value = false;
     errorAlert.value = true;
   } finally {

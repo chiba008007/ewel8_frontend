@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import AdminMenu from "../components/AdminMenu.vue";
 import UserApiService from "@/services/UserApiService";
 import ComponentPartnerRegist from "../components/PartnerRegistForm.vue";
@@ -11,14 +11,14 @@ import { textString } from "@/plugins/const";
 
 pageAdmin();
 const settingData = ref();
-let data = {
-  type: "admin",
-};
-
 const user = ref();
-UserApiService.getAdmin(data).then((response) => {
-  user.value = response;
-  settingData.value = user.value;
+onMounted(() => {
+  const data = { type: "admin" };
+
+  UserApiService.getAdmin(data).then((response) => {
+    user.value = response;
+    settingData.value = user.value;
+  });
 });
 
 const onBlur = (val: string | boolean, type: string, key: number) => {
