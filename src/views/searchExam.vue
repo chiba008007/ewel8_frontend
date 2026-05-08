@@ -36,23 +36,12 @@ const form = ref({
 });
 const desserts = ref<DessertItem[]>([]);
 const defaulted = ref<DessertItem[]>([]);
-try {
-  TestApiService.getSearchExam().then(function (rlt) {
-    console.log(rlt.data);
-    if (rlt.data) {
-      desserts.value = rlt.data;
-      defaulted.value = rlt.data;
-      loading.value = false;
-    }
-  });
-} catch (e) {
-  console.log(e);
-}
+const page = ref(1);
+const lastPage = ref(0);
 
-const typed = ref() as any;
-const onclick = () => {
-  desserts.value = [];
+const fetchData = () => {
   let date: string | null = null;
+
   if (form.value.year && form.value.month && form.value.day) {
     const y = form.value.year;
     const m = form.value.month.padStart(2, "0");
@@ -60,28 +49,35 @@ const onclick = () => {
     date = `${y}-${m}-${d}`;
   }
 
-  // 検索条件が入力されているか判定
-  const hasInput =
-    form.value.id || form.value.customer_name || form.value.name || date;
-
-  if (hasInput) {
-    desserts.value = defaulted.value.filter((element: typeof typed) => {
-      const matchId = !form.value.id || element.email === form.value.id;
-      const matchCustomer =
-        !form.value.customer_name ||
-        element.customer_name === form.value.customer_name;
-      const matchName = !form.value.name || element.name === form.value.name;
-      const matchDate =
-        !date || (element.endtime && element.endtime.startsWith(date));
-
-      // 入力されている項目だけにマッチさせる
-      return matchId && matchCustomer && matchName && matchDate;
-    });
-  } else {
-    // 検索条件が空なら全件表示
-    desserts.value = defaulted.value;
-  }
+  const params = {
+    page: page.value,
+    id: form.value.id,
+    customer_name: form.value.customer_name,
+    name: form.value.name,
+    date: date,
+  };
+  TestApiService.getSearchExam(params).then(function (rlt) {
+    if (rlt.data) {
+      desserts.value = rlt.data.data;
+      defaulted.value = rlt.data.data;
+      lastPage.value = rlt.data.last_page;
+      loading.value = false;
+    }
+  });
 };
+
+const changePage = (n: number) => {
+  page.value = n;
+  fetchData(); // API再取得
+};
+// 初回ロード
+fetchData();
+
+const onclick = () => {
+  page.value = 1;
+  fetchData();
+};
+
 const tableHeight = ref(100);
 const onResize = () => {
   const wHeight = window.innerHeight;
@@ -169,6 +165,8 @@ const onResize = () => {
     class="listable ma-2"
     :height="tableHeight"
     fixed-header
+    :items-per-page="30"
+    hide-default-footer
   >
     <template v-slot:item="{ item }">
       <tr>
@@ -181,5 +179,15 @@ const onResize = () => {
       </tr>
     </template>
   </v-data-table>
+  <div class="ma-2">
+    <v-btn
+      class="btn bg-blue mr-1"
+      v-for="n in lastPage"
+      :key="n"
+      @click="changePage(n)"
+    >
+      {{ n }}
+    </v-btn>
+  </div>
 </template>
 <style lang="scss"></style>
