@@ -12,6 +12,8 @@ import dayjs from "dayjs";
 const user = useStoreUser();
 
 const loading = ref(true);
+const page = ref(1);
+const lastPage = ref(0);
 
 interface History {
   customer_name: string;
@@ -49,18 +51,37 @@ async function loadHistory(
   } = {}
 ) {
   try {
-    const response = await HistoryApiService.testhistory(params);
+    loading.value = true;
+
+    const response = await HistoryApiService.testhistory({
+      page: page.value,
+      ...params,
+    });
+    console.log(response);
     histories.value = response.data.data;
+    lastPage.value = response.data.last_page;
     loading.value = false;
   } catch (error) {
     console.error("API エラー:", error);
+    loading.value = false;
   }
 }
 onMounted(() => {
   loadHistory();
 });
+const changePage = (n: number) => {
+  page.value = n;
 
+  loadHistory({
+    search: form.value.customer_name,
+    year: form.value.year,
+    month: form.value.month,
+    day: form.value.day,
+  });
+};
 const onclick = () => {
+  page.value = 1;
+
   loadHistory({
     search: form.value.customer_name,
     year: form.value.year,
@@ -132,12 +153,13 @@ const onResize = () => {
   <v-data-table
     :headers="headers"
     :items="histories"
-    :items-per-page="10"
     show-current-page
     show-items-per-page
     class="listable ma-2"
     :height="tableHeight"
+    :items-per-page="100"
     fixed-header
+    hide-default-footer
   >
     <template v-slot:item="{ item }">
       <tr>
@@ -150,5 +172,16 @@ const onResize = () => {
       </tr>
     </template>
   </v-data-table>
+
+  <div class="ma-2">
+    <v-btn
+      class="btn bg-blue mr-1"
+      v-for="n in lastPage"
+      :key="n"
+      @click="changePage(n)"
+    >
+      {{ n }}
+    </v-btn>
+  </div>
 </template>
 <style lang="scss"></style>

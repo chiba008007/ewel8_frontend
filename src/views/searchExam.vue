@@ -165,7 +165,6 @@ const onResize = () => {
     class="listable ma-2"
     :height="tableHeight"
     fixed-header
-    :items-per-page="30"
     hide-default-footer
   >
     <template v-slot:item="{ item }">
