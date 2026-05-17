@@ -13,6 +13,9 @@ import DatePicker from "@/components/DateView.vue";
 const user = useStoreUser();
 const pdfMap = Object.fromEntries(pdfArray.map((p) => [p.key, p.text]));
 const loading = ref(true);
+const page = ref(1);
+const lastPage = ref(0);
+const perPage = ref(5);
 
 interface History {
   customer_name: string;
@@ -59,12 +62,28 @@ const form = ref({
 const histories = ref<History[]>([]);
 async function loadHistory() {
   try {
-    console.log(form.value);
-    const response = await HistoryApiService.pdfhistory(form.value);
-    histories.value = response.data;
+    loading.value = true;
+
+    const params = {
+      ...form.value,
+      page: page.value,
+      per_page: perPage.value,
+    };
+
+    const response = await HistoryApiService.pdfhistory(params);
+
+    histories.value = Array.isArray(response.data)
+      ? response.data
+      : response.data.data ?? [];
+
     loading.value = false;
+    lastPage.value = Array.isArray(response.data)
+      ? 1
+      : response.data.last_page ?? 1;
   } catch (error) {
     console.error("API エラー:", error);
+    histories.value = [];
+    loading.value = false;
   }
 }
 onMounted(() => {
@@ -74,6 +93,13 @@ onMounted(() => {
 const onclick = () => {
   loadHistory();
 };
+
+const changePage = (n: number) => {
+  page.value = n;
+
+  loadHistory();
+};
+
 const tableHeight = ref(100);
 const onResize = () => {
   const wHeight = window.innerHeight;
@@ -135,6 +161,7 @@ const getPdfText = (key: string) => {
     class="listable ma-2"
     :height="tableHeight"
     fixed-header
+    hide-default-footer
   >
     <template v-slot:item="{ item }">
       <tr>
@@ -148,5 +175,15 @@ const getPdfText = (key: string) => {
       </tr>
     </template>
   </v-data-table>
+  <div class="ma-2">
+    <v-btn
+      class="btn bg-blue mr-1"
+      v-for="n in lastPage"
+      :key="n"
+      @click="changePage(n)"
+    >
+      {{ n }}
+    </v-btn>
+  </div>
 </template>
 <style lang="scss"></style>
