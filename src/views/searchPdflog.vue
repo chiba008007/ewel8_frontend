@@ -15,7 +15,7 @@ const pdfMap = Object.fromEntries(pdfArray.map((p) => [p.key, p.text]));
 const loading = ref(true);
 const page = ref(1);
 const lastPage = ref(0);
-const perPage = ref(5);
+const perPage = ref(50);
 
 interface History {
   customer_name: string;
