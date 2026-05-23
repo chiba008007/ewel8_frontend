@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import { useRouter } from "vue-router";
 import UserApiService from "@/services/UserApiService";
@@ -43,39 +43,51 @@ const prefs = ref();
 const errorAlertFlag = ref(false);
 const successAlertFlag = ref(false);
 const tab = ref(0);
-
-PrefApiService.getPrefData().then((res) => {
-  prefs.value = res;
-});
-
 const userDetail = ref();
-const result = UserApiService.getPartnerDetailData({
-  partnerId: paramId,
-  type: "partner",
-});
 
-if (result) {
-  result.then((res) => {
+const fetchInitialData = async () => {
+  try {
+    loadingFlag.value = true;
+
+    // 都道府県を取得する
+    const prefRes = await PrefApiService.getPrefData();
+    prefs.value = prefRes;
+
+    // 企業詳細を取得する
+    const res = await UserApiService.getPartnerDetailData({
+      partnerId: String(paramId),
+      type: "partner",
+    });
+
     const entries = res?.data;
     userDetail.value = entries;
-    form.value.post = userDetail.value.post_code;
-    form.value.preftext = userDetail.value.pref;
-    form.value.addressText = userDetail.value.address1;
-    form.value.addressText2 = userDetail.value.address2;
-    form.value.tel = userDetail.value.tel;
-    form.value.fax = userDetail.value.fax;
-    form.value.person = userDetail.value.person;
-    form.value.person_address = userDetail.value.person_address;
-    form.value.person_tel = userDetail.value.person_tel;
-    form.value.person2 = userDetail.value.person2;
-    form.value.person_address2 = userDetail.value.person_address2;
 
+    // API値をフォームに反映する
+    form.value.post = String(entries?.post_code ?? "");
+    form.value.preftext = String(entries?.pref ?? "");
+    form.value.addressText = String(entries?.address1 ?? "");
+    form.value.addressText2 = String(entries?.address2 ?? "");
+    form.value.tel = String(entries?.tel ?? "");
+    form.value.fax = String(entries?.fax ?? "");
+    form.value.person = String(entries?.person ?? "");
+    form.value.person_address = String(entries?.person_address ?? "");
+    form.value.person_tel = String(entries?.person_tel ?? "");
+    form.value.person2 = String(entries?.person2 ?? "");
+    form.value.person_address2 = String(entries?.person_address2 ?? "");
+  } catch (e) {
+    // 取得失敗時にエラー表示する
+    errorAlertFlag.value = true;
+  } finally {
     loadingFlag.value = false;
-  });
-}
+  }
+};
+// 画面表示後に初期データを取得する
+onMounted(() => {
+  fetchInitialData();
+});
 
-const post1 = ref();
-const post2 = ref();
+const post1 = ref("");
+const post2 = ref("");
 const postBlur = (e: string, type: string) => {
   if (type === "post1") post1.value = e;
   if (type === "post2") post2.value = e;
@@ -200,7 +212,7 @@ const addRegist = () => {
                 :items="prefs"
                 :value="form.preftext ?? ``"
                 type="pref"
-                @onChange="(e) => (form.preftext = e)"
+                @onChange="(e) => (form.preftext = String(e))"
               ></addPrefCodeForm>
               <addPartnerForm
                 title="住所"

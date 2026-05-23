@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useStoreUser } from "../store/user";
 import InfoAreaView from "../components/InfoAreaView.vue";
 import { useRouter, useRoute } from "vue-router";
@@ -97,7 +97,6 @@ const onBlurButton = async () => {
 
   // 共通: true または "" を OK とみなす
   const isValid = (r: unknown) => r === true || r === "";
-  console.log(inputData.value);
   // それぞれの結果を取得（非同期含む）
   const results = await Promise.all([
     checkLoginID(inputData.value.login_id, false), // true | string | Promise
@@ -171,7 +170,7 @@ const editData = () => {
     pdfFlag: inputData.value.displayPdfFlag ? 1 : 0,
     weightFlag: inputData.value.displayWeightFlag ? 1 : 0,
     excelFlag: inputData.value.displayExcelFlag ? 1 : 0,
-    customFlag: inputData.value.customerDisplayFlag ? 1 : 0,
+    customerDisplayFlag: inputData.value.customerDisplayFlag ? 1 : 0,
     two_factor_enabled: inputData.value.two_factor_enabled ? 1 : 0,
     sslFlag: inputData.value.displaySslFlag ? 1 : 0,
     logoImagePath: inputData.value.logoImagePath,
@@ -223,6 +222,7 @@ UserApiGetCustomerEdit.getCustomerEdit(editTmp)
     myimage_path.value = rst?.data.logoImagePath;
     inputData.value.logoImagePath = rst?.data.logoImagePath;
     inputData.value.customerDisplayFlag = rst?.data.displayFlag;
+    inputData.value.privacy.checked = Number(rst?.data.privacy) === 1;
     inputData.value.privacy.privacyText = rst?.data.privacyText;
     inputData.value.tanto_name = rst?.data.tanto_name;
     inputData.value.tanto_address = rst?.data.tanto_address;
@@ -231,6 +231,11 @@ UserApiGetCustomerEdit.getCustomerEdit(editTmp)
     inputData.value.tanto_tel2 = rst?.data.tanto_tel2;
     inputData.value.tanto_name2 = rst?.data.tanto_name2;
     inputData.value.tanto_address2 = rst?.data.tanto_address2;
+
+    // 郵便番号を分割して保持する
+    const [post1 = "", post2 = ""] = inputData.value.postCode.split("-");
+    inputData.value.post1 = post1;
+    inputData.value.post2 = post2;
 
     loadingFlag.value = false;
   })
@@ -514,24 +519,17 @@ const backColor = () => {
         :myimage_path="myimage_path"
         @onUpdate="(e) => ((inputData.logoImagePath = e as  File | File[] | any), onUpdate())"
       ></addImageForm>
-
       <addPrivacyForm
         :color="backColor()"
         variant="outlined"
         :hideDetails="`auto`"
         :height="15"
-        :disabled="inputData.privacy.checked ? true : false"
-        :value="inputData.privacy.checked ? 0 : 1"
+        :disabled="inputData.privacy.checked ? false : true"
         :textarea="inputData.privacy.privacyText"
         :privacyModel="inputData.privacy.checked"
-        @onClick="
-          (e) =>
-            (inputData.privacy.checked = inputData.privacy.checked
-              ? false
-              : true)
-        "
+        @onClick="(e) => (inputData.privacy.checked = e)"
         @onBlur="(e) => (inputData.privacy.privacyText = e)"
-      ></addPrivacyForm>
+      />
       <addSwitchForm
         :color="backColor()"
         title="顧客の表示/非表示"
@@ -541,12 +539,7 @@ const backColor = () => {
         :tooltipflag="true"
         tooltipMessage="顧客を非表示にする場合は、登録検査をすべて非表示にしてください。"
         :model="inputData.customerDisplayFlag ? true : false"
-        @onClick="
-          (e) =>
-            (inputData.customerDisplayFlag = inputData.customerDisplayFlag
-              ? false
-              : true)
-        "
+        @onClick="(e) => (inputData.customerDisplayFlag = e)"
       ></addSwitchForm>
       <addSwitchForm
         :color="backColor()"

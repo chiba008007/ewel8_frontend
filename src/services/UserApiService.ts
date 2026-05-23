@@ -43,12 +43,8 @@ class UserApiService {
       //location.href="/error"
     }
   }
-  getPartnerDetailData(data: object) {
-    try {
-      return httpAuth.post("/api/user/getPartnerDetailData", data);
-    } catch (e) {
-      return false;
-    }
+  async getPartnerDetailData(data: object) {
+    return await httpAuth.post("/api/user/getPartnerDetailData", data);
   }
   setPartner(data: object): Promise<object> {
     return httpAuth.post("/api/user/setUserData", data);

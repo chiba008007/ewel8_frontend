@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, withDefaults } from "vue";
+import { ref, computed } from "vue";
 import { useStoreUser } from "../store/user";
 import TextAreaField from "../components/TextAreaFieldView.vue";
 import type { VTextField } from "vuetify/components";
@@ -28,12 +28,25 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   color: "bg-primary",
 });
-
 const emit = defineEmits<{
   (e: "onUpdate", value: boolean, type: string): void;
   (e: "onClick", value: boolean): void;
   (e: "onBlur", value: string): void;
 }>();
+// 表示ラベルをSwitch状態から作る
+// ラベル表示
+const privacyModel = computed({
+  get() {
+    return props.privacyModel ?? false;
+  },
+  set(value: boolean) {
+    emit("onClick", value);
+  },
+});
+
+const privacyLabel = computed(() => {
+  return edittingStatus[privacyModel.value ? 1 : 0];
+});
 </script>
 <template>
   <v-row no-gutters>
@@ -46,11 +59,10 @@ const emit = defineEmits<{
     </v-col>
     <v-col sm="9" class="pa-1 border-sm">
       <ComponentSwitch
-        :label="edittingStatus[!props.value ? 0 : 1]"
+        :label="privacyLabel"
         :type="props.type"
-        :model="props.privacyModel"
-        @onClick="(e) => emit('onClick', e)"
-      ></ComponentSwitch>
+        v-model="privacyModel"
+      />
       <TextAreaField
         :name="props.name"
         :variant="props.variant"
