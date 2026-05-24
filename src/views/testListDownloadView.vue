@@ -4,7 +4,6 @@ import { useRouter, useRoute } from "vue-router";
 import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import pankuzuMain from "../components/pankuzuMain.vue";
-import ButtonView from "@/components/ButtonView.vue";
 import { useStoreUser } from "../store/user";
 import { pagelink } from "@/plugins/pagelink";
 import FileuploadApiService from "@/services/FileuploadApiService";
@@ -17,13 +16,6 @@ const route = useRoute();
 const params = router.currentRoute.value.params;
 const user = useStoreUser();
 const loadingFlag = ref(true);
-
-const onBack = () => {
-  router.push({
-    name: "testLists",
-    params: { id: params.id },
-  });
-};
 
 const headers = [
   { title: "登録日", sortable: true, key: "name" },
@@ -142,10 +134,6 @@ const commaSeparated = (value: number) => {
         </v-data-table>
       </v-col>
     </v-row>
-
-    <div class="my-3">
-      <ButtonView text="戻る" color="primary" @onClick="onBack()"></ButtonView>
-    </div>
   </div>
 </template>
 <style scoped>

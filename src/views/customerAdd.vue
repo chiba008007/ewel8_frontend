@@ -440,14 +440,9 @@ const pagemove = () => {
         variant="outlined"
         :hideDetails="`auto`"
         :height="15"
-        :disabled="inputData.privacy.checked ? true : false"
+        :disabled="inputData.privacy.checked ? false : true"
         :privacyModel="inputData.privacy.checked"
-        @onClick="
-          (e) =>
-            (inputData.privacy.checked = inputData.privacy.checked
-              ? false
-              : true)
-        "
+        @onClick="(e) => (inputData.privacy.checked = e)"
         @onBlur="(e) => (inputData.privacy.privacyText = e)"
       ></addPrivacyForm>
       <addSwitchForm

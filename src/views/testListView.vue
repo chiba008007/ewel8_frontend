@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 import InfoAreaView from "@/components/InfoAreaView.vue";
 import TestMenu from "@/components/TestMenu.vue";
@@ -50,17 +50,31 @@ type userAny = {
 };
 const type = (user.userdata as userType).type;
 
-TestApiService.getTestList({
-  user_id: route.params.id,
-  partner_id: partner_id,
-})
-  .then(function (res) {
-    loadingFlag.value = false;
+const fetchTestList = async () => {
+  try {
+    // 初期表示時に検査一覧を取得
+    const res = await TestApiService.getTestList({
+      user_id: route.params.id,
+      partner_id: partner_id,
+    });
+
     testList.value = res.data;
-  })
-  .catch(function (e) {
+  } catch (e) {
+    // APIエラー時の通知
     alert("param error" + e);
-  });
+  } finally {
+    // 成功・失敗どちらでもローディング終了
+    loadingFlag.value = false;
+  }
+};
+
+onMounted(() => {
+  // 初期表示時にテーブルサイズを調整
+  onResize();
+
+  // 初期表示時に一覧取得
+  fetchTestList();
+});
 
 const tableHeight = ref(100);
 const tableWidth = ref(500);
