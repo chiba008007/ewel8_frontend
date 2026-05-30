@@ -62,7 +62,7 @@ const onClick = () => {
           window.location.reload();
         });
       })
-      .catch(function (e) {
+      .catch(function () {
         errorflag.value = true;
       });
   } else {

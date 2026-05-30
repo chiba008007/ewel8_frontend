@@ -60,6 +60,11 @@ ExamApiDataService.getTestExamEdit({
 })
   .then(function (res) {
     data.value = res.data;
+    // birth が空なら初期値を入れる
+    if (!data.value.birth) {
+      data.value.birth = "0000/01/01";
+    }
+
     examDefault.value = data.value.email;
     emailList.value = data.value.emailList;
     emailInput.value = data.value.email;
@@ -93,20 +98,29 @@ const onEdit = () => {
       console.log(e);
     });
 };
-const onSetBirth = (str: string, type: string) => {
-  let birth = data.value.birth.split("/");
 
-  let y = type === "year" ? str : birth[0];
-  let m = type === "month" ? str : birth[1];
-  let d = type === "day" ? str : birth[2];
+// Select/Text から来る値を受けられる型にする
+const onSetBirth = (
+  value: string | number | null,
+  type: "year" | "month" | "day"
+) => {
+  const birth = data.value.birth || "0000/01/01"; // 初期値
 
-  // 年を4桁ゼロ埋め、日を2桁ゼロ埋め
-  const year = y ? y.toString().padStart(4, "0") : "";
-  const month = m ? m.toString().padStart(2, "0") : "";
-  const day = d ? d.toString().padStart(2, "0") : "";
+  const [birthY = "0000", birthM = "01", birthD = "01"] = birth.split("/");
+
+  // null は空ではなく既存値を使う
+  const y = type === "year" ? value : birthY;
+  const m = type === "month" ? value : birthM;
+  const d = type === "day" ? value : birthD;
+
+  // 表示用に桁を整える
+  const year = String(y ?? birthY).padStart(4, "0");
+  const month = String(m ?? birthM).padStart(2, "0");
+  const day = String(d ?? birthD).padStart(2, "0");
 
   data.value.birth = `${year}/${month}/${day}`;
 };
+
 const isDisabled = ref(false);
 const onChecked = (e: boolean) => {
   if (e) {
