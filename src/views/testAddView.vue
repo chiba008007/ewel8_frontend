@@ -43,6 +43,7 @@ import testAdd from "@/plugins/testAdd";
 import { inputDataPartsType, inputDataType, testpdfType } from "@/types";
 import ProgressView from "@/components/ProgressView.vue";
 import { useTestParts } from "@/composables/useTestParts";
+import CardViewEAIa from "@/components/CardViewEAIa.vue";
 
 const { applyTestParts } = useTestParts();
 const router = useRouter();
@@ -64,7 +65,6 @@ const tab = ref(0);
 const loadingFlag = ref(true);
 const inputWeightMasterString = ref<Record<string, string>>({});
 const partner_id = user.getSession("partner_id");
-
 interface TestPart {
   id?: number;
   test_id?: number;
@@ -134,11 +134,13 @@ const inputTestPart = ref<{
   BAJ3: inputDataPartsType;
   VFJ: inputDataPartsType;
   BEA: inputDataPartsType;
+  EAIa: inputDataPartsType;
 }>({
   PFS: { ...initialPartStatus },
   BAJ3: { ...initialPartStatus },
   VFJ: { ...initialPartStatus },
   BEA: { ...initialPartStatus },
+  EAIa: { ...initialPartStatus },
 });
 
 // 重み付けマスタ取得
@@ -865,6 +867,28 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   "
                   @onTimeLimit="(val) => (inputTestPart.BEA.timelimit = val)"
                 ></CardViewBEA>
+                <CardViewEAIa
+                  :pagename="route.name"
+                  :editid="editid"
+                  class="mt-3"
+                  v-if="
+                    val.code === 'EA-Ia' &&
+                    (!editid ||
+                      inputData.testparts?.[val.code.replace('-', '')]?.id !=
+                        null)
+                  "
+                  :title="val.jp"
+                  :testcount="inputData.testcount"
+                  :selectedTime="
+                    inputTestPart.EAIa.timelimit != null
+                      ? Number(inputTestPart.EAIa.timelimit)
+                      : undefined
+                  "
+                  @onStatus="
+                    (e) => ((inputTestPart.EAIa.status = e), onBlurButton1())
+                  "
+                  @onTimeLimit="(val) => (inputTestPart.EAIa.timelimit = val)"
+                ></CardViewEAIa>
               </div>
             </v-col>
           </v-row>

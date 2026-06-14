@@ -360,8 +360,13 @@ const backColor = () => {
         :items="prefs"
         :value="inputData.preftext"
         type="pref"
-        @onChange="(e) => (inputData.preftext = prefs.find((pref: { id: string; name: string }) => pref.id === e || pref.name === e).name)"
-      ></addPrefCodeForm>
+        @onChange="
+          (e) => {
+            // 選択された県名をそのまま保持する
+            inputData.preftext = String(e);
+          }
+        "
+      />
       <addPartnerForm
         :color="backColor()"
         title="住所"
@@ -403,22 +408,6 @@ const backColor = () => {
         :value="inputData.fax"
         @onBlur="(e) => (inputData.fax = e)"
       ></addPartnerForm>
-      <addSwitchForm
-        :color="backColor()"
-        title="受検者傾向確認ボタン表示"
-        :label="displayString(inputData.displayTrendFlag)"
-        density="compact"
-        type="displayTrendFlag"
-        :tooltipflag="true"
-        tooltipMessage="受検者傾向確認ボタンの表示可否を選択します。"
-        :model="inputData.displayTrendFlag ? true : false"
-        @onClick="
-          () =>
-            (inputData.displayTrendFlag = inputData.displayTrendFlag
-              ? false
-              : true)
-        "
-      ></addSwitchForm>
       <addSwitchForm
         :color="backColor()"
         title="CSVアップロードボタン表示"

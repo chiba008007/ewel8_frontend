@@ -39,6 +39,8 @@ const emit = defineEmits<{
     <v-col sm="9" class="pa-1 border-sm">
       <ComponentSelectField
         :items="props.items"
+        item-title="name"
+        item-value="name"
         :label="props.label"
         :hideDetails="props.hideDetails"
         :class="props.class"
@@ -46,7 +48,7 @@ const emit = defineEmits<{
         :rules="props.rules"
         @onChange="emit('onChange', String($event ?? ''))"
         @onBlur="emit('onBlur', String($event ?? ''), props.type ?? '')"
-      ></ComponentSelectField>
+      />
     </v-col>
   </v-row>
 </template>
