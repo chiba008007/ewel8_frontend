@@ -110,15 +110,31 @@ const onMenuBack = () => {
 };
 
 const loadAnswer = async () => {
-  const res = await ExamBAJ3ApiService.getBAJ3({
-    params: k,
-    testparts_id: testparts_id,
-  });
-  if (!res) return;
+  try {
+    const res = await ExamBAJ3ApiService.getBAJ3({
+      params: k,
+      testparts_id,
+      page: page.value,
+    });
 
-  const data = res.data as Record<string, number>;
-  for (let i = 1; i <= 36; i++) {
-    selectPoint[i] = data["q" + i];
+    // 保存済み回答を反映する
+    const data = res.data as Record<string, number>;
+
+    for (let i = 1; i <= 36; i++) {
+      selectPoint[i] = data["q" + i];
+    }
+  } catch (error: any) {
+    // 未到達ページの場合は、アクセス可能なページへ戻す
+    if (error.response?.status === 403) {
+      await router.replace({
+        name: "examBaj3Take",
+        params: {
+          testparts_id,
+          page: error.response.data.allowed_page,
+        },
+        query: { k },
+      });
+    }
   }
 };
 

@@ -5,12 +5,8 @@ import { d_Path } from "@/plugins/const";
 
 class ExamBAJ3ApiService {
   async getBAJ3(data: object) {
-    try {
-      return await httpAuth.post("/api/exam/getBAJ3", data);
-    } catch (e) {
-      return false;
-      //location.href = "/exam/error";
-    }
+    // 403をExamTake.vueのcatchへ渡す
+    return httpAuth.post("/api/exam/getBAJ3", data);
   }
   setBAJ3(data: object) {
     return httpAuth.post("/api/exam/setBAJ3", data);
