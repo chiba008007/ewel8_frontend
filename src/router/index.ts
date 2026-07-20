@@ -57,6 +57,9 @@ import ExamPfsTakeFin from "../views/examinate/PFS/ExamTakeFin.vue";
 import ExamBEAGuide from "../views/examinate/BEA/ExamGuide.vue";
 import ExamBEATake from "../views/examinate/BEA/ExamTake.vue";
 import ExamBEATakeFin from "../views/examinate/BEA/ExamTakeFin.vue";
+import ExamEAIbGuide from "../views/examinate/EAIb/ExamGuide.vue";
+import ExamEAIbTake from "../views/examinate/EAIb/ExamTake.vue";
+import ExamEAIbTakeFin from "../views/examinate/EAIb/ExamTakeFin.vue";
 import AdminPageLogService from "@/services/AdminPageLogService";
 
 const hostname = location.hostname;
@@ -570,6 +573,24 @@ const routes: Array<RouteRecordRaw> = [
     name: "ExamBEATakeFin",
     component: ExamBEATakeFin,
   },
+
+  // 検査IB
+  {
+    path: "/exam/EAIb/:testparts_id/guide",
+    name: "examEAIbGuide",
+    component: ExamEAIbGuide,
+  },
+  {
+    path: "/exam/EAIb/:testparts_id/page/:page/take",
+    name: "examEAIbTake",
+    component: ExamEAIbTake,
+  },
+  {
+    path: "/exam/EAIb/:testparts_id/page/fin/take",
+    name: "ExamEAIbTakeFin",
+    component: ExamEAIbTakeFin,
+  },
+
   {
     path: "/:pathMatch(.*)*",
     name: "notFound",

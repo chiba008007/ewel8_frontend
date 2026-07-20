@@ -44,6 +44,7 @@ import { inputDataPartsType, inputDataType, testpdfType } from "@/types";
 import ProgressView from "@/components/ProgressView.vue";
 import { useTestParts } from "@/composables/useTestParts";
 import CardViewEAIa from "@/components/CardViewEAIa.vue";
+import CardViewEAIb from "@/components/CardViewEAIb.vue";
 
 const { applyTestParts } = useTestParts();
 const router = useRouter();
@@ -135,12 +136,14 @@ const inputTestPart = ref<{
   VFJ: inputDataPartsType;
   BEA: inputDataPartsType;
   EAIa: inputDataPartsType;
+  EAIb: inputDataPartsType;
 }>({
   PFS: { ...initialPartStatus },
   BAJ3: { ...initialPartStatus },
   VFJ: { ...initialPartStatus },
   BEA: { ...initialPartStatus },
   EAIa: { ...initialPartStatus },
+  EAIb: { ...initialPartStatus },
 });
 
 // 重み付けマスタ取得
@@ -889,6 +892,28 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   "
                   @onTimeLimit="(val) => (inputTestPart.EAIa.timelimit = val)"
                 ></CardViewEAIa>
+                <CardViewEAIb
+                  :pagename="route.name"
+                  :editid="editid"
+                  class="mt-3"
+                  v-if="
+                    val.code === 'EA-Ib' &&
+                    (!editid ||
+                      inputData.testparts?.[val.code.replace('-', '')]?.id !=
+                        null)
+                  "
+                  :title="val.jp"
+                  :testcount="inputData.testcount"
+                  :selectedTime="
+                    inputTestPart.EAIb.timelimit != null
+                      ? Number(inputTestPart.EAIb.timelimit)
+                      : undefined
+                  "
+                  @onStatus="
+                    (e) => ((inputTestPart.EAIb.status = e), onBlurButton1())
+                  "
+                  @onTimeLimit="(val) => (inputTestPart.EAIb.timelimit = val)"
+                ></CardViewEAIb>
               </div>
             </v-col>
           </v-row>

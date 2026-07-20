@@ -6,6 +6,7 @@ import { useRouter } from "vue-router";
 import { useStoreUser } from "@/store/user";
 import userLogout from "@/services/UserLogout";
 import AlertView from "./AlertView.vue";
+import { useRoute } from "vue-router";
 
 const usr = useStoreUser();
 if (usr.isLogin) {
@@ -20,11 +21,14 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
+const route = useRoute();
 const k = router.currentRoute.value.query.k;
 const data = ref();
 const company_name = ref("");
 const testname = ref("");
-let tmp = { params: k };
+const testpartsId = route.params.testparts_id;
+
+let tmp = { params: k, testparts_id: testpartsId };
 const errormessage = ref("");
 ExamApiService.getExam(tmp)
   .then(function (rlt) {

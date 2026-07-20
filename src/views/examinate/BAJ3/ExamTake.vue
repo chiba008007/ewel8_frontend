@@ -59,9 +59,10 @@ setQuestions();
 // ページ切替のためにroute.params.pageを監視する
 watch(
   () => route.params.page,
-  (newPage) => {
+  async (newPage) => {
+    // URL変更時にもAPIでアクセス可否を再確認する
     page.value = Number(newPage);
-    setQuestions();
+    await loadAnswer();
   }
 );
 watch(
@@ -117,14 +118,16 @@ const loadAnswer = async () => {
       page: page.value,
     });
 
-    // 保存済み回答を反映する
+    // API確認成功後に画面を表示する
     const data = res.data as Record<string, number>;
 
     for (let i = 1; i <= 36; i++) {
       selectPoint[i] = data["q" + i];
     }
+
+    setQuestions();
   } catch (error: any) {
-    // 未到達ページの場合は、アクセス可能なページへ戻す
+    // 未到達ページは許可ページへ戻す
     if (error.response?.status === 403) {
       await router.replace({
         name: "examBaj3Take",
@@ -134,7 +137,11 @@ const loadAnswer = async () => {
         },
         query: { k },
       });
+      return;
     }
+
+    // 存在しないtestparts_idはエラー画面へ移動する
+    await router.replace({ name: "error" });
   }
 };
 

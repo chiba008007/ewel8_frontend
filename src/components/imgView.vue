@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { defineProps, withDefaults } from "vue";
-
 interface Props {
   src: string;
-  width?: number;
-  height?: number;
-  maxHeight?: number;
-  minHeight?: number;
+  width?: number | string;
+  height?: number | string;
+  maxWidth?: number | string;
+  maxHeight?: number | string;
+  minHeight?: number | string;
 }
-const props = withDefaults(defineProps<Props>(), {
-  src: undefined,
-});
+
+const props = defineProps<Props>();
 </script>
 
 <template>
@@ -18,7 +16,8 @@ const props = withDefaults(defineProps<Props>(), {
     :src="props.src"
     :width="props.width"
     :height="props.height"
+    :max-width="props.maxWidth"
     :max-height="props.maxHeight"
     :min-height="props.minHeight"
-  ></v-img>
+  />
 </template>

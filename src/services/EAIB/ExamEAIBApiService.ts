@@ -3,23 +3,25 @@ import httpAuth from "@/authExam-common";
 import axios, { AxiosInstance } from "axios";
 import { d_Path } from "@/plugins/const";
 
-class ExamVFJApiService {
-  getVFJ(data: object) {
-    return httpAuth.post("/api/exam/getVFJ", data);
+class ExamEAIBApiService {
+  async getEAIB(data: object) {
+    try {
+      return await httpAuth.post("/api/exam/getEAIB", data);
+    } catch (e) {
+      return false;
+      //location.href = "/exam/error";
+    }
   }
-  setVFJ(data: object) {
-    return httpAuth.post("/api/exam/setVFJ", data);
+  setEAIB(data: object) {
+    return httpAuth.post("/api/exam/setEAIB", data);
   }
-  editVFJ(data: object) {
-    return httpAuth.post("/api/exam/editVFJ", data);
+  editEAIB(data: object) {
+    return httpAuth.post("/api/exam/editEAIB", data);
   }
   getExam(editData: object) {
     return http.post("/api/exam/getExam", editData);
   }
 
-  // getExamTestParts(data: object) {
-  //   return httpAuth.post("/api/exam/getExamTestParts", data);
-  // }
   getTestDataExam(data: object) {
     return httpAuth.post("/api/exam/getTestDataExam", data);
   }
@@ -67,4 +69,4 @@ class ExamVFJApiService {
   }
 }
 
-export default new ExamVFJApiService();
+export default new ExamEAIBApiService();

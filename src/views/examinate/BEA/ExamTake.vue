@@ -116,6 +116,21 @@ const loadAnswer = async () => {
   });
   if (!res) return;
 
+  const requestedPage = Number(route.params.page);
+  const currentPage = Number(res.data.current_page ?? 1);
+
+  // URLで未到達ページを指定された場合は進行可能ページへ戻す
+  if (requestedPage > currentPage) {
+    await router.replace({
+      name: "examBEATake",
+      params: {
+        testparts_id,
+        page: currentPage,
+      },
+      query: { k },
+    });
+  }
+
   startCountdown(
     res.data.limittime,
     (t: string) => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, reactive, onMounted } from "vue";
+import { ref, watch, reactive } from "vue";
 import { EXAMS } from "@/plugins/const";
 import { useRouter, useRoute } from "vue-router";
 import ExamTitle from "@/components/ExamTitle.vue";
@@ -55,14 +55,6 @@ const setQuestions = () => {
 
 setQuestions();
 // ページ切替のためにroute.params.pageを監視する
-watch(
-  () => route.params.page,
-  (newPage) => {
-    page.value = Number(newPage);
-    setQuestions();
-    setLoop();
-  }
-);
 
 const onSelected = (sel: any) => {
   sel.value.map(function (value: number, key: number) {
@@ -101,20 +93,82 @@ const onMenuBack = () => {
   });
 };
 
-const loadAnswer = async () => {
-  const res = await ExamApiService.getPFS({
-    params: k,
-    testparts_id: testparts_id,
-  });
-  if (!res) return;
+const loading = ref(false);
 
-  const data = res.data as Record<string, number>;
-  for (let i = 1; i <= 36; i++) {
-    selectPoint[i] = data["q" + i];
+const loadAnswer = async () => {
+  // APIの重複実行を防止する
+  if (loading.value) return;
+
+  loading.value = true;
+
+  try {
+    const res = await ExamApiService.getPFS({
+      params: k,
+      testparts_id,
+      page: page.value,
+    });
+
+    if (res === false) {
+      await router.replace({ name: "error" });
+      return;
+    }
+
+    const data = res.data as Record<string, number>;
+
+    // 保存済み回答のみ画面へ反映する
+    for (let i = 1; i <= 36; i++) {
+      const value = data["q" + i];
+
+      if (value !== null && value !== undefined) {
+        selectPoint[i] = value;
+      }
+    }
+
+    setLoop();
+  } catch (error: any) {
+    const allowedPage = Number(error.response?.data?.allowed_page);
+
+    if (
+      error.response?.status === 409 &&
+      Number.isInteger(allowedPage) &&
+      allowedPage !== page.value
+    ) {
+      // 回答可能なページへ戻す
+      await router.replace({
+        name: "examPfsTake",
+        params: {
+          testparts_id,
+          page: allowedPage,
+        },
+        query: { k },
+      });
+      return;
+    }
+
+    await router.replace({ name: "error" });
+  } finally {
+    loading.value = false;
   }
 };
 
-onMounted(loadAnswer);
+// 初回表示とURL変更時に実行する
+watch(
+  () => route.params.page,
+  async (newPage) => {
+    const nextPage = Number(newPage);
+
+    // 1～4以外はエラー画面へ移動する
+    if (!Number.isInteger(nextPage) || nextPage < 1 || nextPage > 4) {
+      await router.replace({ name: "error" });
+      return;
+    }
+
+    page.value = nextPage;
+    setQuestions();
+    await loadAnswer();
+  },
+  { immediate: true }
+);
 </script>
 
 <template>

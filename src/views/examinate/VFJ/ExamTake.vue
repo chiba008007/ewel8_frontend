@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, reactive, onMounted } from "vue";
 import { EXAMS } from "@/plugins/const";
+import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 import ExamTitle from "@/components/ExamTitle.vue";
 import ExamParts from "@/components/ExamParts.vue";
@@ -59,10 +60,12 @@ setQuestions();
 // ページ切替のためにroute.params.pageを監視する
 watch(
   () => route.params.page,
-  (newPage) => {
+  async (newPage) => {
     page.value = Number(newPage);
     setQuestions();
-    setLoop();
+
+    // URLのページ変更時にもアクセス可否を確認する
+    await loadAnswer();
   }
 );
 
@@ -83,14 +86,26 @@ const enabledTest = (e: boolean) => {
 };
 
 const handleNext = () => {
+  // 現在ページの設問範囲を取得する
+  const start = (page.value - 1) * 10 + 1;
+  const end = page.value === 7 ? 66 : page.value * 10;
+
+  // 現在ページの回答だけを送信する
+  const currentAnswers: Record<number, number> = {};
+
+  for (let i = start; i <= end; i++) {
+    currentAnswers[i] = selectPoint[i];
+  }
+
   examObj.onStart({
     testparts_id,
     params: k,
     page: page.value + 1,
-    selectPoint,
+    selectPoint: currentAnswers,
     code: EXAMS.VFJ,
   });
 };
+
 const onMenuBack = () => {
   if (page.value <= 1) return;
   router.push({
@@ -104,18 +119,38 @@ const onMenuBack = () => {
 };
 
 const loadAnswer = async () => {
-  const res = await ExamVFJApiService.getVFJ({
-    params: k,
-    testparts_id: testparts_id,
-  });
-  if (!res) return;
+  try {
+    const res = await ExamVFJApiService.getVFJ({
+      params: k,
+      testparts_id,
+      // 表示しようとしているページを送信する
+      page: page.value,
+    });
 
-  const data = res.data as Record<string, number>;
-  for (let i = 1; i <= 66; i++) {
-    selectPoint[i] = data["q" + i];
+    const data = res.data as Record<string, number>;
+
+    for (let i = 1; i <= 66; i++) {
+      selectPoint[i] = data["q" + i];
+    }
+
+    setLoop();
+  } catch (error) {
+    // 先のページへ直接アクセスした場合
+    if (axios.isAxiosError(error) && error.response?.status === 403) {
+      await router.replace({
+        name: "examVFJTake",
+        params: {
+          testparts_id,
+          page: error.response.data.allowed_page,
+        },
+        query: { k },
+      });
+
+      return;
+    }
+
+    await router.replace({ name: "error" });
   }
-
-  setLoop();
 };
 
 onMounted(loadAnswer);
