@@ -1,0 +1,162 @@
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import AddSwitchForm from "./addSwitchForm.vue";
+import TextField from "@/components/TextFieldView.vue";
+import { settingStatus } from "@/plugins/const";
+import getWeightMasterView from "./getWeightMasterView.vue";
+import CardViewHeader from "./CardViewHeader.vue";
+const settingString = (type: boolean) => {
+  return type ? settingStatus[1] : settingStatus[0];
+};
+
+interface Props {
+  pagename?: string | symbol | undefined;
+  title?: string;
+  editid?: number | string | string[];
+  testcount?: number | string;
+  model?: boolean;
+  weightModel?: boolean;
+  element?: object | any;
+  dataDetail?: object | any;
+  inputWeight?: string[];
+  inputWeightMasterString?: string;
+}
+interface inputObj {
+  [key: string]: string;
+}
+const props = withDefaults(defineProps<Props>(), {
+  title: "",
+  editid: 0,
+  testcount: 0,
+});
+
+const emit = defineEmits<{
+  (e: "onKeyup", value: string, name: string | undefined): void;
+  (e: "onBlur", value: string, name: string): void;
+  (e: "onThree", value: boolean): void;
+  (e: "onWeightFlag", value: boolean): void;
+  (e: "onWeight", value: object): void;
+  (e: "onStatus", value: boolean): void;
+  (e: "setInputWeight", value: string | number | null): void;
+}>();
+
+const inputData: inputObj = {};
+const onkeyup = (e: string, i: number) => {
+  let n = i.toString();
+  inputData[n] = e;
+  emit("onWeight", inputData);
+};
+
+const bgcolor = computed(() => {
+  const status = props.dataDetail?.status;
+
+  return {
+    0: status ? "" : "bg-success",
+    1: status ? "bg-success" : "",
+  };
+});
+const onClick = (status: number) => {
+  emit("onStatus", Boolean(status));
+};
+
+if (props.editid) {
+  onClick(1);
+}
+const setInputWeight = (ev: string | number | null) => {
+  emit("setInputWeight", ev);
+};
+</script>
+<template>
+  <v-card class="w-100" elevation="4" variant="outlined">
+    <CardViewHeader
+      :title="props.title"
+      :pagename="pagename"
+      :editid="props.editid"
+      :bgcolor="bgcolor"
+      @onClick="onClick"
+    ></CardViewHeader>
+    <v-card-text>
+      <v-row no-gutters>
+        <v-col
+          >受検者数:{{ props.testcount }}<span class="ml-2">人</span></v-col
+        >
+      </v-row>
+      <v-row no-gutters>
+        <v-col>
+          <AddSwitchForm
+            :label="settingString(props.model)"
+            title="３要素を用いるストレス共生力算出"
+            color="white border-none pl-2"
+            class="border-none pl-0"
+            :model="props.model"
+            @onClick="(e) => emit('onThree', e)"
+          ></AddSwitchForm>
+        </v-col>
+      </v-row>
+      <v-row no-gutters>
+        <v-col>
+          <AddSwitchForm
+            :label="settingString(props.weightModel)"
+            :title="`重付け【` + props.title + `】`"
+            color="white border-none pl-2"
+            class="border-none pl-0"
+            :model="props.weightModel"
+            @onClick="(e) => emit('onWeightFlag', e)"
+          ></AddSwitchForm>
+        </v-col>
+      </v-row>
+
+      <v-row no-gutters v-show="props.editid === 0">
+        <v-col cols="12">
+          重みマスタからデータ取得<br />
+          <getWeightMasterView
+            :inputWeightMasterString="props.inputWeightMasterString"
+            class="w-50"
+            @onChange="(e) => setInputWeight(e)"
+            :items="props.inputWeight"
+          ></getWeightMasterView>
+        </v-col>
+      </v-row>
+
+      <p class="text-caption text-red" v-show="props.editid === 0">
+        重み付けを設定する場合は、各々数値を入力してください。入力する場合は、半角数字で入力してください。<br />
+        既存の重み付けマスタ、csvファイルから取得することも可能です。<br />
+        また、重み取得後、編集も可能です。
+      </p>
+      <v-row no-gutters class="mt-2">
+        <v-col>
+          <v-row class="mt-0" no-gutters>
+            <v-col
+              cols="2"
+              v-for="val in props.element"
+              :key="val.id"
+              class="mt-1"
+            >
+              <div class="border-sm pa-1 bg-lime text-caption">
+                <p style="overflow: hidden; white-space: nowrap">
+                  {{ val.note }}
+                </p>
+              </div>
+              <div v-if="editid" class="text-right pa-1 box">
+                {{ props.dataDetail[`weight${val.id}`] }}
+              </div>
+              <TextField
+                v-else
+                :value="props.dataDetail[`weight${val.id}`]"
+                type="number"
+                step="0.001"
+                class="text-caption"
+                @onKeyup="(e) => onkeyup(e, val.id)"
+              ></TextField>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-card-text>
+  </v-card>
+</template>
+<style lang="scss">
+.box {
+  border: 1px solid #ccc;
+}
+</style>

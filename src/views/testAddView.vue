@@ -32,6 +32,7 @@ import {
 } from "../plugins/validate";
 import CardViewPFS from "@/components/CardViewPFS.vue";
 import CardViewBAJ3 from "@/components/CardViewBAJ3.vue";
+import CardViewBAJ4 from "@/components/CardViewBAJ4.vue";
 import CardViewVFJ from "@/components/CardViewVFJ.vue";
 import CardViewBEA from "@/components/CardViewBEA.vue";
 import ElementApiService from "@/services/ElementApiService";
@@ -133,6 +134,7 @@ const initialPartStatus: inputDataPartsType = {
 const inputTestPart = ref<{
   PFS: inputDataPartsType;
   BAJ3: inputDataPartsType;
+  BAJ4: inputDataPartsType;
   VFJ: inputDataPartsType;
   BEA: inputDataPartsType;
   EAIa: inputDataPartsType;
@@ -140,6 +142,7 @@ const inputTestPart = ref<{
 }>({
   PFS: { ...initialPartStatus },
   BAJ3: { ...initialPartStatus },
+  BAJ4: { ...initialPartStatus },
   VFJ: { ...initialPartStatus },
   BEA: { ...initialPartStatus },
   EAIa: { ...initialPartStatus },
@@ -348,6 +351,7 @@ const onClick = () => {
     inputTestPart.value.VFJ.examPersonName = VFJName;
   }
   try {
+    console.log(tmp);
     TestApiService.setTest(tmp).then((res) => {
       console.log(res);
       alertFlag.value = true;
@@ -806,6 +810,32 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   :editid="editid"
                   class="mt-3"
                   v-if="
+                    val.code === 'BA-J4' &&
+                    (!editid ||
+                      inputData.testparts?.[val.code.replace('-', '')]?.id !=
+                        null)
+                  "
+                  :title="val.jp"
+                  :testcount="inputData.testcount"
+                  :model="inputTestPart.BAJ4.threeflag"
+                  :weightModel="inputTestPart.BAJ4.weightFlag"
+                  :dataDetail="inputTestPart.BAJ4"
+                  :inputWeight="inputWeight"
+                  :inputWeightMasterString="inputWeightMasterString[val.code]"
+                  :element="elements"
+                  @onThree="(e) => (inputTestPart.BAJ4.threeflag = e)"
+                  @onWeightFlag="(e) => (inputTestPart.BAJ4.weightFlag = e)"
+                  @onWeight="(e) => (inputTestPart.BAJ4.weight = e)"
+                  @onStatus="
+                    (e) => ((inputTestPart.BAJ4.status = e), onBlurButton1())
+                  "
+                  @setInputWeight="(e) => setInputWeight(e, val.code)"
+                ></CardViewBAJ3>
+                <CardViewBAJ3
+                  :pagename="route.name"
+                  :editid="editid"
+                  class="mt-3"
+                  v-if="
                     val.code === 'BA-J3' &&
                     (!editid ||
                       inputData.testparts?.[val.code.replace('-', '')]?.id !=
@@ -943,16 +973,23 @@ const setInputWeight = (e: string | number | null, type: string) => {
             placeholder="選択したいPDF名を入力してください。"
             @onKeyup="(e) => onSearch(e)"
           ></TextFieldView>
-          <CheckboxView
-            v-for="pdf in pdfLists"
-            :key="pdf.key"
-            :label="pdf.text"
-            :value="inputPDf[pdf.key].value"
-            :hide-details="false"
-            class="ma-0 pa-0"
-            @onChange="(e) => pdfCheck(e, pdf.key)"
-          >
-          </CheckboxView>
+          <v-row class="mt-5">
+            <v-col
+              cols="4"
+              class="ma-0 pa-0 border-bottom"
+              v-for="pdf in pdfLists"
+              :key="pdf.key"
+            >
+              <CheckboxView
+                :label="pdf.text"
+                :value="inputPDf[pdf.key].value"
+                :hide-details="true"
+                class="ma-0 pa-0"
+                @onChange="(e) => pdfCheck(e, pdf.key)"
+              >
+              </CheckboxView>
+            </v-col>
+          </v-row>
         </section>
       </v-window-item>
     </v-window>

@@ -9,6 +9,7 @@ import excelDownload from "@/components/excelDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
 import ExamBAJ3View from "@/components/ExamBAJ3View.vue";
 import ExamBEAView from "@/components/ExamBEAView.vue";
+import ExamEAIBView from "@/components/ExamEAIBView.vue";
 import { passArray, examStatusArray } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
@@ -90,7 +91,11 @@ let tmp = {
   test_id: params.testid,
   partner_id: user.getSession("partner_id"),
 };
-const typed = { code: "" };
+// 同じ場所に追加
+type TestTableHeader = {
+  code: string;
+  license_text?: string;
+};
 const testCount = ref(0);
 const tableWidth = ref("100%");
 TestApiService.getTestTableTh(tmp)
@@ -100,7 +105,8 @@ TestApiService.getTestTableTh(tmp)
     }
     testCount.value = rlt.data.length;
 
-    rlt.data.forEach((x: typeof typed) => {
+    rlt.data.forEach((x: TestTableHeader) => {
+      console.log(x);
       if (x.code === "PFS" || x.code === "BAJ3") {
         headers.value.push({
           title: x.code,
@@ -110,7 +116,7 @@ TestApiService.getTestTableTh(tmp)
           row: 1, //pfs用
         });
       }
-      if (x.code === "BEA") {
+      if (x.code === "BEA" || x.code === "EAIb") {
         headers.value.push({
           title: x.code,
           sortable: false,
@@ -471,6 +477,12 @@ const onPdfDownload = () => {
                 :lv="((item as any)['baj3'] ).lv"
                 @onClick="baj3Dialog((item as any)['id'])"
               ></ExamBAJ3View>
+              <ExamEAIBView
+                v-if="headers.some((item) => item.title === 'EAIb')"
+                :starttime="((item as any)['eaib']).starttime"
+                :endtime="((item as any)['eaib']).endtime"
+                :id="((item as any)['eaib'] ).id"
+              ></ExamEAIBView>
               <ExamBEAView
                 v-if="headers.some((item) => item.title === 'BEA')"
                 :starttime="((item as any)['bea']).starttime"

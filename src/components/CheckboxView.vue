@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from "vue";
-
 interface Props {
   label?: string;
   value?: number | string | undefined | null | boolean;
@@ -30,6 +28,7 @@ const emit = defineEmits<{
     :hide-details="props.hideDetail"
     :class="props.class"
     :model-value="!!props.value"
+    density="compact"
     @update:model-value="
       (val) => {
         const checked = val as boolean
@@ -39,3 +38,14 @@ const emit = defineEmits<{
     "
   ></v-checkbox>
 </template>
+<style scoped>
+/* チェックボックス間の余白を縮める */
+.pdf-checkbox {
+  margin: 0;
+}
+
+/* Vuetify標準の入力領域の高さを縮める */
+.pdf-checkbox :deep(.v-input__control) {
+  min-height: 36px;
+}
+</style>

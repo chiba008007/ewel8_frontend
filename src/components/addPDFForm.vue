@@ -4,7 +4,7 @@ import TextFieldView from "./TextFieldView.vue";
 import ComponentSwitch from "@/components/SwitchView.vue";
 import SelectFieldView from "@/components/SelectFieldView.vue";
 import { monthArray, dayArray } from "@/plugins/const";
-import { zeroPadding, numberValue, zeroZapress } from "@/plugins/validate";
+import { numberValue } from "@/plugins/validate";
 import { settingStatus } from "@/plugins/const";
 import dayjs from "dayjs";
 import { inputDataType } from "@/types";

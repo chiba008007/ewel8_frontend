@@ -122,7 +122,7 @@ const enabledTest = (e: boolean) => {
           <ComponentButton
             v-for="exam in examList"
             :key="exam.testparts_id"
-            :text="exam.code"
+            :text="exam.license_text"
             color="primary"
             class="w-100 mb-2"
             :status="exam.examstatus ? 1 : ''"
