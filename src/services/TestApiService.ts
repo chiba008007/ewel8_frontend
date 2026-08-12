@@ -34,6 +34,9 @@ class TestApiService {
   getBaj3TestDetail(data: object) {
     return httpAuth.post("/api/test/getBaj3TestDetail", data);
   }
+  getBaj4TestDetail(data: object) {
+    return httpAuth.post("/api/test/getBaj4TestDetail", data);
+  }
   async getSearchExam(data = {}) {
     return httpAuth.post("/api/test/getSearchExam", data);
   }

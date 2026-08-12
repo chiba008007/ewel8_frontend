@@ -8,6 +8,7 @@ import csvDownload from "@/components/csvDownload.vue";
 import excelDownload from "@/components/excelDownload.vue";
 import ExamPfsView from "@/components/ExamPfsView.vue";
 import ExamBAJ3View from "@/components/ExamBAJ3View.vue";
+import ExamBAJ4View from "@/components/ExamBAJ4View.vue";
 import ExamBEAView from "@/components/ExamBEAView.vue";
 import ExamEAIBView from "@/components/ExamEAIBView.vue";
 import { passArray, examStatusArray } from "@/plugins/const";
@@ -45,6 +46,7 @@ const headers = ref([
 const subHeaders = ref<Record<string, string[]>>({
   PFS: ["ステータス", "行動価値適合度", "ストレス共生レベル"],
   BAJ3: ["ステータス", "行動価値適合度", "ストレス共生レベル"],
+  BAJ4: ["ステータス", "行動価値適合度", "ストレス共生レベル"],
 });
 
 const totalCols = computed(() =>
@@ -106,8 +108,7 @@ TestApiService.getTestTableTh(tmp)
     testCount.value = rlt.data.length;
 
     rlt.data.forEach((x: TestTableHeader) => {
-      console.log(x);
-      if (x.code === "PFS" || x.code === "BAJ3") {
+      if (x.code === "PFS" || x.code === "BAJ3" || x.code === "BAJ4") {
         headers.value.push({
           title: x.code,
           sortable: false,
@@ -160,7 +161,6 @@ onMounted(async () => {
       user_id: params.id,
       test_id: params.testid,
     });
-    console.log(rlt);
     pagetitle.value = rlt.data.testname;
     pdfstartday.value = rlt.data.pdfstartday;
     pdfendday.value = rlt.data.pdfendday;
@@ -168,7 +168,6 @@ onMounted(async () => {
     testpdf_count.value = rlt.data.testpdf_count;
     TestApiService.getExam(tmp).then(function (rlt) {
       detail.value = rlt;
-
       // パスフラグを変換してからリストに設定
       const exams = rlt.data.exams.map((value: any, index: number) => ({
         ...value,
@@ -262,7 +261,8 @@ const applyFilter = () => {
   });
 };
 const tableHeight = ref(100);
-const { pfsDialog, baj3Dialog, dialogFlag, pfsDialogText } = usePfsDialog();
+const { pfsDialog, baj3Dialog, baj4Dialog, dialogFlag, pfsDialogText } =
+  usePfsDialog();
 
 // const baj3Dialog = (e: number) => {
 //   alert("BAJ3");
@@ -477,6 +477,15 @@ const onPdfDownload = () => {
                 :lv="((item as any)['baj3'] ).lv"
                 @onClick="baj3Dialog((item as any)['id'])"
               ></ExamBAJ3View>
+              <ExamBAJ4View
+                v-if="headers.some((item) => item.title === 'BAJ4')"
+                :starttime="((item as any)['baj4']).starttime"
+                :endtime="((item as any)['baj4']).endtime"
+                :id="((item as any)['baj4'] ).id"
+                :level="((item as any)['baj4'] ).level"
+                :lv="((item as any)['baj4'] ).lv"
+                @onClick="baj4Dialog((item as any)['id'])"
+              ></ExamBAJ4View>
               <ExamEAIBView
                 v-if="headers.some((item) => item.title === 'EAIb')"
                 :starttime="((item as any)['eaib']).starttime"

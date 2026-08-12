@@ -49,9 +49,27 @@ export const usePfsDialog = () => {
     dialogFlag.value = true;
   };
 
+  const baj4Dialog = async (e: number) => {
+    const tmp = {
+      exam_id: e,
+      testparts_id: Number(route.params.testid),
+    };
+
+    const rlt = await TestApiService.getBaj4TestDetail(tmp);
+
+    pfsDialogText.value.text1 = rlt.data[0];
+    pfsDialogText.value.text2 = rlt.data[1];
+    pfsDialogText.value.text3 = rlt.data[2];
+    pfsDialogText.value.text4 = rlt.data[3];
+    pfsDialogText.value.text5 = rlt.data[4];
+
+    dialogFlag.value = true;
+  };
+
   return {
     pfsDialog,
     baj3Dialog,
+    baj4Dialog,
     pfsDialogText,
     dialogFlag,
   };

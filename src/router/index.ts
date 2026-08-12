@@ -51,6 +51,9 @@ import ExamVFJTakeFin from "../views/examinate/VFJ/ExamTakeFin.vue";
 import ExamBaj3Guide from "../views/examinate/BAJ3/ExamGuide.vue";
 import ExamBaj3Take from "../views/examinate/BAJ3/ExamTake.vue";
 import ExamBaj3TakeFin from "../views/examinate/BAJ3/ExamTakeFin.vue";
+import ExamBaj4Guide from "../views/examinate/BAJ4/ExamGuide.vue";
+import ExamBaj4Take from "../views/examinate/BAJ4/ExamTake.vue";
+import ExamBaj4TakeFin from "../views/examinate/BAJ4/ExamTakeFin.vue";
 import ExamPfsGuide from "../views/examinate/PFS/ExamGuide.vue";
 import ExamPfsTake from "../views/examinate/PFS/ExamTake.vue";
 import ExamPfsTakeFin from "../views/examinate/PFS/ExamTakeFin.vue";
@@ -541,6 +544,23 @@ const routes: Array<RouteRecordRaw> = [
     name: "ExamBaj3TakeFin",
     component: ExamBaj3TakeFin,
   },
+  // BAJ4検査(検査Ⅱ)
+  {
+    path: "/exam/baj4/:testparts_id/guide",
+    name: "examBaj4Guide",
+    component: ExamBaj4Guide,
+  },
+  {
+    path: "/exam/baj4/:testparts_id/page/:page/take",
+    name: "examBaj4Take",
+    component: ExamBaj4Take,
+  },
+  {
+    path: "/exam/baj4/:testparts_id/page/fin/take",
+    name: "ExamBaj4TakeFin",
+    component: ExamBaj4TakeFin,
+  },
+
   // PFS検査
   {
     path: "/exam/pfs/:testparts_id/guide",

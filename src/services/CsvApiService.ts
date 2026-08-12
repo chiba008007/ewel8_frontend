@@ -7,6 +7,9 @@ class CsvApiService {
   getBAJ3(data: object) {
     return httpAuth.post("/api/csv/getBAJ3", data);
   }
+  getBAJ4(data: object) {
+    return httpAuth.post("/api/csv/getBAJ4", data);
+  }
   getVFJ(data: object) {
     return httpAuth.post("/api/csv/getVFJ", data);
   }

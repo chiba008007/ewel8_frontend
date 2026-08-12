@@ -15,7 +15,9 @@ const k = router.currentRoute.value.query.k;
 let tmp = { params: k, testparts_id: route.params.testparts_id };
 ExamApiService.getExamTestParts(tmp)
   .then(function (rlt) {
-    testcode.value = rlt.data.code;
+    // console.log(rlt.data);
+    testcode.value =
+      rlt.data.code === "BAJ4" ? rlt.data.license_text : rlt.data.code;
   })
   .catch(() => {
     alert("error");

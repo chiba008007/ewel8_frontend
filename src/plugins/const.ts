@@ -286,6 +286,7 @@ export const BILLSENDFROM = {
 export const EXAMS = {
   PFS: "PFS",
   BAJ3: "BAJ3",
+  BAJ4: "BAJ4",
   VFJ: "VFJ",
   BEA: "BEA",
   EAIb: "EAIb",

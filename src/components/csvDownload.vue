@@ -6,6 +6,7 @@ import TestApiService from "@/services/TestApiService";
 import ButtonView from "@/components/ButtonView.vue";
 import { pfsCsv } from "@/plugins/csv";
 import { BAJ3csv } from "@/plugins/BAJ3csv";
+import { BAJ4csv } from "@/plugins/BAJ4csv";
 import { VFJcsv } from "@/plugins/VFJcsv";
 import { BEAcsv } from "@/plugins/BEAcsv";
 import { EAIbcsv } from "@/plugins/EAIbcsv";
@@ -58,6 +59,9 @@ const onCsvDownLoad = (code: string) => {
       break;
     case "BAJ3":
       BAJ3csv(params);
+      break;
+    case "BAJ4":
+      BAJ4csv(params);
       break;
     case "VFJ":
       VFJcsv(params);
