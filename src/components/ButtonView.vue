@@ -25,7 +25,7 @@ const props = defineProps<{
     :density="props.density"
     :color="props.color"
     :disabled="props.disabled === true"
-    :class="props.class"
+    :class="[props.class, 'text-none']"
     @click="emit('onClick')"
   >
     <span v-if="props.status == 1" class="text-red mr-4">受検済み</span>

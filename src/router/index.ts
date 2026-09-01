@@ -63,6 +63,9 @@ import ExamBEATakeFin from "../views/examinate/BEA/ExamTakeFin.vue";
 import ExamEAIbGuide from "../views/examinate/EAIb/ExamGuide.vue";
 import ExamEAIbTake from "../views/examinate/EAIb/ExamTake.vue";
 import ExamEAIbTakeFin from "../views/examinate/EAIb/ExamTakeFin.vue";
+import ExamEAIaGuide from "../views/examinate/EAIa/ExamGuide.vue";
+import ExamEAIaTake from "../views/examinate/EAIa/ExamTake.vue";
+import ExamEAIaTakeFin from "../views/examinate/EAIa/ExamTakeFin.vue";
 import AdminPageLogService from "@/services/AdminPageLogService";
 
 const hostname = location.hostname;
@@ -609,6 +612,23 @@ const routes: Array<RouteRecordRaw> = [
     path: "/exam/EAIb/:testparts_id/page/fin/take",
     name: "ExamEAIbTakeFin",
     component: ExamEAIbTakeFin,
+  },
+
+  // 検査Ia
+  {
+    path: "/exam/EAIa/:testparts_id/guide",
+    name: "examEAIaGuide",
+    component: ExamEAIaGuide,
+  },
+  {
+    path: "/exam/EAIa/:testparts_id/page/:page/take",
+    name: "examEAIaTake",
+    component: ExamEAIaTake,
+  },
+  {
+    path: "/exam/EAIa/:testparts_id/page/fin/take",
+    name: "ExamEAIaTakeFin",
+    component: ExamEAIaTakeFin,
   },
 
   {

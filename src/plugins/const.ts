@@ -290,6 +290,7 @@ export const EXAMS = {
   VFJ: "VFJ",
   BEA: "BEA",
   EAIb: "EAIb",
+  EAIa: "EAIa",
 };
 
 //
