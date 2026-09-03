@@ -10,6 +10,7 @@ import { BAJ4csv } from "@/plugins/BAJ4csv";
 import { VFJcsv } from "@/plugins/VFJcsv";
 import { BEAcsv } from "@/plugins/BEAcsv";
 import { EAIbcsv } from "@/plugins/EAIbcsv";
+import { EAIacsv } from "@/plugins/EAIacsv";
 import { useStoreUser } from "@/store/user";
 
 const router = useRouter();
@@ -71,6 +72,9 @@ const onCsvDownLoad = (code: string) => {
       break;
     case "EAIb":
       EAIbcsv(params);
+      break;
+    case "EAIa":
+      EAIacsv(params);
       break;
   }
 };

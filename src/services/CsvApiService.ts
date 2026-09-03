@@ -19,6 +19,9 @@ class CsvApiService {
   getEAIb(data: object) {
     return httpAuth.post("/api/csv/getEAIb", data);
   }
+  getEAIa(data: object) {
+    return httpAuth.post("/api/csv/getEAIa", data);
+  }
 }
 
 export default new CsvApiService();
