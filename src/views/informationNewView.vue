@@ -69,7 +69,7 @@ onMounted(async () => {
   form.value.end_day = String(ed.date());
   form.value.end_hour = String(ed.hour());
   form.value.end_time = String(ed.minute());
-  form.value.display = result.data["information"].display;
+  form.value.display = String(result.data["information"].display);
   form.value.note = result.data["information"].note;
   filepath.value = result.data["information"].file;
 
@@ -152,9 +152,9 @@ const onRegist = () => {
   });
   fd.append("users", JSON.stringify(users));
   fd.append("id", String(paramId));
-  InformationApiService.setInfoList(fd).then((res: any) => {
+  InformationApiService.setInfoList(fd).then(async (res: any) => {
     if (res.data.status) {
-      router.push(router.resolve({ name: "information" }).href);
+      flashMessage.value = "登録しました";
     } else {
       alert("登録失敗");
     }
@@ -218,8 +218,17 @@ const onRegist = () => {
             :items="DISPLAY_TERM"
             hideDetails="auto"
             :rules="[(v:string) => !!v || REQUIRED_MESSAGE]"
-            :value="form.display"
-            @onChange="(e) => (form.display = e)"
+            :value="
+              DISPLAY_TERM.find((item) => item.id === Number(form.display))
+                ?.name ?? ''
+            "
+            @onChange="
+              (e) => {
+                form.display = String(
+                  DISPLAY_TERM.find((item) => item.name === e)?.id ?? ''
+                );
+              }
+            "
           ></addPrefCodeForm>
           <addInfoTextareaForm
             title="内容"

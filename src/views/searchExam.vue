@@ -166,6 +166,7 @@ const onResize = () => {
     :height="tableHeight"
     fixed-header
     hide-default-footer
+    :items-per-page="-1"
   >
     <template v-slot:item="{ item }">
       <tr>
