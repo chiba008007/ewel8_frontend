@@ -11,6 +11,7 @@ import ExamBAJ3View from "@/components/ExamBAJ3View.vue";
 import ExamBAJ4View from "@/components/ExamBAJ4View.vue";
 import ExamBEAView from "@/components/ExamBEAView.vue";
 import ExamEAIBView from "@/components/ExamEAIBView.vue";
+import ExamEAIAView from "@/components/ExamEAIAView.vue";
 import { passArray, examStatusArray } from "@/plugins/const";
 import ButtonView from "@/components/ButtonView.vue";
 import ComponentImg from "@/components/imgView.vue";
@@ -117,7 +118,7 @@ TestApiService.getTestTableTh(tmp)
           row: 1, //pfs用
         });
       }
-      if (x.code === "BEA" || x.code === "EAIb") {
+      if (x.code === "BEA" || x.code === "EAIb" || x.code === "EAIa") {
         headers.value.push({
           title: x.code,
           sortable: false,
@@ -492,6 +493,12 @@ const onPdfDownload = () => {
                 :endtime="((item as any)['eaib']).endtime"
                 :id="((item as any)['eaib'] ).id"
               ></ExamEAIBView>
+              <ExamEAIAView
+                v-if="headers.some((item) => item.title === 'EAIa')"
+                :starttime="((item as any)['eaia']).starttime"
+                :endtime="((item as any)['eaia']).endtime"
+                :id="((item as any)['eaia'] ).id"
+              ></ExamEAIAView>
               <ExamBEAView
                 v-if="headers.some((item) => item.title === 'BEA')"
                 :starttime="((item as any)['bea']).starttime"
