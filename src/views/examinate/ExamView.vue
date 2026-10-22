@@ -12,6 +12,8 @@ import { requiredValue, checkBirth, zeroPadding } from "@/plugins/validate";
 import { useStoreUser } from "@/store/user";
 import userLogout from "@/services/UserLogout";
 
+import AdminPageLogService from "@/services/AdminPageLogService";
+
 const user = useStoreUser();
 const recomendflag = ref(0);
 const logintext = ref("");
@@ -58,6 +60,16 @@ const onClick = () => {
         user.setUserDataExamToken(response.data.token);
         user.setUserExamData(response.data.user);
         errorflag.value = false;
+
+        AdminPageLogService.setPageLog({
+          route_name: "exam",
+          title: "受検者ログイン",
+          path: "/exam/",
+          params: {},
+        }).catch((error) => {
+          console.error("アクセスログ登録失敗", error);
+        });
+
         router.push({ name: "examProfile", query: { k: k } }).then(() => {
           window.location.reload();
         });

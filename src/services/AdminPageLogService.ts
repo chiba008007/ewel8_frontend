@@ -4,8 +4,13 @@ class AdminPageLogService {
   getPageLog(data: object) {
     return httpAuth.post("/api/page/list", data);
   }
+
   setPageLog(data: object) {
     return httpAuth.post("/api/page/log", data);
+  }
+
+  setExamPageLog(data: object) {
+    return httpAuth.post("/api/exam/page/log", data);
   }
 }
 

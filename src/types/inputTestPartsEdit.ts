@@ -19,4 +19,5 @@ export interface inputDataPartsType {
   weight14: string | undefined | null;
   weight: number | string | null | undefined | object;
   examPersonName: string | null;
+  mhqtype: string | null;
 }

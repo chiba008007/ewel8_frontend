@@ -35,6 +35,7 @@ import CardViewBAJ3 from "@/components/CardViewBAJ3.vue";
 import CardViewBAJ4 from "@/components/CardViewBAJ4.vue";
 import CardViewVFJ from "@/components/CardViewVFJ.vue";
 import CardViewBEA from "@/components/CardViewBEA.vue";
+import CardViewMHQ from "@/components/CardViewMHQ.vue";
 import ElementApiService from "@/services/ElementApiService";
 import AlertView from "@/components/AlertView.vue";
 import pankuzuMain from "@/components/pankuzuMain.vue";
@@ -129,6 +130,7 @@ const initialPartStatus: inputDataPartsType = {
   weight14: null,
   weight: null,
   examPersonName: null,
+  mhqtype: null,
 };
 
 const inputTestPart = ref<{
@@ -139,6 +141,7 @@ const inputTestPart = ref<{
   BEA: inputDataPartsType;
   EAIa: inputDataPartsType;
   EAIb: inputDataPartsType;
+  MHQ: inputDataPartsType;
 }>({
   PFS: { ...initialPartStatus },
   BAJ3: { ...initialPartStatus },
@@ -147,6 +150,7 @@ const inputTestPart = ref<{
   BEA: { ...initialPartStatus },
   EAIa: { ...initialPartStatus },
   EAIb: { ...initialPartStatus },
+  MHQ: { ...initialPartStatus, mhqtype: "MHQ-R" },
 });
 
 // 重み付けマスタ取得
@@ -944,6 +948,31 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   "
                   @onTimeLimit="(val) => (inputTestPart.EAIb.timelimit = val)"
                 ></CardViewEAIb>
+                <CardViewMHQ
+                  :pagename="route.name"
+                  :editid="editid"
+                  class="mt-3"
+                  v-if="
+                    val.code === 'MHQ' &&
+                    (!editid ||
+                      inputData.testparts?.[
+                        val.code.replace('-', '').toUpperCase()
+                      ]?.id != null)
+                  "
+                  :title="val.jp"
+                  :testcount="inputData.testcount"
+                  :selectedTime="
+                    inputTestPart.MHQ.timelimit != null
+                      ? Number(inputTestPart.MHQ.timelimit)
+                      : undefined
+                  "
+                  @onStatus="
+                    (e) => ((inputTestPart.MHQ.status = e), onBlurButton1())
+                  "
+                  @onTimeLimit="(val) => (inputTestPart.MHQ.timelimit = val)"
+                  @onMhqType="(val) => (inputTestPart.MHQ.mhqtype = val)"
+                  :mhqtype="inputTestPart.MHQ.mhqtype"
+                ></CardViewMHQ>
               </div>
             </v-col>
           </v-row>

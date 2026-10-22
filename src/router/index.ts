@@ -648,8 +648,15 @@ const router = createRouter({
 
 router.afterEach((to, from) => {
   const store = useStoreUser();
-  // ログインしていないときはログを送らない
-  if (!store.isLogin) return;
+
+  console.log("アクセスログ確認", {
+    path: to.fullPath,
+    isLogin: store.isLogin,
+  });
+
+  const isExamPage = to.path.startsWith("/exam/");
+
+  if (!store.isLogin && !isExamPage) return;
 
   const key = to.meta.titleKey as string;
   const title = store.getTitle(key);
@@ -660,7 +667,11 @@ router.afterEach((to, from) => {
     title: title,
     params: to.params,
   };
-  AdminPageLogService.setPageLog(data);
+  if (isExamPage) {
+    AdminPageLogService.setExamPageLog(data);
+  } else {
+    AdminPageLogService.setPageLog(data);
+  }
 });
 
 router.beforeEach((to, from, next) => {

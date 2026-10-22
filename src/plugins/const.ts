@@ -315,3 +315,6 @@ export const PDF_TYPE = {
 
 // テスト設定時間
 export const TIMELIMITLINE = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+
+// MHQ種別
+export const MHQTYPE = ["MHQ-R", "MHQ-E"];
