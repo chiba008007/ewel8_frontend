@@ -100,7 +100,7 @@ watch(isFormValid, (v) => {
       :hideDetails="true"
       :items="prefs"
       :value="form.pref"
-      @onChange="(v) => (form.pref = Number(v))"
+      @onChange="(v) => (form.pref = String(v))"
     ></AddPrefCodeForm>
     <addPartnerForm
       title="住所"

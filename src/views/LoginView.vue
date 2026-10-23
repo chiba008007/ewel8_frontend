@@ -7,6 +7,7 @@ import UserApiService from "@/services/UserApiService";
 import UserLogout from "@/services/UserLogout";
 import TwoFactorView from "@/components/TwoFactorView.vue";
 import ProgressView from "@/components/ProgressView.vue";
+import RecommendView from "@/components/RecommendView.vue";
 
 const userId = ref<string>();
 const password = ref<string>();
@@ -81,7 +82,6 @@ const onClick = () => {
       <v-card class="mx-auto" variant="outlined" min-width="400px">
         <v-card-actions>
           <v-col>
-            <p class="text-h6">E-WEL.COM</p>
             <div class="mt-2">
               <label>User ID</label>
               <v-text-field
@@ -123,5 +123,6 @@ const onClick = () => {
         @onClick="onClick"
       ></two-factor-view>
     </v-sheet>
+    <RecommendView :recomendflag="true"></RecommendView>
   </v-container>
 </template>

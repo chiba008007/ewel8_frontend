@@ -25,8 +25,10 @@ const route = useRoute();
 const k = router.currentRoute.value.query.k;
 const data = ref();
 const company_name = ref("");
+const logoImagePath = ref("");
 const testname = ref("");
 const testpartsId = route.params.testparts_id;
+const logoLoaded = ref(false);
 
 let tmp = { params: k, testparts_id: testpartsId };
 const errormessage = ref("");
@@ -40,7 +42,9 @@ ExamApiService.getExam(tmp)
     emit("onLoginId", JSON.parse(ls)?.userExam.email);
     data.value = rlt.data;
     company_name.value = data.value.company_name;
+    logoImagePath.value = data.value.logoImagePath;
     testname.value = data.value.testname;
+    logoLoaded.value = true;
     emit("onResultFlag", rlt.data.resultflag);
     emit("enabledTest", true);
   })
@@ -55,9 +59,10 @@ ExamApiService.getExam(tmp)
     <v-row class="pa-1 align-center bg-white">
       <v-col md="1" cols="3">
         <ComponentImg
+          v-if="logoLoaded"
           :maxHeight="50"
-          :src="require('@/assets/logo.png')"
-        ></ComponentImg>
+          :src="logoImagePath || require('@/assets/logo.png')"
+        />
       </v-col>
       <v-col class="text-h6 pl-2 font-weight-bold" md="11" cols="9">
         {{ company_name }}

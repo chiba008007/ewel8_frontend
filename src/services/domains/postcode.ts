@@ -3,7 +3,7 @@ import { Core as YubinBangoCore } from "yubinbango-core2";
 type AddressTarget = {
   post1: string;
   post2: string;
-  pref: number;
+  pref: string;
   address1: string;
 };
 

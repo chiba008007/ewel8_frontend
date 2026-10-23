@@ -5,7 +5,7 @@ export interface PartnerForm {
 
   post1: string;
   post2: string;
-  pref: number;
+  pref: string;
   address1: string;
   address2: string;
   tel: string;
@@ -34,7 +34,7 @@ export const createPartnerForm = (): PartnerForm => ({
 
   post1: "",
   post2: "",
-  pref: 0,
+  pref: "",
   address1: "",
   address2: "",
   tel: "",

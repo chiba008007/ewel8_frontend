@@ -88,9 +88,10 @@ const submit = async () => {
       throw new Error(loginIdResult);
     }
     await savePartner(form, partnerId);
-    router.push("/list");
-    //registAlert.value = true;
+    // router.push("/list");
+    registAlert.value = true;
   } catch (error) {
+    console.error("新規登録エラー:", error);
     registAlert.value = false;
     errorAlert.value = true;
   } finally {
@@ -132,7 +133,7 @@ onMounted(async () => {
       pref: res.pref,
     });
   } catch (e) {
-    errorAlert.value = true;
+    console.error("パートナー情報取得エラー:", e);
   } finally {
     loadingFlag.value = false;
   }
