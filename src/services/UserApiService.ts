@@ -116,6 +116,9 @@ class UserApiService {
       return null;
     }
   }
+  checkCustomerAccess(data: { user_id: string | number }) {
+    return httpAuth.post("/api/user/checkCustomerAccess", data);
+  }
 }
 
 export default new UserApiService();

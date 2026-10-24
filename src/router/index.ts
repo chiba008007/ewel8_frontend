@@ -67,6 +67,7 @@ import ExamEAIaGuide from "../views/examinate/EAIa/ExamGuide.vue";
 import ExamEAIaTake from "../views/examinate/EAIa/ExamTake.vue";
 import ExamEAIaTakeFin from "../views/examinate/EAIa/ExamTakeFin.vue";
 import AdminPageLogService from "@/services/AdminPageLogService";
+import UserApiService from "@/services/UserApiService";
 
 const hostname = location.hostname;
 //const isTestSite = hostname === "test.v-gate.jp";
@@ -346,6 +347,7 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true,
       allowedRoles: ["admin", "partner", "customer"],
       partnercheck: true,
+      customerAccessCheck: true,
     },
   },
   {
@@ -376,6 +378,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true,
       allowedRoles: ["admin", "partner", "customer"],
+      customerAccessCheck: true,
     },
   },
   // 検査一覧用ダウンロード
@@ -386,6 +389,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true,
       allowedRoles: ["admin", "partner", "customer"],
+      customerAccessCheck: true,
     },
   },
   // 重み付けマスタ
@@ -419,6 +423,7 @@ const routes: Array<RouteRecordRaw> = [
     component: testAddView,
     meta: {
       requiresAuth: true,
+      customerAccessCheck: true,
     },
   },
   {
@@ -674,36 +679,60 @@ router.afterEach((to, from) => {
   }
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
   const user = useStoreUser();
   const isLogin = user.isLogin;
-  const userType = (user.userdata as any).type;
-  const allowedRoles = to.meta.allowedRoles as string[] | undefined;
-  const partnercheck = to.meta.partnercheck as boolean; // パートナー権限でログインした場合 idとpartnerのidが同じ
+
+  if (requiresAuth && !isLogin) {
+    return next({
+      path: "/login",
+      query: { redirect: to.fullPath },
+    });
+  }
 
   if (requiresAuth) {
-    if (!isLogin) {
-      return next({
-        path: "/login",
-        query: { redirect: to.fullPath },
-      });
-    }
+    const userType = (user.userdata as any)?.type;
+    const allowedRoles = to.meta.allowedRoles as string[] | undefined;
+    const partnercheck = to.meta.partnercheck as boolean;
 
     if (allowedRoles && !allowedRoles.includes(userType)) {
-      return next({ path: "/forbidden" });
+      return next("/error");
     }
+
     if (
       partnercheck &&
       !to.params.typeString &&
-      user.userdata.type === "partner" &&
+      userType === "partner" &&
       user.userdata.id != to.params.id
     ) {
-      return next({ path: "/forbidden" });
+      return next("/error");
     }
-    return next(); // 認証 & 権限 OK
+
+    if (to.meta.customerAccessCheck) {
+      const customerId =
+        to.name === "customerEdit" ? to.params.editid : to.params.id;
+
+      if (!customerId) {
+        return next("/error");
+      }
+
+      try {
+        const res = await UserApiService.checkCustomerAccess({
+          user_id: String(customerId),
+        });
+
+        if (res.data?.allowed !== true) {
+          return next("/error");
+        }
+      } catch (e) {
+        console.error("権限確認エラー", e);
+        return next("/error");
+      }
+    }
   }
 
-  return next(); // 認証不要ルートはそのまま許可
+  return next();
 });
 export default router;

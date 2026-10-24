@@ -9,6 +9,7 @@ export default function () {
       user_id: tmpid,
     })
       .then((res: any) => {
+        console.log("getUserLisence:", res.data);
         lisenceView.value = res.data;
       })
       .catch((e) => {
