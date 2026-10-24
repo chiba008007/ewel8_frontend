@@ -12,10 +12,14 @@ export const pagelink = (link: string, id: number, key: number) => {
 };
 
 export const deleteStatus = (id: number, key: number): Promise<number> => {
-  const tmp = {
-    id: id,
-  };
-  return FileuploadApiService.deleteStatus(tmp).then((rlt) => {
-    return key;
-  });
+  if (confirm("ファイルの削除を行います")) {
+    const tmp = {
+      id: id,
+    };
+    return FileuploadApiService.deleteStatus(tmp).then((rlt) => {
+      return key;
+    });
+  } else {
+    return Promise.resolve(-1);
+  }
 };

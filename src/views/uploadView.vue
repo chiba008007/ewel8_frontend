@@ -174,6 +174,7 @@ const commaSeparated = (value: number) => {
                 density="compact"
                 @onClick="
                   deleteStatus(item.id, item.key).then((key) => {
+                    if (key === -1) return;
                     desserts.splice(key, 1);
                     alertDeleteflag = true;
                   })

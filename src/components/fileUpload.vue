@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, withDefaults } from "vue";
+import { ref } from "vue";
 import { VFileUpload } from "vuetify/lib/labs/components.mjs";
 import ButtonView from "./ButtonView.vue";
+
 type TVDensity = VFileUpload["$props"]["density"];
+
 interface Props {
   label?: string;
   density?: TVDensity;
@@ -28,7 +30,17 @@ const emit = defineEmits<{
   (e: "onChange", value: Event): void;
   (e: "onClick", value: string): void;
 }>();
+
+// 選択されたファイル
+const selectedFile = ref<File | null>(null);
+
+const onFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  selectedFile.value = input.files?.[0] ?? null;
+  emit("onChange", event);
+};
 </script>
+
 <template>
   <div class="mt-3">
     <v-row no-gutters class="mt-3">
@@ -38,7 +50,8 @@ const emit = defineEmits<{
           :label="props.label"
           :variant="props.variant"
           :density="props.density"
-          @change="emit('onChange', $event)"
+          @change="onFileChange"
+          @click:clear="selectedFile = null"
         />
       </v-col>
       <v-col>
@@ -46,12 +59,14 @@ const emit = defineEmits<{
           text="アップロード"
           class="ml-3"
           color="primary"
+          :disabled="!selectedFile"
           @click="emit('onClick', 'on')"
-        ></ButtonView>
+        />
       </v-col>
     </v-row>
   </div>
 </template>
+
 <style type="text/css">
 .w500 {
   width: 500px;
