@@ -29,7 +29,10 @@ const params = router.currentRoute.value.params;
 const onTableSet = () => {
   const tmp = {
     id: params.id,
-    partner_id: user.getSession("partner_id"),
+    partner_id:
+      user.userdata.type === "customer"
+        ? (user.userdata as { partner_id?: number }).partner_id
+        : user.getSession("partner_id"),
   };
   testList.value = [];
   WeightApiService.getWeightMaster(tmp)

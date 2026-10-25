@@ -29,7 +29,10 @@ const testheaders = ref([
   { title: "機能", align: undefined, key: "method" },
 ]);
 
-const partner_id = user.getSession("partner_id");
+const partner_id =
+  user.userdata.type === "customer"
+    ? user.userdata.partner_id
+    : user.getSession("partner_id");
 const tmp = {
   user_id: route.params.id,
   partner_id: partner_id,
@@ -37,8 +40,11 @@ const tmp = {
 const testList = ref();
 
 type userType = {
-  type: string;
+  id: string;
+  type: "admin" | "partner" | "customer";
+  partner_id?: number;
 };
+
 type userAny = {
   id: number;
   testname: string;

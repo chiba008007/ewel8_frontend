@@ -33,16 +33,19 @@ const pageClickMoveParam = (pagename: string) => {
     });
 };
 const pageCustomerEditParam = (pagename: string) => {
-  router.push(
-    router.resolve({
-      name: pagename,
-      params: {
-        id: user.getSession("partner_id"),
-        editid: tmpid,
-        typeString: "test",
-      },
-    }).href
-  );
+  const partnerId =
+    userdata.type === "customer"
+      ? userdata.partner_id
+      : user.getSession("partner_id");
+
+  router.push({
+    name: pagename,
+    params: {
+      id: String(partnerId),
+      editid: String(tmpid),
+      typeString: "test",
+    },
+  });
 };
 </script>
 <template>

@@ -48,7 +48,11 @@ onMounted(() => {
 });
 const reading = () => {
   let tmp: { customer_id?: number; partner_id: number } = {
-    partner_id: user.getSession("partner_id"),
+    partner_id: Number(
+      user.userdata.type === "customer"
+        ? (user.userdata as { partner_id?: number }).partner_id
+        : user.getSession("partner_id")
+    ),
   };
 
   if (route.name !== "customerDown") {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import { useStoreUser } from "../store/user";
 import UserApiService from "@/services/UserApiService";
@@ -16,6 +16,7 @@ import ProgressView from "@/components/ProgressView.vue";
 const user = useStoreUser();
 const move = pageClickMove();
 const route = useRoute();
+const router = useRouter();
 
 // route.params.id は string | string[] の可能性があるため string に寄せる
 const tmpid = String(route.params.id);
@@ -31,6 +32,7 @@ const customerheaders = ref([
   { title: "処理数", key: "syoriCount" },
   { title: "残数", key: "zanCount" },
   { title: "機能", key: "method" },
+  { title: "更新日", key: "updated" },
 ]);
 
 const headers = ref([
@@ -64,6 +66,7 @@ type CustomerRow = {
   syoriCount: number;
   zanCount: number;
   method: string;
+  updated: string;
 };
 
 // 画面表示用：ライセンス一覧
@@ -115,6 +118,9 @@ const fetchCustomerList = async () => {
     syoriCount: value.syori,
     zanCount: value.zan,
     method: "",
+    updated: value.updated_at
+      ? new Date(value.updated_at).toLocaleString("ja-JP")
+      : "",
   }));
 };
 
@@ -152,11 +158,14 @@ const onMove = (param: string, key: number) => {
     <v-col class="mt-0 pt-0">
       <v-tabs v-model="tab">
         <v-tab value="1">顧客一覧</v-tab>
-        <v-tab value="2">検査一覧</v-tab>
+        <v-tab value="2">ライセンス数</v-tab>
       </v-tabs>
 
       <v-window v-model="tab">
         <v-window-item value="1">
+          <p class="text-black ml-2 mt-2">
+            ※ 列の見出しをクリックすると、昇順・降順を切り替えられます。
+          </p>
           <v-data-table
             v-if="!loadingFlag && customerList.length > 0"
             :headers="customerheaders"
@@ -166,7 +175,7 @@ const onMove = (param: string, key: number) => {
           >
             <template v-slot:item="{ item }">
               <tr v-show="item.id">
-                <td class="w-50">{{ item.campany }}</td>
+                <td>{{ item.campany }}</td>
                 <td>{{ item.examCount }}</td>
                 <td>{{ item.syoriCount }}</td>
                 <td>{{ item.zanCount }}</td>
@@ -217,6 +226,7 @@ const onMove = (param: string, key: number) => {
                     "
                   ></ButtonView>
                 </td>
+                <td style="width: 100px">{{ item.updated }}</td>
               </tr>
             </template>
           </v-data-table>

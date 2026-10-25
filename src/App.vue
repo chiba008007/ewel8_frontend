@@ -19,8 +19,9 @@ const isLogin = computed(() => {
   return usr?.isLogin;
 });
 const system_name = computed(() => {
-  let usrdata = usr.getUserData();
-  return usrdata.system_name;
+  const usrdata = usr.getUserData();
+
+  return usrdata.system_name || usrdata.name || "";
 });
 const onLogout = () => {
   userLogout.logout();
