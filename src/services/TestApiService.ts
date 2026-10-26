@@ -46,6 +46,10 @@ class TestApiService {
   async deleteTest(data = {}) {
     return await httpAuth.post("/api/test/deleteTest", data);
   }
+
+  async getTestExamList(data = {}) {
+    return await httpAuth.post("/api/exam/getTestExamList", data);
+  }
 }
 
 export default new TestApiService();
