@@ -19,7 +19,7 @@ export const useStoreUser = defineStore("user", {
     download: "ダウンロード",
     upload: "添付",
     ListView: "パートナー一覧",
-    testList: "検査一覧",
+    testList: "顧客画面",
     testExamList: "検査結果一覧",
     testExamEdit: "受検者情報更新",
     testListsDownload: "ダウンロード",

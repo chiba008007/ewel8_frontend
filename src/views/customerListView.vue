@@ -12,11 +12,13 @@ import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import pankuzuMain from "@/components/pankuzuMain.vue";
 import ProgressView from "@/components/ProgressView.vue";
+import { D_ADMIN } from "@/plugins/const";
 
 const user = useStoreUser();
 const move = pageClickMove();
 const route = useRoute();
 const router = useRouter();
+const type = user.userdata.type;
 
 // route.params.id は string | string[] の可能性があるため string に寄せる
 const tmpid = String(route.params.id);
@@ -176,12 +178,12 @@ const onMove = (param: string, key: number) => {
             <template v-slot:item="{ item }">
               <tr v-show="item.id">
                 <td>{{ item.campany }}</td>
-                <td>{{ item.examCount }}</td>
-                <td>{{ item.syoriCount }}</td>
-                <td>{{ item.zanCount }}</td>
-                <td class="w-25">
+                <td class="wNum">{{ item.examCount }}</td>
+                <td class="wNum">{{ item.syoriCount }}</td>
+                <td class="wNum">{{ item.zanCount }}</td>
+                <td class="w-auto text-center">
                   <ButtonView
-                    text="検査一覧"
+                    text="顧客画面"
                     color="success"
                     size="small"
                     @click="onMove('testLists', Number(item.id))"
@@ -211,6 +213,7 @@ const onMove = (param: string, key: number) => {
                         item.id
                       )
                     "
+                    v-if="type === D_ADMIN"
                   ></ButtonView>
                   <ButtonView
                     text="添付"
@@ -254,4 +257,8 @@ const onMove = (param: string, key: number) => {
     </v-col>
   </v-row>
 </template>
-<style lang="scss"></style>
+<style lang="scss">
+.wNum {
+  width: 120px;
+}
+</style>

@@ -99,10 +99,11 @@ const onBlurButton = async () => {
   const isValid = (r: unknown) => r === true || r === "";
   // それぞれの結果を取得（非同期含む）
   const results = await Promise.all([
-    checkLoginID(inputData.value.login_id, false), // true | string | Promise
-    Promise.resolve(requiredValue(inputData.value.name, "顧客企業名")), // true | string
+    checkLoginID(inputData.value.login_id, false),
+    Promise.resolve(requiredValue(inputData.value.name, "顧客企業名")),
     Promise.resolve(requiredValue(inputData.value.tanto_name, "担当者氏名")),
     Promise.resolve(checkEmailRequired(inputData.value.tanto_address)),
+    Promise.resolve(checkPasswordEdit(inputData.value.password)), // 追加
   ]);
 
   // 全て OK ならボタンを有効化
@@ -283,7 +284,7 @@ const backColor = () => {
   <v-row class="ml-2">
     <v-col cols="12">
       <ComponentButton
-        :text="typeString === 'test' ? '検査一覧' : '顧客企業一覧'"
+        :text="typeString === 'test' ? '顧客画面' : '顧客企業一覧'"
         color="red"
         variant="outlined"
         @onClick="pageBack()"
@@ -327,8 +328,8 @@ const backColor = () => {
         type="login_id"
         :value="inputData.login_id"
         :requriredIcon="true"
-        :maxlength="8"
-        messages="4文字以上8文字以下で入力してください"
+        :maxlength="128"
+        messages="半角英数・4文字以上128文字以内で入力してください。大文字と小文字は区別されます。"
         @onBlur="(ev) => ((inputData.login_id = ev), onBlurButton())"
         :rules="[loginIdRule]"
       ></addPartnerForm>
@@ -338,6 +339,8 @@ const backColor = () => {
         text="パスワード未入力時は変更されません"
         class="w-50"
         :hideDetails="`auto`"
+        :passwordFlag="true"
+        :maxlength="15"
         type="password"
         :value="inputData.password"
         @onBlur="(e) => ((inputData.password = e), onBlurButton())"
@@ -494,7 +497,7 @@ const backColor = () => {
         :tooltipflag="true"
         tooltipMessage="受検ページをhttps://で利用します。"
         @onClick="
-          (e) =>
+          (e:any) =>
             (inputData.displaySslFlag = inputData.displaySslFlag ? false : true)
         "
       ></addSwitchForm>

@@ -356,7 +356,7 @@ const routes: Array<RouteRecordRaw> = [
     component: customerDelete,
     meta: {
       requiresAuth: true,
-      allowedRoles: ["admin", "partner"],
+      allowedRoles: ["admin"],
       partnercheck: true,
     },
   },

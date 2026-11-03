@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import { useRouter } from "vue-router";
 import UserApiService from "@/services/UserApiService";
@@ -133,6 +133,10 @@ const addRegist = () => {
       alert("edit ERROR" + e);
     });
 };
+
+const passwordInvalid = computed(
+  () => checkPassword(form.value.password, "edit") !== true
+);
 </script>
 <template>
   <ProgressView v-if="loadingFlag"></ProgressView>
@@ -155,7 +159,7 @@ const addRegist = () => {
             color="primary"
             class="my-3"
             @onClick="addRegist()"
-            :disabled="registButton"
+            :disabled="registButton || passwordInvalid"
           />
         </v-col>
       </v-row>
@@ -193,6 +197,7 @@ const addRegist = () => {
                 class="w-75"
                 :passwordFlag="true"
                 :maxlength="15"
+                :value="form.password"
                 :rules="[(e) => checkPassword(e, 'edit')]"
                 @onBlur="(e) => (form.password = e)"
               ></addPartnerForm>
