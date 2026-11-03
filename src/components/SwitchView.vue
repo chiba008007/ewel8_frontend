@@ -39,3 +39,9 @@ const emit = defineEmits<{
     "
   />
 </template>
+<style scoped lang="scss">
+:deep(.v-label) {
+  white-space: nowrap !important;
+  flex-shrink: 0;
+}
+</style>

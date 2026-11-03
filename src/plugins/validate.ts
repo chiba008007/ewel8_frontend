@@ -59,9 +59,9 @@ export const checkLoginIDSync = (value: string): true | string => {
     return "ログインIDは必須です。";
   }
 
-  const pattern = /^[a-zA-Z0-9]{4,8}$/;
+  const pattern = /^[a-zA-Z0-9]{4,128}$/;
   if (!pattern.test(value)) {
-    return "ログインIDは半角英数4文字以上8文字以下で入力してください。";
+    return "ログインIDは半角英数4文字以上128文字以下で入力してください。";
   }
 
   return true;
@@ -76,9 +76,9 @@ export const checkLoginID = async (
     return "ログインIDは必須です。";
   }
 
-  const pattern = /^[a-zA-Z0-9]{4,8}$/;
+  const pattern = /^[a-zA-Z0-9]{4,128}$/;
   if (!pattern.test(value)) {
-    return "ログインIDは半角英数4文字以上8文字以下で入力してください。";
+    return "ログインIDは半角英数4文字以上128文字以下で入力してください。";
   }
 
   if (!flag) {

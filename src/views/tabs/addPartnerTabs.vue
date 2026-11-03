@@ -72,7 +72,7 @@ watch(isFormValid, (v) => {
       class="w-75"
       :value="form.login_id"
       :requriredIcon="true"
-      messages="半角英数・4文字以上で入力してください。大文字と小文字は区別されます。"
+      messages="半角英数・4文字以上128文字以内で入力してください。大文字と小文字は区別されます。"
       @onKeyup="(v) => (form.login_id = v)"
       :rules="[(v) => checkLoginIDSync(v)]"
     ></addPartnerForm>
@@ -82,7 +82,7 @@ watch(isFormValid, (v) => {
       class="w-100"
       :value="form.password"
       :requriredIcon="true"
-      messages="半角8文字以上、半角15文字で入力してください。大文字と小文字は区別さ英大文字・英小文字・数字それぞれを最低1文字ずつ含む必要があります。"
+      :passwordFlag="true"
       :rules="[(v) => checkPassword(v, '', partnerId)]"
       @onKeyup="(v) => (form.password = v)"
     ></addPartnerForm>

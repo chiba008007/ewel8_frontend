@@ -67,6 +67,7 @@ const pdfstartday = ref();
 const pdfendday = ref();
 const pdfuseflag = ref();
 const testpdf_count = ref();
+const pdfCountLimitOk = ref(true);
 oneYearAgo.setFullYear(today.getFullYear() - 1); // ← ここで1年前にずらす
 
 const yearStr = oneYearAgo
@@ -101,13 +102,14 @@ type TestTableHeader = {
 };
 const testCount = ref(0);
 const tableWidth = ref("100%");
+const pdflogflag = ref(0);
+
 TestApiService.getTestTableTh(tmp)
   .then(function (rlt) {
     if (rlt.data.length === 0) {
       throw new Error("データが取得できませんでした");
     }
     testCount.value = rlt.data.length;
-
     rlt.data.forEach((x: TestTableHeader) => {
       if (x.code === "PFS" || x.code === "BAJ3" || x.code === "BAJ4") {
         headers.value.push({
@@ -162,11 +164,14 @@ onMounted(async () => {
       user_id: params.id,
       test_id: params.testid,
     });
+    pdflogflag.value = Number(rlt.data.pdflogflag ?? 0);
     pagetitle.value = rlt.data.testname;
     pdfstartday.value = rlt.data.pdfstartday;
     pdfendday.value = rlt.data.pdfendday;
     pdfuseflag.value = rlt.data.pdfuseflag;
     testpdf_count.value = rlt.data.testpdf_count;
+    pdfCountLimitOk.value = rlt.data.pdf_count_limit_ok;
+
     TestApiService.getExam(tmp).then(function (rlt) {
       detail.value = rlt;
       // パスフラグを変換してからリストに設定
@@ -186,7 +191,13 @@ onMounted(async () => {
 
 const isButtonDisabled = (item: any) => {
   const endedAt = (item as any).ended_at;
-  if (testpdf_count.value == 0) return true;
+
+  // PDF出力件数が上限に達した場合
+  if (!pdfCountLimitOk.value) return true;
+
+  if (pdflogflag.value === 1 && testpdf_count.value == 0) {
+    return true;
+  }
   if (pdfuseflag.value == 0) {
     // フラグが0のときは ended_at だけで判定
     return endedAt == null ? true : false; // ended_at がなければ disabled
@@ -436,7 +447,7 @@ const onPdfDownload = () => {
               </template>
             </tr>
             <tr>
-              <template v-for="col in columns" :key="col.key">
+              <template v-for="col in columns">
                 <th
                   v-for="(sub, idx) in subHeaders[col.key as string] || []"
                   :key="`${col.key}-${idx}`"

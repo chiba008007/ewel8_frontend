@@ -70,7 +70,7 @@ useRequiredCounter(
   ],
   errorTab
 );
-
+const errorMessage = ref("");
 const router = useRouter();
 // 登録ボタン押下時の登録処理
 const submit = async () => {
@@ -94,6 +94,8 @@ const submit = async () => {
     console.error("新規登録エラー:", error);
     registAlert.value = false;
     errorAlert.value = true;
+    errorMessage.value =
+      error instanceof Error ? error.message : "登録に失敗しました。";
   } finally {
     loadingFlag.value = false;
   }
@@ -192,11 +194,7 @@ const updateElement = (index: number, val: string) => {
         "
         v-if="registAlert"
       />
-      <AlertView
-        type="warning"
-        :text="`IDが重複しています。`"
-        v-if="errorAlert"
-      />
+      <AlertView type="warning" :text="errorMessage" v-if="errorAlert" />
       <ButtonView
         text="登録"
         color="success"

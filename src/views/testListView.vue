@@ -11,12 +11,18 @@ import pageClickMove from "@/plugins/pagemove";
 import pankuzuMain from "@/components/pankuzuMain.vue";
 import dayjs from "dayjs";
 import { useStoreUser } from "@/store/user";
-import { D_ADMIN, D_PARTNER, examStatusArray } from "@/plugins/const";
+import {
+  D_ADMIN,
+  D_PARTNER,
+  examStatusArray,
+  SWITCHLABEL,
+} from "@/plugins/const";
 import ProgressView from "@/components/ProgressView.vue";
 import TextFieldView from "@/components/TextFieldView.vue";
 import "dayjs/locale/ja";
 import SelectFieldView from "@/components/SelectFieldView.vue";
 import DateView from "@/components/DateView.vue";
+import SwitchView from "@/components/SwitchView.vue";
 
 dayjs.locale("ja");
 const move = pageClickMove();
@@ -31,6 +37,10 @@ const testheaders = ref([
   { title: "処理数", align: undefined, key: "syoriCount" },
   { title: "残数", align: undefined, key: "zanCount" },
   { title: "機能", align: undefined, key: "method" },
+  { title: "ﾒｰﾙお知らせ", align: undefined, key: "mailinfo" },
+  ...(user.userdata.type === D_ADMIN
+    ? [{ title: "PDFログ", align: undefined, key: "pdflog" }]
+    : []),
 ]);
 
 const partner_id =
@@ -58,6 +68,8 @@ type userAny = {
   testcount: number;
   zan: number;
   syori: number;
+  mailinfoflag: number;
+  pdflogflag: number;
 };
 const type = (user.userdata as userType).type;
 
@@ -184,6 +196,27 @@ const examHeaders = [
   { title: "メモ1", key: "memo1" },
   { title: "メモ2", key: "memo2" },
 ];
+
+const fetchUpdateTestFlag = async (
+  item: userAny,
+  flag: "mailinfoflag" | "pdflogflag",
+  checked: boolean | null
+) => {
+  const value = checked ? 1 : 0;
+
+  try {
+    await TestApiService.updateTestFlag({
+      user_id: tmp.user_id,
+      test_id: item.id,
+      flag: flag,
+      value: value,
+    });
+
+    item[flag] = value;
+  } catch (e) {
+    alert("更新に失敗しました");
+  }
+};
 </script>
 <template>
   <PartnerAdmin coded="customer" />
@@ -332,6 +365,7 @@ const examHeaders = [
                     "
                   ></ButtonView>
                   <ButtonView
+                    v-if="type == D_ADMIN"
                     text="追加更新"
                     class="text-caption mb-2 ml-2"
                     color="success"
@@ -344,7 +378,7 @@ const examHeaders = [
                     "
                   ></ButtonView>
                   <ButtonView
-                    v-if="type != D_PARTNER"
+                    v-if="type == D_ADMIN"
                     text="削除"
                     class="text-caption mb-2 ml-2"
                     color="red"
@@ -369,6 +403,27 @@ const examHeaders = [
                       })
                     "
                   ></ButtonView>
+                </td>
+                <td class="text-center">
+                  <SwitchView
+                    :label="SWITCHLABEL[(item as userAny).mailinfoflag]"
+                    :model-value="Boolean((item as userAny).mailinfoflag)"
+                    @update:model-value="
+                      (value) =>
+                        fetchUpdateTestFlag(item as userAny, 'mailinfoflag', value)
+                    "
+                  />
+                </td>
+
+                <td v-if="type === D_ADMIN" class="text-center">
+                  <SwitchView
+                    :label="SWITCHLABEL[(item as userAny).pdflogflag]"
+                    :model-value="Boolean((item as userAny).pdflogflag)"
+                    @update:model-value="
+                      (value) =>
+                        fetchUpdateTestFlag(item as userAny, 'pdflogflag', value)
+                    "
+                  />
                 </td>
               </tr>
             </template>

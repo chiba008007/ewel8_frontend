@@ -50,6 +50,9 @@ class TestApiService {
   async getTestExamList(data = {}) {
     return await httpAuth.post("/api/exam/getTestExamList", data);
   }
+  async updateTestFlag(data = {}) {
+    return await httpAuth.post("/api/test/updateTestFlag", data);
+  }
 }
 
 export default new TestApiService();
