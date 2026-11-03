@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import { useStoreUser } from "@/store/user";
 import { getTodayDateTime, getTodayDate } from "@/plugins/date";
 import {
@@ -246,12 +246,10 @@ const onBlurButton1 = () => {
 };
 const onBlurButton = () => {
   registButton.value = true;
-  if (inputData.value.testname) {
-    errorTab1.value = errorTab1.value > 0 ? errorTab1.value - 1 : 0;
-  }
-  if (inputData.value.testcount > 0) {
-    errorTab1.value = errorTab1.value > 0 ? errorTab1.value - 1 : 0;
-  }
+
+  errorTab1.value =
+    (inputData.value.testname?.trim() ? 0 : 1) +
+    (Number(inputData.value.testcount) > 0 ? 0 : 1);
   if (inputData.value.testname && inputData.value.testcount > 0) {
     registButton.value = false;
   }
@@ -470,6 +468,63 @@ const setInputWeight = (e: string | number | null, type: string) => {
     });
   }
 };
+
+const changeStatus = (
+  code: keyof typeof inputTestPart.value,
+  enabled: boolean
+) => {
+  if (enabled) {
+    const normalize = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, "");
+
+    const license = lisenceViewCalc.value?.find(
+      (v: { code: string; num: number }) =>
+        normalize(v.code) === normalize(code)
+    );
+
+    if (!license) {
+      alert("販売可能ライセンス数を取得できません。");
+      return;
+    }
+
+    if (Number(inputData.value.testcount) > Number(license.num)) {
+      inputTestPart.value[code].status = false;
+      onBlurButton1();
+
+      alert(`受検者数が販売可能ライセンス数（${license.num}）を超えています。`);
+      return;
+    }
+  }
+
+  inputTestPart.value[code].status = enabled;
+  onBlurButton1();
+};
+
+const licenseErrors = computed(() => {
+  const count = Number(inputData.value.testcount);
+  const licenses = (lisenceViewCalc.value ?? []) as {
+    code: string;
+    num: number;
+    jp: string;
+  }[];
+
+  const normalize = (code: string) => code.replace(/-/g, "").toUpperCase();
+
+  return Object.entries(inputTestPart.value)
+    .filter(([, part]) => part.status)
+    .flatMap(([code]) => {
+      const license = licenses.find(
+        (v) => normalize(v.code) === normalize(code)
+      );
+
+      if (!license) {
+        return [`${code}のライセンス数を取得できません。`];
+      }
+
+      return count > Number(license.num)
+        ? [`${license.jp}：販売可能${license.num}人に対して${count}人です。`]
+        : [];
+    });
+});
 </script>
 <template>
   <ProgressView v-if="loadingFlag"></ProgressView>
@@ -496,7 +551,13 @@ const setInputWeight = (e: string | number | null, type: string) => {
       </v-badge>
     </v-tab>
     <v-tab :value="1">
-      <v-badge color="error" :content="errorTab2" floating> 検査種別 </v-badge>
+      <v-badge
+        color="error"
+        :content="Math.max(errorTab2, licenseErrors.length)"
+        floating
+      >
+        検査種別
+      </v-badge>
     </v-tab>
     <v-tab :value="2">出力PDF選択</v-tab>
   </v-tabs>
@@ -526,7 +587,7 @@ const setInputWeight = (e: string | number | null, type: string) => {
       text="次へ"
       color="lime"
       class="mt-3 mb-3"
-      :disabled="registButton"
+      :disabled="registButton || licenseErrors.length > 0"
       @onClick="tab = Number(tab) + 1"
     />
     <ButtonView
@@ -534,7 +595,7 @@ const setInputWeight = (e: string | number | null, type: string) => {
       text="検査更新実行"
       color="green"
       class="mt-3 mb-3 ml-1"
-      :disabled="registButton"
+      :disabled="registButton || licenseErrors.length > 0"
       @onClick="onEditClick()"
     />
     <ButtonView
@@ -542,7 +603,7 @@ const setInputWeight = (e: string | number | null, type: string) => {
       text="検査登録実行"
       color="green"
       class="mt-3 mb-3 ml-1"
-      :disabled="registButton"
+      :disabled="registButton || licenseErrors.length > 0"
       @onClick="onClick()"
     />
     <h3>{{ user.testAdd }}</h3>
@@ -554,16 +615,23 @@ const setInputWeight = (e: string | number | null, type: string) => {
         <p class="ml-2 text-caption">販売可能ライセンス</p>
         <v-row dense class="ml-2">
           <v-col
-            cols="1"
+            cols="6"
+            sm="4"
+            md="3"
+            lg="2"
             v-for="lisence in lisenceViewCalc"
             :key="lisence.id"
-            class="text-cener"
+            class="text-center"
           >
             <div class="border-sm">
-              <div class="border-b-sm text-center bg-lime text-caption">
+              <div
+                class="border-b-sm text-center bg-lime text-body-2 font-weight-bold pa-1"
+              >
                 {{ lisence.jp }}
               </div>
-              <p class="text-right text-caption">{{ lisence.num }}</p>
+              <p class="text-right text-h6 font-weight-bold ma-2">
+                {{ lisence.num }}
+              </p>
             </div>
           </v-col>
         </v-row>
@@ -606,6 +674,7 @@ const setInputWeight = (e: string | number | null, type: string) => {
                 numberValue(Number(v), '受検者数', 10000, Number(editid), done),
             ]"
             @onBlur="(e:any) => ((inputData.testcount = e), onBlurButton())"
+            :errormessage="licenseErrors.join('、')"
           ></addPartnerForm>
           <addSwitchForm
             title="氏名の入力"
@@ -804,12 +873,10 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   @onThree="(e) => (inputTestPart.PFS.threeflag = e)"
                   @onWeightFlag="(e) => (inputTestPart.PFS.weightFlag = e)"
                   @onWeight="(e) => (inputTestPart.PFS.weight = e)"
-                  @onStatus="
-                    (e) => ((inputTestPart.PFS.status = e), onBlurButton1())
-                  "
+                  @onStatus="(e) => changeStatus('PFS', e)"
                   @setInputWeight="(e) => setInputWeight(e, val.code)"
                 ></CardViewPFS>
-                <CardViewBAJ3
+                <CardViewBAJ4
                   :pagename="route.name"
                   :editid="editid"
                   class="mt-3"
@@ -830,11 +897,9 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   @onThree="(e) => (inputTestPart.BAJ4.threeflag = e)"
                   @onWeightFlag="(e) => (inputTestPart.BAJ4.weightFlag = e)"
                   @onWeight="(e) => (inputTestPart.BAJ4.weight = e)"
-                  @onStatus="
-                    (e) => ((inputTestPart.BAJ4.status = e), onBlurButton1())
-                  "
+                  @onStatus="(e) => changeStatus('BAJ4', e)"
                   @setInputWeight="(e) => setInputWeight(e, val.code)"
-                ></CardViewBAJ3>
+                ></CardViewBAJ4>
                 <CardViewBAJ3
                   :pagename="route.name"
                   :editid="editid"
@@ -856,14 +921,13 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   @onThree="(e) => (inputTestPart.BAJ3.threeflag = e)"
                   @onWeightFlag="(e) => (inputTestPart.BAJ3.weightFlag = e)"
                   @onWeight="(e) => (inputTestPart.BAJ3.weight = e)"
-                  @onStatus="
-                    (e) => ((inputTestPart.BAJ3.status = e), onBlurButton1())
-                  "
+                  @onStatus="(e) => changeStatus('BAJ3', e)"
                   @setInputWeight="(e) => setInputWeight(e, val.code)"
                 ></CardViewBAJ3>
                 <CardViewVFJ
                   :pagename="route.name"
                   :editid="editid"
+                  :status="Boolean(inputTestPart.VFJ.status)"
                   :examPersonName="inputTestPart.VFJ?.examPersonName ?? VFJName"
                   class="mt-3"
                   v-if="
@@ -874,9 +938,7 @@ const setInputWeight = (e: string | number | null, type: string) => {
                   "
                   :title="val.jp"
                   :testcount="inputData.testcount"
-                  @onStatus="
-                    (e) => ((inputTestPart.VFJ.status = e), onBlurButton1())
-                  "
+                  @onStatus="(e) => changeStatus('VFJ', e)"
                   @onKeyup="
                     (e) => (inputTestPart.VFJ.examPersonName = e ?? VFJName)
                   "
@@ -884,6 +946,7 @@ const setInputWeight = (e: string | number | null, type: string) => {
                 <CardViewBEA
                   :pagename="route.name"
                   :editid="editid"
+                  :status="Boolean(inputTestPart.BEA.status)"
                   class="mt-3"
                   v-if="
                     val.code === 'bea' &&
@@ -899,9 +962,7 @@ const setInputWeight = (e: string | number | null, type: string) => {
                       ? Number(inputTestPart.BEA.timelimit)
                       : undefined
                   "
-                  @onStatus="
-                    (e) => ((inputTestPart.BEA.status = e), onBlurButton1())
-                  "
+                  @onStatus="(e) => changeStatus('BEA', e)"
                   @onTimeLimit="(val) => (inputTestPart.BEA.timelimit = val)"
                 ></CardViewBEA>
                 <CardViewEAIa
@@ -921,14 +982,14 @@ const setInputWeight = (e: string | number | null, type: string) => {
                       ? Number(inputTestPart.EAIa.timelimit)
                       : undefined
                   "
-                  @onStatus="
-                    (e) => ((inputTestPart.EAIa.status = e), onBlurButton1())
-                  "
+                  :status="Boolean(inputTestPart.EAIa.status)"
+                  @onStatus="(e) => changeStatus('EAIa', e)"
                   @onTimeLimit="(val) => (inputTestPart.EAIa.timelimit = val)"
                 ></CardViewEAIa>
                 <CardViewEAIb
                   :pagename="route.name"
                   :editid="editid"
+                  :status="Boolean(inputTestPart.EAIb.status)"
                   class="mt-3"
                   v-if="
                     val.code === 'EA-Ib' &&
@@ -943,14 +1004,13 @@ const setInputWeight = (e: string | number | null, type: string) => {
                       ? Number(inputTestPart.EAIb.timelimit)
                       : undefined
                   "
-                  @onStatus="
-                    (e) => ((inputTestPart.EAIb.status = e), onBlurButton1())
-                  "
+                  @onStatus="(e) => changeStatus('EAIb', e)"
                   @onTimeLimit="(val) => (inputTestPart.EAIb.timelimit = val)"
                 ></CardViewEAIb>
                 <CardViewMHQ
                   :pagename="route.name"
                   :editid="editid"
+                  :status="Boolean(inputTestPart.MHQ.status)"
                   class="mt-3"
                   v-if="
                     val.code === 'MHQ' &&
@@ -966,9 +1026,7 @@ const setInputWeight = (e: string | number | null, type: string) => {
                       ? Number(inputTestPart.MHQ.timelimit)
                       : undefined
                   "
-                  @onStatus="
-                    (e) => ((inputTestPart.MHQ.status = e), onBlurButton1())
-                  "
+                  @onStatus="(e) => changeStatus('MHQ', e)"
                   @onTimeLimit="(val) => (inputTestPart.MHQ.timelimit = val)"
                   @onMhqType="(val) => (inputTestPart.MHQ.mhqtype = val)"
                   :mhqtype="inputTestPart.MHQ.mhqtype"

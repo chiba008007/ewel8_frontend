@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { computed } from "vue";
 import CardViewHeader from "./CardViewHeader.vue";
 import TextField from "@/components/TextFieldView.vue";
 interface Props {
@@ -8,6 +8,7 @@ interface Props {
   editid?: number | string | string[];
   testcount?: number | string;
   examPersonName?: string | null;
+  status?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   title: "",
@@ -15,32 +16,19 @@ const props = withDefaults(defineProps<Props>(), {
   editid: 0,
   testcount: 0,
 });
-onMounted(() => {
-  if (props.editid) {
-    onClick(1);
-  }
-});
+
 const emit = defineEmits<{
   (e: "onKeyup", value: string, name: string | undefined): void;
   (e: "onStatus", value: boolean): void;
 }>();
 
-const bgcolor = ref({
-  0: "bg-success",
-  1: "",
-});
+const bgcolor = computed(() => ({
+  0: props.status ? "" : "bg-success",
+  1: props.status ? "bg-success" : "",
+}));
 
 const onClick = (status: number) => {
-  if (status === 0) {
-    bgcolor.value[0] = "bg-success";
-    bgcolor.value[1] = "";
-  }
-  if (status === 1) {
-    bgcolor.value[0] = "";
-    bgcolor.value[1] = "bg-success";
-  }
-  let bool = status ? true : false;
-  emit("onStatus", bool);
+  emit("onStatus", status === 1);
 };
 </script>
 <template>

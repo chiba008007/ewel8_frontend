@@ -29,7 +29,7 @@ export default function () {
       .catch((e) => {
         console.log(e);
       });
-    return lisenceView;
+    return lisenceViewCalc;
   };
 
   const getPartnerDetail = async (tmpid: string | null, typeStr: string) => {

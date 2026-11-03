@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { computed } from "vue";
 import CardViewHeader from "./CardViewHeader.vue";
 import SelectFieldView from "./SelectFieldView.vue";
 import { TIMELIMITLINE, MHQTYPE } from "@/plugins/const";
@@ -11,6 +11,7 @@ interface Props {
   timelimit?: number;
   selectedTime?: number;
   mhqtype?: string | null;
+  status?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   title: "",
@@ -19,11 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
   testcount: 0,
   selectedTime: 60,
 });
-onMounted(() => {
-  if (props.editid) {
-    onClick(1);
-  }
-});
+
 const emit = defineEmits<{
   (e: "onKeyup", value: string, name: string | undefined): void;
   (e: "onStatus", value: boolean): void;
@@ -31,22 +28,13 @@ const emit = defineEmits<{
   (e: "onMhqType", value: string): void;
 }>();
 
-const bgcolor = ref({
-  0: "bg-success",
-  1: "",
-});
+const bgcolor = computed(() => ({
+  0: props.status ? "" : "bg-success",
+  1: props.status ? "bg-success" : "",
+}));
 
 const onClick = (status: number) => {
-  if (status === 0) {
-    bgcolor.value[0] = "bg-success";
-    bgcolor.value[1] = "";
-  }
-  if (status === 1) {
-    bgcolor.value[0] = "";
-    bgcolor.value[1] = "bg-success";
-  }
-  let bool = status ? true : false;
-  emit("onStatus", bool);
+  emit("onStatus", status === 1);
 };
 </script>
 <template>

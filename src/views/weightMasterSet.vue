@@ -83,6 +83,8 @@ type elemType = {
 const elements = ref<elemType[]>([]);
 UserApiService.getUserElement(tmp)
   .then((res) => {
+    console.log(11111111111);
+    console.log(res);
     for (let i = 1; i <= 14; i++) {
       let elem = "element" + i;
       elements.value.push({ text: res.data[elem], num: i });

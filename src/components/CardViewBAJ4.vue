@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import AddSwitchForm from "./addSwitchForm.vue";
 import TextField from "@/components/TextFieldView.vue";
 import { settingStatus } from "@/plugins/const";
@@ -59,9 +59,6 @@ const onClick = (status: number) => {
   emit("onStatus", Boolean(status));
 };
 
-if (props.editid) {
-  onClick(1);
-}
 const setInputWeight = (ev: string | number | null) => {
   emit("setInputWeight", ev);
 };

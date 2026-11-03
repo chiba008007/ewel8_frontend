@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed } from "vue";
 import AddSwitchForm from "@/components/addSwitchForm.vue";
 import TextField from "@/components/TextFieldView.vue";
 import { settingStatus } from "@/plugins/const";
@@ -46,25 +46,14 @@ const onkeyup = (e: string, i: number) => {
   inputData[n] = e;
   emit("onWeight", inputData);
 };
-const bgcolor = ref({
-  0: "bg-success",
-  1: "",
-});
+const bgcolor = computed(() => ({
+  0: props.dataDetail?.status ? "" : "bg-success",
+  1: props.dataDetail?.status ? "bg-success" : "",
+}));
 const onClick = (status: number) => {
-  if (status === 0) {
-    bgcolor.value[0] = "bg-success";
-    bgcolor.value[1] = "";
-  }
-  if (status === 1) {
-    bgcolor.value[0] = "";
-    bgcolor.value[1] = "bg-success";
-  }
-  let bool = status ? true : false;
-  emit("onStatus", bool);
+  emit("onStatus", status === 1);
 };
-if (props.editid) {
-  onClick(1);
-}
+
 const setInputWeight = (ev: string | number | null) => {
   emit("setInputWeight", ev);
 };
