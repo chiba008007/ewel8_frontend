@@ -258,7 +258,7 @@ const pagemove = () => {
         type="login_id"
         :value="inputData.login_id"
         :requriredIcon="true"
-        messages="4文字以上8文字以下で入力してください"
+        messages="半角英数・4文字以上128文字以内で入力してください。大文字と小文字は区別されます。"
         @onBlur="(ev) => ((inputData.login_id = ev), onBlurButton())"
         :rules="[loginIdRule]"
       ></addPartnerForm>
@@ -270,6 +270,7 @@ const pagemove = () => {
         type="password"
         :value="inputData.password"
         :requriredIcon="true"
+        :passwordFlag="true"
         :rules="[(v) => checkPassword(v)]"
         @onKeyup="(e) => ((inputData.password = e), onBlurButton())"
       ></addPartnerForm>
@@ -423,7 +424,7 @@ const pagemove = () => {
         :tooltipflag="true"
         tooltipMessage="受検ページをhttps://で利用します。"
         @onClick="
-          (e) =>
+          (e:any) =>
             (inputData.displaySslFlag = inputData.displaySslFlag ? false : true)
         "
       ></addSwitchForm>

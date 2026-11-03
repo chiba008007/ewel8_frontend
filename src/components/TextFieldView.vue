@@ -54,6 +54,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: "onKeyup", value: string, name: string | undefined): void;
   (e: "onBlur", value: string, name: string): void;
+  (e: "onInput", value: string): void;
 }>();
 
 const normalizedRules = computed<readonly RuleElement[]>(() => {
@@ -79,6 +80,7 @@ const normalizedRules = computed<readonly RuleElement[]>(() => {
     :maxlength="props.maxlength"
     @keyup="emit('onKeyup', $event.target.value, props.name ?? '')"
     @blur="emit('onBlur', $event.target.value, props.name ?? '')"
+    @update:model-value="emit('onInput', String($event ?? ''))"
   ></v-text-field>
   <p v-if="props.errormessage" class="text-red text-caption ml-4">
     {{ props.errormessage }}

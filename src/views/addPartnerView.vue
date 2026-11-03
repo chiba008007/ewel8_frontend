@@ -50,6 +50,7 @@ const registAlert = ref(false);
 const errorAlert = ref(false);
 const isFormValid = ref(false);
 const route = useRoute();
+const licenseResetKey = ref(0);
 
 const partnerId =
   typeof route.params.id === "string" ? route.params.id : undefined;
@@ -88,6 +89,28 @@ const submit = async () => {
       throw new Error(loginIdResult);
     }
     await savePartner(form, partnerId);
+
+    // 登録した総数を反映
+    const totals = new Map<string, number>(
+      form.licensesKey.map((code, i) => [
+        code,
+        Number(form.licensesBody[i] ?? 0),
+      ])
+    );
+
+    licenses.value = licenses.value.map((license) => ({
+      ...license,
+      list: Object.values(license.list).map((item) => ({
+        ...item,
+        value: totals.get(item.code) ?? item.value,
+      })),
+    }));
+
+    // 変更件数と＋／－を初期化
+    licenseResetKey.value++;
+
+    registAlert.value = true;
+
     // router.push("/list");
     registAlert.value = true;
   } catch (error) {
@@ -215,6 +238,7 @@ const updateElement = (index: number, val: string) => {
         <v-window-item value="license">
           <!-- ライセンス設定 -->
           <addLicenseTabs
+            :key="licenseResetKey"
             v-if="licenses.length"
             :form="form"
             :licenses="licenses"
