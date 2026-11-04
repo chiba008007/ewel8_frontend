@@ -20,14 +20,9 @@ const onclick = (id: number | undefined) => {
 </script>
 <template>
   <td class="text-center">
-    <ButtonView
-      :text="props.endtime"
-      variant="text"
-      density="compact"
-      @onClick="onclick(props.id)"
-      v-if="props.endtime"
-      class="bg-blue"
-    ></ButtonView>
+    <p v-if="props.endtime">
+      {{ props.endtime }}
+    </p>
     <p v-else-if="props.starttime">受検中</p>
   </td>
 </template>

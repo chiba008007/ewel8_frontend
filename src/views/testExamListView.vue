@@ -48,6 +48,7 @@ const subHeaders = ref<Record<string, string[]>>({
   PFS: ["ステータス", "行動価値適合度", "ストレス共生レベル"],
   BAJ3: ["ステータス", "行動価値適合度", "ストレス共生レベル"],
   BAJ4: ["ステータス", "行動価値適合度", "ストレス共生レベル"],
+  EAIb: ["ステータス"],
 });
 
 const totalCols = computed(() =>
