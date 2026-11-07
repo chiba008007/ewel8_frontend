@@ -3,8 +3,9 @@ import { ref } from "vue";
 import ComponentButton from "../components/ButtonView.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStoreUser } from "../store/user";
-import { textString } from "@/plugins/const";
+import { D_CUSTOMER, textString } from "@/plugins/const";
 import UserApiService from "@/services/UserApiService";
+import { D_ADMIN, D_PARTNER } from "@/plugins/const";
 
 const router = useRouter();
 const user = useStoreUser();
@@ -52,6 +53,9 @@ const pageCustomerEditParam = (pagename: string) => {
   <v-sheet width="98%">
     <div class="d-flex flex-row justify-left pl-2 pr-5 pb-2">
       <ComponentButton
+        v-if="
+          user.userdata.type === D_ADMIN || user.userdata.type === D_PARTNER
+        "
         text="検査登録"
         variant="elevated"
         density="compact"
@@ -68,6 +72,9 @@ const pageCustomerEditParam = (pagename: string) => {
         @onClick="pageCustomerEditParam('customerEdit')"
       ></ComponentButton>
       <ComponentButton
+        v-if="
+          user.userdata.type === D_ADMIN || user.userdata.type === D_CUSTOMER
+        "
         text="ダウンロード"
         variant="elevated"
         density="compact"
@@ -76,6 +83,9 @@ const pageCustomerEditParam = (pagename: string) => {
         @onClick="pageClickMoveParam('testListsDownload')"
       ></ComponentButton>
       <ComponentButton
+        v-if="
+          user.userdata.type === D_ADMIN || user.userdata.type === D_PARTNER
+        "
         text="重み付けマスタ登録"
         variant="elevated"
         density="compact"

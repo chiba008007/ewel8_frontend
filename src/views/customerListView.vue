@@ -33,7 +33,7 @@ const customerheaders = ref([
   { title: "受検者数", key: "examCount" },
   { title: "処理数", key: "syoriCount" },
   { title: "残数", key: "zanCount" },
-  { title: "機能", key: "method" },
+  { title: "機能", key: "method", width: "280px" },
   { title: "更新日", key: "updated" },
 ]);
 
@@ -177,11 +177,14 @@ const onMove = (param: string, key: number) => {
           >
             <template v-slot:item="{ item }">
               <tr v-show="item.id">
-                <td>{{ item.campany }}</td>
+                <td class="col-3">{{ item.campany }}</td>
                 <td class="wNum">{{ item.examCount }}</td>
                 <td class="wNum">{{ item.syoriCount }}</td>
                 <td class="wNum">{{ item.zanCount }}</td>
-                <td class="w-auto text-center">
+                <td
+                  class="w-auto text-center"
+                  style="width: 280px; white-space: nowrap"
+                >
                   <ButtonView
                     text="顧客画面"
                     color="success"

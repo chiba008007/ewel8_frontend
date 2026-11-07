@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useStoreUser } from "../store/user";
 import CustomerMenu from "../components/CustomerMenu.vue";
 import InfoAreaView from "../components/InfoAreaView.vue";
@@ -56,7 +56,7 @@ const inputData = ref({
     checked: false,
     privacyText: user.privacyText,
   },
-  customerDisplayFlag: false,
+  customerDisplayFlag: true,
   two_factor_enabled: false,
   tanto_name: "",
   tanto_address: "",

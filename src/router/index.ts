@@ -16,6 +16,7 @@ import examRowData from "../views/examRowData.vue";
 import invoiceView from "../views/invoiceView.vue";
 import invoiceSetView from "../views/invoiceSetView.vue";
 import customerList from "../views/customerListView.vue";
+import noneView from "../views/noneView.vue";
 import customerAdd from "../views/customerAdd.vue";
 import customerEdit from "../views/customerEdit.vue";
 import customerDelete from "../views/customerDelete.vue";
@@ -340,6 +341,16 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/none/:id",
+    name: "none",
+    component: noneView,
+    meta: {
+      allowedRoles: ["admin", "partner"],
+      requiresAuth: true,
+      partnercheck: true,
+    },
+  },
+  {
     path: "/customerEdit/edit/:id/:editid?/:typeString?",
     name: "customerEdit",
     component: customerEdit,
@@ -399,6 +410,8 @@ const routes: Array<RouteRecordRaw> = [
     component: weightMaster,
     meta: {
       requiresAuth: true,
+      allowedRoles: ["admin", "partner"],
+      customerAccessCheck: true,
     },
   },
   {
@@ -407,6 +420,8 @@ const routes: Array<RouteRecordRaw> = [
     component: weightMasterSet,
     meta: {
       requiresAuth: true,
+      allowedRoles: ["admin", "partner"],
+      customerAccessCheck: true,
     },
   },
   {
@@ -415,6 +430,8 @@ const routes: Array<RouteRecordRaw> = [
     component: weightMasterSet,
     meta: {
       requiresAuth: true,
+      allowedRoles: ["admin", "partner"],
+      customerAccessCheck: true,
     },
   },
   {

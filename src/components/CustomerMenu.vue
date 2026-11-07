@@ -3,7 +3,8 @@ import { ref } from "vue";
 import ComponentButton from "../components/ButtonView.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStoreUser } from "../store/user";
-import { textString } from "@/plugins/const";
+import { textString, D_PARTNER } from "@/plugins/const";
+
 const router = useRouter();
 const user = useStoreUser();
 const userdata = user.userdata as any;
@@ -60,6 +61,17 @@ const pageClickMoveParam = (pagename: string) => {
         color="primary"
         class="ml-1 w-20"
         @onClick="pageClickMoveParam('testExec')"
+      ></ComponentButton>
+    </div>
+    <div class="d-flex flex-row mt-2">
+      <ComponentButton
+        v-if="user.userdata.type === D_PARTNER"
+        text="非表示機能一覧"
+        variant="outlined"
+        density="compact"
+        color="primary"
+        class="w-20"
+        @onClick="pageClickMoveParam('none')"
       ></ComponentButton>
     </div>
   </v-sheet>

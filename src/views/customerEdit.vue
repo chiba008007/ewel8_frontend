@@ -37,6 +37,21 @@ const typeString = route.params.typeString;
 const tmpid = route.params.id;
 const editid = route.params.editid;
 
+const canHideCustomer = ref(false);
+
+onMounted(async () => {
+  const res = await UserApiService.canHideCustomer({ id: String(editid) });
+  canHideCustomer.value = res.data.canHideCustomer;
+});
+const changeCustomerDisplay = () => {
+  if (inputData.value.customerDisplayFlag && !canHideCustomer.value) {
+    alert("登録検査をすべて非表示にしてください。");
+    return;
+  }
+
+  inputData.value.customerDisplayFlag = !inputData.value.customerDisplayFlag;
+};
+
 type ValidationResult = string | boolean;
 
 // checkLoginID の戻り値（true | string | Promise<...>）を
@@ -531,7 +546,7 @@ const backColor = () => {
         :tooltipflag="true"
         tooltipMessage="顧客を非表示にする場合は、登録検査をすべて非表示にしてください。"
         :model="inputData.customerDisplayFlag ? true : false"
-        @onClick="(e) => (inputData.customerDisplayFlag = e)"
+        @onClick="changeCustomerDisplay"
       ></addSwitchForm>
       <addSwitchForm
         :color="backColor()"

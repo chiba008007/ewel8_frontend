@@ -369,7 +369,7 @@ const fetchUpdateTestFlag = async (
                     "
                   ></ButtonView>
                   <ButtonView
-                    v-if="type == D_ADMIN"
+                    v-if="type == D_ADMIN || type == D_PARTNER"
                     text="追加更新"
                     class="text-caption mb-2 ml-2"
                     color="success"

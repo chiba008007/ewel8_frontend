@@ -95,6 +95,15 @@ class UserApiService {
       return res.data.pdfImagePath;
     });
   }
+  getCustomerDeleteList(data: object) {
+    return httpAuth.post("/api/user/getCustomerDeleteList", data);
+  }
+  canHideCustomer(data: { id: string }) {
+    return httpAuth.post<{ canHideCustomer: boolean }>(
+      "/api/user/canHideCustomer",
+      data
+    );
+  }
 
   async getCustomerEdit(data: object): Promise<GetCustomerEditResponse> {
     return await httpAuth.post("/api/user/getCustomerEdit", data);
