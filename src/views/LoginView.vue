@@ -112,6 +112,14 @@ const onClick = () => {
               >
                 ログイン
               </v-btn>
+              <div class="text-center mt-2">
+                <router-link
+                  :to="{ name: 'passwordReminder' }"
+                  class="text-primary text-decoration-underline"
+                >
+                  パスワードを忘れた方はこちら
+                </router-link>
+              </div>
             </div>
           </v-col>
         </v-card-actions>

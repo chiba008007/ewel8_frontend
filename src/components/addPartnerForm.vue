@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ComponentTextField from "../components/TextFieldView.vue";
+import { useRoute } from "vue-router";
 
 type Rule = (value: string) => true | string | Promise<true | string>;
 
@@ -12,6 +13,8 @@ type RuleElement =
   | ((value: any) => ValidationResult)
   | ((value: any) => PromiseLike<ValidationResult>)
   | [string, any, (string | undefined)?];
+
+const route = useRoute();
 
 const adaptedRules = computed<RuleElement[]>(() => {
   const r = props.rules as unknown;
@@ -91,9 +94,9 @@ const emit = defineEmits<{
         パスワードの長さは、半角8文字以上、半角15文字以下です。<br />
         パスワードに使用できる文字は、半角英数すべてです。<br />
         パスワードには英大文字・英小文字・数字それぞれを最低1文字ずつ含む必要があります。
-      </p>
-      <p v-if="props.explaintext" class="text-caption">
-        {{ props.explaintext }}
+        <span v-if="route.name === 'editPartner'">
+          <br />未入力時は変更されません
+        </span>
       </p>
     </v-col>
   </v-row>

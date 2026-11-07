@@ -128,6 +128,17 @@ class UserApiService {
   checkCustomerAccess(data: { user_id: string | number }) {
     return httpAuth.post("/api/user/checkCustomerAccess", data);
   }
+  passwordRemind(data: { login_id: string; email: string }) {
+    return httpAuth.post("/api/user/passwordRemind", data);
+  }
+  passwordReset(data: {
+    login_id: string;
+    token: string;
+    password: string;
+    password_confirmation: string;
+  }) {
+    return httpAuth.post("/api/user/passwordReset", data);
+  }
 }
 
 export default new UserApiService();

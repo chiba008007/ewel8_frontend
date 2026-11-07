@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { useStoreUser } from "@/store/user";
 import {
   D_ADMIN,
+  D_CUSTOMER,
   D_PARTNER,
   examStatusArray,
   SWITCHLABEL,
@@ -70,6 +71,7 @@ type userAny = {
   syori: number;
   mailinfoflag: number;
   pdflogflag: number;
+  selectedTests?: string[];
 };
 const type = (user.userdata as userType).type;
 
@@ -231,11 +233,15 @@ const fetchUpdateTestFlag = async (
   ></pankuzuMain>
   <ProgressView v-if="loadingFlag"></ProgressView>
 
-  <v-tabs v-model="tab" class="mb-3">
+  <v-tabs
+    v-model="tab"
+    class="mb-3"
+    v-if="type == D_ADMIN || type == D_CUSTOMER"
+  >
     <v-tab value="tests">検査一覧</v-tab>
     <v-tab value="users">受検者一覧</v-tab>
   </v-tabs>
-  <div class="search-area">
+  <div class="search-area" v-if="type == D_ADMIN || type == D_CUSTOMER">
     <div class="font-weight-bold mb-2">■ 検査検索条件</div>
 
     <div class="search-grid">
@@ -337,6 +343,22 @@ const fetchUpdateTestFlag = async (
                     "
                     >{{ (item as userAny).testname }}</a
                   >
+
+                  <div class="text-end">
+                    <v-tooltip location="bottom">
+                      <template #activator="{ props }">
+                        <span v-bind="props" class="text-amber-darken-3">
+                          利用検査
+                        </span>
+                      </template>
+                      <div
+                        v-for="name in (item as userAny).selectedTests ?? []"
+                        :key="name"
+                      >
+                        {{ name }}
+                      </div>
+                    </v-tooltip>
+                  </div>
                 </td>
                 <td class="text-xs-right" nowrap>
                   {{

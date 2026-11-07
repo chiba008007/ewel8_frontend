@@ -58,6 +58,7 @@ const totalCols = computed(() =>
   )
 );
 
+const filterPanels = ref(["filters"]);
 const router = useRouter();
 const detail = ref();
 const user = useStoreUser();
@@ -132,6 +133,18 @@ TestApiService.getTestTableTh(tmp)
       }
     });
 
+    headers.value.push(
+      { title: "メモ1", sortable: false, key: "memo1", cols: 1, row: 2 },
+      { title: "メモ2", sortable: false, key: "memo2", cols: 1, row: 2 }
+    );
+
+    headers.value.push({
+      title: "PDF",
+      sortable: false,
+      key: "pdf",
+      cols: 1,
+      row: 2,
+    });
     headers.value.push({
       title: "機能",
       sortable: false,
@@ -256,11 +269,15 @@ const applyFilter = () => {
     } else if (status === 3) {
       examStatusMatch = true; // 未指定: フィルタ無効
     }
-    let startedAtMatch = true;
-    if (item.started_at && startDate.value && endDate.value) {
-      const itemDate = item.started_at.slice(0, 10);
-      startedAtMatch = itemDate >= startDate.value && itemDate <= endDate.value;
-    }
+
+    const itemDate = item.started_at?.slice(0, 10);
+
+    const startedAtMatch =
+      status === 0 ||
+      (!startDate.value && !endDate.value) ||
+      (!!itemDate &&
+        (!startDate.value || itemDate >= startDate.value) &&
+        (!endDate.value || itemDate <= endDate.value));
 
     return (
       nameMatch &&
@@ -312,6 +329,16 @@ const onPdfDownload = () => {
     params: { id: params.id, testid: params.testid },
   });
 };
+const dateResetKey = ref(0);
+const clearFilters = () => {
+  Object.keys(filterText).forEach((key) => {
+    (filterText as any)[key] = "";
+  });
+
+  startDate.value = "";
+  endDate.value = "";
+  dateResetKey.value++;
+};
 </script>
 <template>
   <ProgressView v-if="loadingFlag"></ProgressView>
@@ -348,83 +375,153 @@ const onPdfDownload = () => {
 
     <v-row v-resize="onResize" style="width: auto">
       <v-col class="ma-1" style="overflow: scroll">
-        <v-card class="pa-3 ma-2">
-          <v-card-text>
-            <v-row no-gutters>
-              <v-col cols="2">
-                ID
-                <TextFieldView
-                  density="compact"
-                  @onKeyup="(e) => (filterText.email = e)"
-                ></TextFieldView>
-              </v-col>
-              <v-col cols="2">
-                氏名
-                <TextFieldView
-                  density="compact"
-                  @onKeyup="(e) => (filterText.name = e)"
-                ></TextFieldView>
-              </v-col>
-              <v-col cols="2">
-                ふりがな
-                <TextFieldView
-                  density="compact"
-                  @onKeyup="(e) => (filterText.kana = e)"
-                ></TextFieldView>
-              </v-col>
-              <v-col cols="2">
-                ステータス
-                <SelectFieldView
-                  :items="examStatusArray"
-                  :text="filterText.examStatus"
-                  @onChange="(e) => (filterText.examStatus = e)"
-                ></SelectFieldView>
-              </v-col>
-              <v-col cols="2">
-                受検日(開始)
-                <DateView
-                  v-model:value="startDate"
-                  name="start"
-                  density="compact"
-                />
-              </v-col>
-              <v-col cols="2">
-                受検日(終了)
-                <DateView
-                  v-model:value="endDate"
-                  name="end"
-                  :min="startDate"
-                  density="compact"
-                />
-              </v-col>
-              <v-col cols="5">
-                メモ1
-                <TextFieldView
-                  density="compact"
-                  @onKeyup="(e) => (filterText.memo1 = e)"
-                ></TextFieldView>
-              </v-col>
-              <v-col cols="5">
-                メモ2
-                <TextFieldView
-                  density="compact"
-                  @onKeyup="(e) => (filterText.memo2 = e)"
-                ></TextFieldView>
-              </v-col>
-              <v-col cols="2" class="text-right">
-                <ButtonView
-                  text="検索"
-                  class="bg-blue mt-5 w-50"
-                  @onClick="applyFilter"
-                ></ButtonView>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+        <v-expansion-panels
+          v-model="filterPanels"
+          multiple
+          class="ma-2 search-filter"
+        >
+          <v-expansion-panel value="filters" elevation="0" class="border">
+            <v-expansion-panel-title class="font-weight-bold">
+              <v-icon icon="mdi-filter-variant" color="primary" class="mr-2" />
+              フィルタリング
+            </v-expansion-panel-title>
+
+            <v-expansion-panel-text>
+              <v-row dense>
+                <v-col cols="12" sm="6" md="6">
+                  <div class="filter-field">
+                    <span class="filter-label">ID</span>
+                    <TextFieldView
+                      :value="filterText.email"
+                      :hideDetails="true"
+                      @onKeyup="(e) => (filterText.email = e)"
+                    />
+                  </div>
+                </v-col>
+
+                <v-col cols="12" sm="6" md="6">
+                  <div class="filter-field">
+                    <span class="filter-label">氏名</span>
+                    <TextFieldView
+                      :value="filterText.name"
+                      :hideDetails="true"
+                      @onKeyup="(e) => (filterText.name = e)"
+                    />
+                  </div>
+                </v-col>
+              </v-row>
+
+              <v-row dense class="mt-2">
+                <v-col cols="12" md="6">
+                  <div class="filter-field">
+                    <span class="filter-label">ふりがな</span>
+                    <TextFieldView
+                      :value="filterText.kana"
+                      :hideDetails="true"
+                      @onKeyup="(e) => (filterText.kana = e)"
+                    />
+                  </div>
+                </v-col>
+
+                <v-col cols="12" md="6">
+                  <div class="filter-field">
+                    <span class="filter-label">受検ステータス</span>
+                    <SelectFieldView
+                      :clearable="true"
+                      :items="examStatusArray"
+                      :text="filterText.examStatus"
+                      @onChange="(e) => (filterText.examStatus = e)"
+                    />
+                  </div>
+                </v-col>
+
+                <v-col cols="12" md="12">
+                  <div class="filter-field">
+                    <span class="filter-label">受検日</span>
+                    <div class="filter-dates">
+                      <DateView
+                        v-model:value="startDate"
+                        name="start"
+                        :clearable="true"
+                        :key="`start-${dateResetKey}`"
+                        @onClear="startDate = ''"
+                      />
+                      <span>〜</span>
+                      <DateView
+                        v-model:value="endDate"
+                        name="end"
+                        :min="startDate"
+                        :clearable="true"
+                        :key="`end-${dateResetKey}`"
+                        @onClear="endDate = ''"
+                      />
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
+
+              <v-row dense class="mt-2">
+                <v-col cols="12">
+                  <div class="filter-field">
+                    <span class="filter-label">メモ1</span>
+                    <TextFieldView
+                      :value="filterText.memo1"
+                      :hideDetails="true"
+                      @onKeyup="(e) => (filterText.memo1 = e)"
+                    />
+                  </div>
+                </v-col>
+
+                <v-col cols="12">
+                  <div class="filter-field">
+                    <span class="filter-label">メモ2</span>
+                    <TextFieldView
+                      :value="filterText.memo2"
+                      :hideDetails="true"
+                      @onKeyup="(e) => (filterText.memo2 = e)"
+                    />
+                  </div>
+                </v-col>
+              </v-row>
+              <v-row class="mt-3">
+                <v-col>
+                  <ButtonView
+                    text="検査一覧に戻る"
+                    color="secondary"
+                    variant="outlined"
+                    class="px-5"
+                    @onClick="
+                      router.push({
+                        name: 'testLists',
+                        params: { id: params.id },
+                      })
+                    "
+                  />
+                </v-col>
+                <v-col class="text-end">
+                  <ButtonView
+                    text="クリア"
+                    color="secondary"
+                    variant="outlined"
+                    @onClick="clearFilters"
+                  />
+                  <ButtonView
+                    text="検索"
+                    color="primary"
+                    variant="flat"
+                    class="px-8 ml-1"
+                    @onClick="applyFilter"
+                  />
+                </v-col>
+              </v-row>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+
         <v-data-table
           :headers="headers"
           :items="filteredExamList"
-          class="listable ma-2 dataTableStyle"
+          class="listable ma-2 dataTableStyle memo-scroll-table"
           id="testTable"
           :height="tableHeight"
           fixed-header
@@ -461,7 +558,7 @@ const onPdfDownload = () => {
           </template>
           <template v-slot:item="{ item, index }">
             <tr :class="index % 2 === 0 ? 'bg-light-gray' : ''">
-              <td width="40" rowspan="2">{{ (item as any).originalIndex }}</td>
+              <td width="40">{{ (item as any).originalIndex }}</td>
               <td width="80">{{ (item as any).email }}</td>
               <td class="text-xs-right">{{ (item as any).name }}</td>
               <td class="text-xs-right">{{ (item as any).kana }}</td>
@@ -517,6 +614,17 @@ const onPdfDownload = () => {
                 :endtime="((item as any)['bea']).endtime"
                 :id="((item as any)['bea'] ).id"
               ></ExamBEAView>
+
+              <td class="memo-column">
+                {{ item.memo1 }}
+              </td>
+
+              <td class="memo-column">
+                {{ item.memo2 }}
+              </td>
+              <td>
+                {{ item.pdf_histories_count ? "出力済" : "未出力" }}
+              </td>
               <td class="text-xs-right text-center d-flex pt-3 justify-center">
                 <ButtonView
                   text="更新"
@@ -568,16 +676,6 @@ const onPdfDownload = () => {
                 ></ButtonView>
               </td>
             </tr>
-            <tr :class="index % 2 === 0 ? 'bg-light-gray' : ''">
-              <td :colspan="totalCols - 2" class="text-caption">
-                <div v-if="item.memo1">メモ1: {{ item.memo1 }}</div>
-                <div v-if="item.memo2">メモ2: {{ item.memo2 }}</div>
-              </td>
-              <td class="text-xs-right text-center">
-                <span v-if="item.pdf_histories_count">出力済</span>
-                <span v-else>未出力</span>
-              </td>
-            </tr>
           </template>
         </v-data-table>
         <div class="pa-2">
@@ -610,5 +708,99 @@ const onPdfDownload = () => {
 }
 .bg-light-gray {
   background-color: #e7e5e5; /* ごく薄いグレー */
+}
+
+.memo-scroll-table {
+  .v-table__wrapper {
+    overflow-x: auto;
+  }
+
+  .v-table__wrapper > table {
+    min-width: 1800px;
+    table-layout: auto;
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+  }
+
+  .memo-column {
+    min-width: 350px;
+    width: 350px;
+    max-width: 350px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    vertical-align: middle;
+  }
+}
+
+.filter-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.filter-label {
+  flex: 0 0 100px;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.filter-field > :last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-dates > :first-child,
+.filter-dates > :last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-filter {
+  .v-expansion-panel {
+    border: 1px solid #dce3eb !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+  }
+
+  .v-expansion-panel-title {
+    min-height: 48px;
+    padding: 12px 18px;
+    background: #f8fafc;
+    font-size: 14px;
+    border-bottom: 1px solid #e5eaf0;
+  }
+
+  .v-expansion-panel-text__wrapper {
+    padding: 18px 20px 14px;
+  }
+
+  .filter-label {
+    flex: 0 0 120px;
+    font-weight: 500;
+    color: #475569;
+  }
+  max-width: 880px;
+
+  .filter-label {
+    flex: 0 0 110px;
+    white-space: nowrap;
+  }
+  .filter-field {
+    gap: 12px;
+  }
 }
 </style>

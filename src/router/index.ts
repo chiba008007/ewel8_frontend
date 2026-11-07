@@ -3,6 +3,8 @@ import { useStoreUser } from "../store/user";
 import HomeView from "../views/HomeView.vue";
 import BlankView from "../views/BlankView.vue";
 import LoginView from "../views/LoginView.vue";
+import PasswordReminderView from "../views/PasswordReminderView.vue";
+import passwordResetView from "../views/passwordResetView.vue";
 import ListView from "../views/ListView.vue";
 import licenseView from "../views/licenseView.vue";
 import partnerRegistView from "../views/partnerRegistView.vue";
@@ -273,6 +275,16 @@ const routes: Array<RouteRecordRaw> = [
     path: "/login",
     name: "Login",
     component: LoginView,
+  },
+  {
+    path: "/password-reminder",
+    name: "passwordReminder",
+    component: PasswordReminderView,
+  },
+  {
+    path: "/password-reset",
+    name: "passwordReset",
+    component: passwordResetView,
   },
   {
     path: "/about",

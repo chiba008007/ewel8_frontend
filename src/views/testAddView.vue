@@ -55,6 +55,18 @@ const user = useStoreUser();
 
 const tmpid = route.params.id;
 const editid = route.params?.edit_id ? route.params?.edit_id : 0;
+
+const originalTestcount = ref(0);
+const originalActiveCodes = ref<string[]>([]);
+
+const normalizeCode = (code: string) => code.replace(/-/g, "").toUpperCase();
+
+const availableCount = (code: string, num: number) =>
+  Number(num) +
+  (editid && originalActiveCodes.value.includes(normalizeCode(code))
+    ? originalTestcount.value
+    : 0);
+
 const pl = pageLicense();
 const dc = dateChecked();
 
@@ -197,6 +209,11 @@ onMounted(async () => {
         });
         // 各パーツ
         applyTestParts(inputTestPart, res.data.testparts);
+        originalTestcount.value = Number(inputData.value.testcount);
+
+        originalActiveCodes.value = Object.entries(inputTestPart.value)
+          .filter(([, part]) => Boolean(part.status))
+          .map(([code]) => normalizeCode(code));
       });
     } catch (e) {
       alert("editdata error");
@@ -486,7 +503,9 @@ const changeStatus = (
       return;
     }
 
-    if (Number(inputData.value.testcount) > Number(license.num)) {
+    const available = availableCount(code, Number(license.num));
+
+    if (Number(inputData.value.testcount) > available) {
       inputTestPart.value[code].status = false;
       onBlurButton1();
 
@@ -520,11 +539,25 @@ const licenseErrors = computed(() => {
         return [`${code}のライセンス数を取得できません。`];
       }
 
-      return count > Number(license.num)
-        ? [`${license.jp}：販売可能${license.num}人に対して${count}人です。`]
+      const available = availableCount(code, license.num);
+
+      return count > available
+        ? [`${license.jp}：利用可能${available}人に対して${count}人です。`]
         : [];
     });
 });
+
+watch(
+  licenseErrors,
+  (errors) => {
+    console.log({
+      errors,
+      originalTestcount: originalTestcount.value,
+      originalActiveCodes: originalActiveCodes.value,
+    });
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <ProgressView v-if="loadingFlag"></ProgressView>
