@@ -30,7 +30,7 @@ for (let i = 1; i <= 31; i++) {
 }
 </script>
 <template>
-  <div class="d-flex">
+  <div class="d-flex birth-date">
     <ComponentTextField
       text="年"
       :value="props.yearValue"
@@ -42,15 +42,26 @@ for (let i = 1; i <= 31; i++) {
       label="月"
       :items="month"
       :text="props.monthValue"
-      @onChange="(e) => emit('onMonthChange', e)"
+      @onChange="(e) => emit('onMonthChange', String(e))"
     ></ComponentSelectField>
     <p class="pa-2">月</p>
     <ComponentSelectField
       label="日"
       :items="day"
       :text="props.dayValue"
-      @onChange="(e) => emit('onDayChange', e)"
+      @onChange="(e) => emit('onDayChange', String(e))"
     ></ComponentSelectField>
     <p class="pa-2">日</p>
   </div>
 </template>
+<style scoped>
+.birth-date :deep(.v-field) {
+  height: 40px;
+}
+
+.birth-date :deep(.v-field__input) {
+  min-height: 40px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+</style>

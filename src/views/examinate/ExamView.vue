@@ -109,7 +109,8 @@ const enabledTest = (e: boolean) => {
           density="compact"
           variant="outlined"
           :hideDetails="`auto`"
-          @onBlur="(val) => (inputData.login_id = val)"
+          :value="inputData.login_id"
+          @onInput="(val) => (inputData.login_id = val)"
           class="mb-6"
           :rules="[(e) => requiredValue(e, 'ログインID')]"
         />
