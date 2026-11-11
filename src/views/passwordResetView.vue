@@ -78,47 +78,45 @@ const onSubmit = async () => {
         <v-card-actions>
           <v-col>
             <AlertView
-              v-if="alertMessage"
-              :type="alertType"
-              :text="alertMessage"
-              class="mb-4"
-            />
-
-            <AlertView
               v-if="!token || !loginId"
               type="error"
               text="再設定URLが正しくありません。"
               class="mb-4"
             />
+            <div v-if="alertMessage === ''">
+              <addPartnerForm
+                title="新しいパスワード"
+                type="password"
+                :value="password"
+                :rules="passwordRules"
+                :maxlength="15"
+                :passwordFlag="true"
+                @onKeyup="(e: string) => (password = e)"
+              />
 
-            <addPartnerForm
-              title="新しいパスワード"
-              type="password"
-              :value="password"
-              :rules="passwordRules"
-              :maxlength="15"
-              :passwordFlag="true"
-              @onKeyup="(e: string) => (password = e)"
-            />
+              <addPartnerForm
+                title="パスワード（確認）"
+                type="password"
+                :value="passwordConfirm"
+                :rules="confirmRules"
+                :maxlength="15"
+                @onKeyup="(e: string) => (passwordConfirm = e)"
+              />
 
-            <addPartnerForm
-              title="パスワード（確認）"
-              type="password"
-              :value="passwordConfirm"
-              :rules="confirmRules"
-              :maxlength="15"
-              @onKeyup="(e: string) => (passwordConfirm = e)"
-            />
-
-            <ButtonView
-              text="パスワードを変更"
-              color="primary"
-              variant="flat"
-              class="w-100 mt-4"
-              :disabled="!isValid || submitting"
-              @onClick="onSubmit"
-            />
-
+              <ButtonView
+                text="パスワードを変更"
+                color="primary"
+                variant="flat"
+                class="w-100 mt-4"
+                :disabled="!isValid || submitting"
+                @onClick="onSubmit"
+              />
+            </div>
+            <div v-else>
+              <p class="text-center">
+                下記からログイン画面に戻り、設定したパスワードでログインしてください。
+              </p>
+            </div>
             <div class="text-center mt-4">
               <router-link :to="{ name: 'Login' }">
                 ログイン画面に戻る
