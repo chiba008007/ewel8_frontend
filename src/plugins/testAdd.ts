@@ -3,6 +3,7 @@ export default function () {
   const testEdit = (inputData: inputDataType, res: any) => {
     inputData.testname = res.data.test.testname;
     inputData.testcount = res.data.test.testcount;
+    inputData.examdisplayflag = res.data.test.examdisplayflag === 1;
     inputData.nameuseflag = res.data.test.nameuseflag ? true : false;
     inputData.genderuseflag = res.data.test.genderuseflag ? true : false;
     inputData.mailremaincount = res.data.test.mailremaincount;

@@ -189,11 +189,13 @@ onMounted(async () => {
     TestApiService.getExam(tmp).then(function (rlt) {
       detail.value = rlt;
       // パスフラグを変換してからリストに設定
-      const exams = rlt.data.exams.map((value: any, index: number) => ({
-        ...value,
-        originalIndex: index + 1,
-        passText: (passArray as any)[value.passflag],
-      }));
+      const exams = (rlt.data?.exams ?? []).map(
+        (value: any, index: number) => ({
+          ...value,
+          originalIndex: index + 1,
+          passText: (passArray as any)[value.passflag],
+        })
+      );
       originalExamList.value = exams;
       filteredExamList.value = exams;
       loadingFlag.value = false;

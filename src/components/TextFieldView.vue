@@ -34,6 +34,7 @@ interface Props {
   rules?: RuleElement[] | null | undefined;
   maxlength?: number;
   step?: string;
+  min?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -65,6 +66,7 @@ const normalizedRules = computed<readonly RuleElement[]>(() => {
 </script>
 <template>
   <v-text-field
+    :min="props.min"
     :type="props.type"
     :label="props.text"
     :step="props.step"

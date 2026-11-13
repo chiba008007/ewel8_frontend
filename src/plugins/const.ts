@@ -324,3 +324,8 @@ export const SWITCHLABEL: Record<number, string> = {
 
 // MHQ種別
 export const MHQTYPE = ["MHQ-R", "MHQ-E"];
+
+export const EXAMCOUNTTYPE: Record<string, string> = {
+  up: "件追加処理を行います。",
+  down: "件削除処理を行います。",
+};

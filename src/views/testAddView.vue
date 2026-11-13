@@ -15,6 +15,7 @@ import TestMenu from "../components/TestMenu.vue";
 import PartnerAdmin from "../components/PartnerAdmin.vue";
 import ButtonView from "@/components/ButtonView.vue";
 import addPartnerForm from "../components/addPartnerForm.vue";
+import addPartnerExamForm from "../components/addPartnerExamForm.vue";
 import addSwitchForm from "../components/addSwitchForm.vue";
 import addDateForm from "../components/addDateForm.vue";
 import addLoginForm from "../components/addLoginExplainForm.vue";
@@ -47,6 +48,7 @@ import ProgressView from "@/components/ProgressView.vue";
 import { useTestParts } from "@/composables/useTestParts";
 import CardViewEAIa from "@/components/CardViewEAIa.vue";
 import CardViewEAIb from "@/components/CardViewEAIb.vue";
+import { D_ADMIN } from "@/plugins/const";
 
 const { applyTestParts } = useTestParts();
 const router = useRouter();
@@ -73,6 +75,7 @@ const dc = dateChecked();
 const today = new Date();
 const errorTab1 = ref(2);
 const errorTab2 = ref(1);
+const unexaminedCount = ref<number>(0);
 // const userdata = user.userdata;
 // console.log(user.userdata);
 const isLoading = ref(true);
@@ -80,6 +83,20 @@ const tab = ref(0);
 const loadingFlag = ref(true);
 const inputWeightMasterString = ref<Record<string, string>>({});
 const partner_id = user.getSession("partner_id");
+
+// 受検者カウント
+const changeCount = ref(0);
+const changeType = ref<"up" | "down">("up");
+
+const recalcTestcount = () => {
+  const count = Number(changeCount.value);
+
+  inputData.value.testcount =
+    originalTestcount.value + (changeType.value === "up" ? count : -count);
+
+  onBlurButton();
+};
+
 interface TestPart {
   id?: number;
   test_id?: number;
@@ -91,6 +108,7 @@ interface TestPart {
 const inputData = ref({
   testname: "",
   testcount: 0,
+  examdisplayflag: true,
   nameuseflag: true,
   genderuseflag: true,
   mailremaincount: 0,
@@ -195,6 +213,7 @@ onMounted(async () => {
     registButton.value = false;
     try {
       TestApiService.getTestEditData(tmp).then((res) => {
+        unexaminedCount.value = Number(res.data.unexamined_count);
         done.value = res.data.done;
         (inputData.value as inputDataType) = testAdd().testEdit(
           inputData.value,
@@ -262,19 +281,14 @@ const onBlurButton1 = () => {
   }
 };
 const onBlurButton = () => {
-  registButton.value = true;
+  const count = Number(inputData.value.testcount);
+  const validCount = editid ? count >= 0 : count > 0;
 
   errorTab1.value =
-    (inputData.value.testname?.trim() ? 0 : 1) +
-    (Number(inputData.value.testcount) > 0 ? 0 : 1);
-  if (inputData.value.testname && inputData.value.testcount > 0) {
-    registButton.value = false;
-  }
-  if (editid) {
-    if (Number(done.value) > Number(inputData.value.testcount)) {
-      registButton.value = true;
-    }
-  }
+    (inputData.value.testname?.trim() ? 0 : 1) + (validCount ? 0 : 1);
+
+  registButton.value =
+    errorTab1.value > 0 || (Boolean(editid) && count < Number(done.value));
 };
 
 // パートナー・顧客企業の取得
@@ -341,6 +355,7 @@ const onClick = () => {
     user_id: tmpid,
     testname: inputData.value.testname,
     testcount: inputData.value.testcount,
+    examdisplayflag: inputData.value.examdisplayflag ? 1 : 0,
     nameuseflag: inputData.value.nameuseflag,
     genderuseflag: inputData.value.genderuseflag,
     mailremaincount: inputData.value.mailremaincount,
@@ -370,9 +385,7 @@ const onClick = () => {
     inputTestPart.value.VFJ.examPersonName = VFJName;
   }
   try {
-    console.log(tmp);
     TestApiService.setTest(tmp).then((res) => {
-      console.log(res);
       alertFlag.value = true;
     });
   } catch (e) {
@@ -382,14 +395,18 @@ const onClick = () => {
 
 const onEditClick = () => {
   alertFlag.value = false;
-  //  console.log(inputPDf.value);
   let tmp = {
     partner_id: partner_id,
     customer_id: tmpid,
     user_id: tmpid,
     edit_id: editid,
+    examdisplayflag: inputData.value.examdisplayflag ? 1 : 0,
     testname: inputData.value.testname,
-    testcount: inputData.value.testcount,
+    testcount:
+      originalTestcount.value +
+      (changeType.value === "up"
+        ? Number(changeCount.value)
+        : -Number(changeCount.value)),
     nameuseflag: inputData.value.nameuseflag,
     genderuseflag: inputData.value.genderuseflag,
     mailremaincount: inputData.value.mailremaincount,
@@ -419,7 +436,15 @@ const onEditClick = () => {
   }
 
   try {
-    TestApiService.editTest(tmp).then((res) => {
+    TestApiService.editTest(tmp).then(() => {
+      originalTestcount.value = Number(tmp.testcount);
+      unexaminedCount.value +=
+        changeType.value === "up"
+          ? Number(changeCount.value)
+          : -Number(changeCount.value);
+
+      changeCount.value = 0;
+      changeType.value = "up";
       alertFlag.value = true;
     });
   } catch (e) {
@@ -526,6 +551,16 @@ const licenseErrors = computed(() => {
     jp: string;
   }[];
 
+  if (editid && changeType.value === "down") {
+    const maxDelete = unexaminedCount.value;
+
+    return changeCount.value > maxDelete
+      ? [
+          `削除可能人数は${maxDelete}人です。${changeCount.value}人は削除できません。`,
+        ]
+      : [];
+  }
+
   const normalize = (code: string) => code.replace(/-/g, "").toUpperCase();
 
   return Object.entries(inputTestPart.value)
@@ -540,6 +575,16 @@ const licenseErrors = computed(() => {
       }
 
       const available = availableCount(code, license.num);
+
+      if (editid && changeType.value === "up") {
+        const maxAdd = Math.max(0, available - originalTestcount.value);
+
+        return changeCount.value > maxAdd
+          ? [
+              `${license.jp}：追加可能人数は${maxAdd}人です。${changeCount.value}人は追加できません。`,
+            ]
+          : [];
+      }
 
       return count > available
         ? [`${license.jp}：利用可能${available}人に対して${count}人です。`]
@@ -693,22 +738,64 @@ watch(
             :rules="[(e) => requiredValue(e, '検査名')]"
             @onBlur="(e:any) => ((inputData.testname = e), onBlurButton())"
           ></addPartnerForm>
-          <addPartnerForm
+          <addSwitchForm
+            v-if="user.userdata.type === D_ADMIN"
+            title="検査の表示/非表示"
+            :label="displayString(inputData.examdisplayflag)"
+            density="compact"
+            color="bg-lime"
+            :model="inputData.examdisplayflag"
+            :tooltipflag="true"
+            tooltipMessage="顧客画面での検査の表示・非表示を設定します。"
+            @onClick="
+              () =>
+                (inputData.examdisplayflag = inputData.examdisplayflag
+                  ? false
+                  : true)
+            "
+          ></addSwitchForm>
+
+          <addPartnerExamForm
+            :examtype="true"
+            :unexaminedCount="unexaminedCount"
+            :registeredCount="originalTestcount"
+            :changeType="changeType"
             color="bg-lime"
             title="受検者数"
             text="受検者数を入力してください"
-            explaintext="半角数字で入力してください。以下で選択される検査受検者数に反映されます。"
-            class="w-50"
+            explaintext="半角数字で入力してください。"
             :hideDetails="`auto`"
-            :value="inputData.testcount"
+            :value="
+              route.name === 'testEdit' ? changeCount : inputData.testcount
+            "
             :requriredIcon="true"
             :rules="[
               (v) =>
-                numberValue(Number(v), '受検者数', 10000, Number(editid), done),
+                route.name === 'testEdit' && Number(v) === 0
+                  ? true
+                  : numberValue(
+                      Number(v),
+                      '受検者数',
+                      10000,
+                      Number(editid),
+                      done
+                    ),
             ]"
-            @onBlur="(e:any) => ((inputData.testcount = e), onBlurButton())"
+            @onChangeType="(e: 'up' | 'down') => {
+              changeType = e;
+              recalcTestcount();
+            }"
+            @onBlur="(e: any) => {
+              if (route.name === 'testEdit') {
+                changeCount = Number(e);
+                recalcTestcount();
+              } else {
+                inputData.testcount = Number(e);
+                onBlurButton();
+              }
+            }"
             :errormessage="licenseErrors.join('、')"
-          ></addPartnerForm>
+          />
           <addSwitchForm
             title="氏名の入力"
             :label="displayString(inputData.nameuseflag)"

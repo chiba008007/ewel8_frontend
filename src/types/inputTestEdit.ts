@@ -1,6 +1,7 @@
 export interface inputDataType {
   testname: string;
   testcount: number;
+  examdisplayflag: boolean;
   nameuseflag: boolean;
   genderuseflag: boolean;
   mailremaincount: number;
