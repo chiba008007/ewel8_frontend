@@ -72,6 +72,7 @@ type userAny = {
   mailinfoflag: number;
   pdflogflag: number;
   selectedTests?: string[];
+  examdisplayflag: number;
 };
 const type = (user.userdata as userType).type;
 
@@ -326,7 +327,9 @@ const fetchUpdateTestFlag = async (
             color="green"
           >
             <template v-slot:item="{ item }">
-              <tr>
+              <tr
+                :class="{ 'exam-hidden': Number((item as userAny).examdisplayflag) === 0 }"
+              >
                 <td class="w-25">
                   <span v-if="type === D_PARTNER">{{
                     (item as userAny).testname
@@ -522,5 +525,8 @@ a.text-link {
   flex: 1;
   width: 100%;
   min-width: 0;
+}
+tr.exam-hidden > td {
+  background-color: #bbdefb !important;
 }
 </style>
